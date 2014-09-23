@@ -7,4 +7,3 @@ C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\Assembly-C
 C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\UnityEngine.xml
 C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.dll
 C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.pdb
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.csprojResolveAssemblyReference.cache

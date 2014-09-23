@@ -68,6 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControllerWrapper.cs" />
     <Compile Include="FlyByWire.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XMLConfigReader.cs" />
