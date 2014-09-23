@@ -6,4 +6,10 @@
     <StartArguments>-popupwindow</StartArguments>
     <StartWorkingDirectory>C:\Users\nlight\Desktop\ksp_test\</StartWorkingDirectory>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <StartProgram>C:\Users\nlight\Desktop\ksp_test\KSP.exe</StartProgram>
+    <StartWorkingDirectory>C:\Users\nlight\Desktop\ksp_test\</StartWorkingDirectory>
+    <StartArguments>-popupwindow</StartArguments>
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
 </Project>

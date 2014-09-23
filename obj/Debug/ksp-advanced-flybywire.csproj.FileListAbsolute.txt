@@ -1,0 +1,9 @@
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\Debug\ksp-advanced-flybywire.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\Debug\ksp-advanced-flybywire.pdb
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\Debug\Assembly-CSharp.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\Debug\UnityEngine.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\Debug\XInputDotNetPure.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\Debug\Assembly-CSharp.xml
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\Debug\UnityEngine.xml
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\Debug\ksp-advanced-flybywire.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\Debug\ksp-advanced-flybywire.pdb
