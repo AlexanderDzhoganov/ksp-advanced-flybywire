@@ -68,7 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControllerPreset.cs" />
     <Compile Include="ControllerWrapper.cs" />
+    <Compile Include="DropDownList.cs" />
     <Compile Include="FlyByWire.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XMLConfigReader.cs" />

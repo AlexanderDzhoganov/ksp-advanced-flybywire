@@ -43,8 +43,8 @@ namespace KSPAdvancedFlyByWire
         private GamePadState m_State;
         private PlayerIndex m_ControllerIndex = PlayerIndex.One;
 
-        public delegate void ButtonPressedCallback(Button button);
-        public delegate void ButtonReleasedCallback(Button button);
+        public delegate void ButtonPressedCallback(Button button, FlightCtrlState state);
+        public delegate void ButtonReleasedCallback(Button button, FlightCtrlState state);
 
         public ButtonPressedCallback buttonPressedCallback = null;
         public ButtonReleasedCallback buttonReleasedCallback = null;
@@ -58,7 +58,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        public void Update()
+        public void Update(FlightCtrlState state)
         {
             m_State = GamePad.GetState(m_ControllerIndex);
 
@@ -70,7 +70,7 @@ namespace KSPAdvancedFlyByWire
 
                     if(buttonPressedCallback != null)
                     {
-                        buttonPressedCallback((Button)i);
+                        buttonPressedCallback((Button)i, state);
                     }
                 }
                 else if(!GetButton((Button)i) && m_ButtonStates[i])
@@ -79,7 +79,7 @@ namespace KSPAdvancedFlyByWire
 
                     if(buttonReleasedCallback != null)
                     {
-                        buttonReleasedCallback((Button)i);
+                        buttonReleasedCallback((Button)i, state);
                     }
                 }
             }

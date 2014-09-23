@@ -9,12 +9,6 @@ using UnityEngine;
 namespace KSPAdvancedFlyByWire
 {
 
-    enum RightStickMode
-    {
-        Orientation,
-        Translation
-    }
-
     [KSPAddon(KSPAddon.Startup.Flight, true)]
     public class FlyByWire : MonoBehaviour
     {
@@ -22,13 +16,11 @@ namespace KSPAdvancedFlyByWire
         private bool m_CallbackSet = false;
 
         private ControllerWrapper m_Controller = null;
+        private List<ControllerPreset> m_Presets = new List<ControllerPreset>();
+        private ControllerPreset m_CurrentPreset = null;
 
         private float m_TriggerSensitivity = 0.05f;
-        private float m_GlobalSensitivityHigh = 0.8f;
-        private float m_GlobalSensitivityLow = 0.05f;
-
-        private bool m_InputsLocked = false;
-        private RightStickMode m_RightStickMode = RightStickMode.Orientation;
+        private float m_DiscreteActionStep = 0.15f;
 
         private float m_Throttle = 0.0f;
 
@@ -37,6 +29,7 @@ namespace KSPAdvancedFlyByWire
             print("KSPAdvancedFlyByWire: initialized");
             m_Controller = new ControllerWrapper();
             m_Controller.buttonPressedCallback = new ControllerWrapper.ButtonPressedCallback(ButtonPressedCallback);
+            m_CurrentPreset = new ControllerPreset();
         }
 
         public void OnDestroy()
@@ -46,76 +39,165 @@ namespace KSPAdvancedFlyByWire
 
         void DoMainWindow(int index)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Lock inputs");
-            m_InputsLocked = GUILayout.Toggle(m_InputsLocked, "");
-            GUILayout.EndHorizontal();
         }
 
-        void ButtonPressedCallback(Button button)
+        void ButtonPressedCallback(Button button, FlightCtrlState state)
         {
-            if(button == Button.X)
-            {
-                m_InputsLocked = !m_InputsLocked;
-            }
-            else if(button == Button.Back)
-            {
-                if(m_RightStickMode == RightStickMode.Orientation)
-                {
-                    m_RightStickMode = RightStickMode.Orientation;
-                }
-                else
-                {
-                    m_RightStickMode = RightStickMode.Translation;
-                }
-            }
+            EvaluateDiscreteAction(m_CurrentPreset.GetButton(button), state);
         }
 
         private void OnFlyByWire(FlightCtrlState state)
         {
-            m_Controller.Update();
-
-            if(m_InputsLocked)
+            FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(true);
+            m_Controller.Update(state);
+            
+            state.mainThrottle = m_Throttle;
+            
+            for(int i = 0; i < 6; i++)
             {
+                AnalogInput input = (AnalogInput)i;
+                EvaluateContinousAction(m_CurrentPreset.GetAnalogInput(input), m_Controller.GetAnalogInput(input), state);
+            }
+
+            FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
+        }
+        
+        private void EvaluateDiscreteAction(DiscreteAction action, FlightCtrlState state)
+        {
+            switch(action)
+            {
+            case DiscreteAction.None:
+                return;
+            case DiscreteAction.YawPlus:
+                state.yaw += m_DiscreteActionStep;
+                return;
+            case DiscreteAction.YawMinus:
+                state.yaw -= m_DiscreteActionStep;
+                return;
+            case DiscreteAction.PitchPlus:
+                state.pitch += m_DiscreteActionStep;
+                return;
+            case DiscreteAction.PitchMinus:
+                state.pitch -= m_DiscreteActionStep;
+                return;
+            case DiscreteAction.RollPlus:
+                state.roll += m_DiscreteActionStep;
+                return;
+            case DiscreteAction.RollMinus:
+                state.roll -= m_DiscreteActionStep;
+                return;
+            case DiscreteAction.XPlus:
+                state.X += m_DiscreteActionStep;
+                return;
+            case DiscreteAction.XMinus:
+                state.X -= m_DiscreteActionStep;
+                return;
+            case DiscreteAction.YPlus:
+                state.Y += m_DiscreteActionStep;
+                return;
+            case DiscreteAction.YMinus:
+                state.Y -= m_DiscreteActionStep;
+                return;
+            case DiscreteAction.ZPlus:
+                state.Z += m_DiscreteActionStep;
+                return;
+            case DiscreteAction.ZMinus:
+                state.Z -= m_DiscreteActionStep;
+                return;
+            case DiscreteAction.ThrottlePlus:
+                m_Throttle += m_DiscreteActionStep;
+                return;
+            case DiscreteAction.ThrottleMinus:
+                m_Throttle -= m_DiscreteActionStep;
+                return;
+            case DiscreteAction.Stage:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Stage);
+                return;
+            case DiscreteAction.Gear:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
+                return;
+            case DiscreteAction.Light:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Light);
+                return;
+            case DiscreteAction.RCS:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.RCS);
+                return;
+            case DiscreteAction.SAS:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.SAS);
+                return;
+            case DiscreteAction.Brakes:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Brakes);
+                return;
+            case DiscreteAction.Abort:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Abort);
+                return;
+            case DiscreteAction.Custom01:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom01);
+                return;
+            case DiscreteAction.Custom02:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom02);
+                return;
+            case DiscreteAction.Custom03:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom03);
+                return;
+            case DiscreteAction.Custom04:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom04);
+                return;
+            case DiscreteAction.Custom05:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom05);
+                return;
+            case DiscreteAction.Custom06:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom06);
+                return;
+            case DiscreteAction.Custom07:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom07);
+                return;
+            case DiscreteAction.Custom08:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom08);
+                return;
+            case DiscreteAction.Custom09:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom09);
+                return;
+            case DiscreteAction.Custom10:
+                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom10);
+                return;
+            case DiscreteAction.KillThrottle:
+                m_Throttle = 0.0f;
+                return;
+            case DiscreteAction.NextPreset:
+                return;
+            case DiscreteAction.PreviousPreset:
                 return;
             }
+        }
 
-            float sensitivity = m_GlobalSensitivityHigh;
-            if(m_Controller.GetButton(Button.RightShoulder))
+        private void EvaluateContinousAction(ContinuousAction action, float value, FlightCtrlState state)
+        {
+            switch(action)
             {
-                sensitivity = m_GlobalSensitivityLow;
-            }
-
-            m_Throttle -= m_Controller.GetAnalogInput(AnalogInput.LeftTrigger) * m_TriggerSensitivity * sensitivity;
-            m_Throttle += m_Controller.GetAnalogInput(AnalogInput.RightTrigger) * m_TriggerSensitivity * sensitivity;
-            m_Throttle = m_Throttle < 0.0f ? 0.0f : m_Throttle > 1.0f ? 1.0f : m_Throttle;
-            state.mainThrottle = m_Throttle;
-
-            if(m_RightStickMode == RightStickMode.Orientation)
-            {
-                state.pitch = m_Controller.GetAnalogInput(AnalogInput.RightStickY) * sensitivity;
-
-                if (m_Controller.GetButton(Button.LeftShoulder))
-                {
-                    state.roll = m_Controller.GetAnalogInput(AnalogInput.RightStickX) * sensitivity;
-                }
-                else
-                {
-                    state.yaw = m_Controller.GetAnalogInput(AnalogInput.RightStickX) * sensitivity;
-                }
-            }
-            else
-            {
-                state.X = m_Controller.GetAnalogInput(AnalogInput.RightStickX) * sensitivity;
-
-                if (m_Controller.GetButton(Button.LeftShoulder))
-                {
-                    state.Z = m_Controller.GetAnalogInput(AnalogInput.RightStickY) * sensitivity;
-                }
-                else
-                {
-                    state.Y = m_Controller.GetAnalogInput(AnalogInput.RightStickY) * sensitivity;
-                }
+                case ContinuousAction.None:
+                    return;
+                case ContinuousAction.Yaw:
+                    state.yaw += value;
+                    return;
+                case ContinuousAction.Pitch:
+                    state.pitch += value;
+                    return;
+                case ContinuousAction.Roll:
+                    state.roll += value;
+                    return;
+                case ContinuousAction.X:
+                    state.X += value;
+                    return;
+                case ContinuousAction.Y:
+                    state.Y += value;
+                    return;
+                case ContinuousAction.Z:
+                    state.Z += value;
+                    return;
+                case ContinuousAction.Throttle:
+                    m_Throttle += value;
+                    return;
             }
         }
 
