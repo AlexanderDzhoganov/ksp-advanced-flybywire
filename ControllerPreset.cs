@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace KSPAdvancedFlyByWire
 {
+
     public enum DiscreteAction
     {
         None,
@@ -64,7 +65,7 @@ namespace KSPAdvancedFlyByWire
 
         public ControllerPreset()
         {
-
+            discreteActionsMap[(int)Button.Start] = DiscreteAction.SAS;
         }
 
         public string name = "Default preset";
