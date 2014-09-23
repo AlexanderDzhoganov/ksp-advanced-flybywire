@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Users\nlight\Desktop\ksp_test\KSP.exe</StartProgram>
+    <StartArguments>-popupwindow</StartArguments>
+    <StartWorkingDirectory>C:\Users\nlight\Desktop\ksp_test\</StartWorkingDirectory>
+  </PropertyGroup>
+</Project>
