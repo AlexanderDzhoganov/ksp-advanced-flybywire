@@ -34,14 +34,14 @@ namespace KSPAdvancedFlyByWire
             int presetsCount = m_Config.GetValue<int>("PresetsCount", 0);
             int selectedPreset = m_Config.GetValue<int>("SelectedPreset", 0);
 
-            if(presetsCount == 0)
+            if (presetsCount == 0)
             {
                 m_Config.SetValue("Preset0", new ControllerPreset());
             }
 
             m_Config.save();
 
-            for (int i = 0; i < presetsCount; i++ )
+            for (int i = 0; i < presetsCount; i++)
             {
                 m_Presets.Add(m_Config.GetValue<ControllerPreset>("Preset" + i));
             }
@@ -74,7 +74,7 @@ namespace KSPAdvancedFlyByWire
             
             state.mainThrottle = m_Throttle;
             
-            for(int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 AnalogInput input = (AnalogInput)i;
                 EvaluateContinuousAction(m_CurrentPreset.GetAnalogInput(input), m_Controller.GetAnalogInput(input), state);
@@ -85,7 +85,7 @@ namespace KSPAdvancedFlyByWire
         
         private void EvaluateDiscreteAction(DiscreteAction action, FlightCtrlState state)
         {
-            switch(action)
+            switch (action)
             {
             case DiscreteAction.None:
                 return;
@@ -194,7 +194,7 @@ namespace KSPAdvancedFlyByWire
 
         private void EvaluateContinuousAction(ContinuousAction action, float value, FlightCtrlState state)
         {
-            switch(action)
+            switch (action)
             {
                 case ContinuousAction.None:
                     return;
@@ -224,7 +224,7 @@ namespace KSPAdvancedFlyByWire
 
         private void Update()
         {
-            if(!m_CallbackSet && FlightGlobals.ActiveVessel != null)
+            if (!m_CallbackSet && FlightGlobals.ActiveVessel != null)
             {
                 FlightGlobals.ActiveVessel.OnFlyByWire += new FlightInputCallback(OnFlyByWire);
                 m_CallbackSet = true;

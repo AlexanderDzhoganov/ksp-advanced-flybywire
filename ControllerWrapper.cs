@@ -50,6 +50,8 @@ namespace KSPAdvancedFlyByWire
         public ButtonReleasedCallback buttonReleasedCallback = null;
         public bool[] m_ButtonStates = new bool[15];
 
+        public Curve analogInputEvaluationCurve = new Curve();
+        
         public ControllerWrapper()
         {
             for(int i = 0; i < 15; i++)
@@ -126,23 +128,31 @@ namespace KSPAdvancedFlyByWire
 
         public float GetAnalogInput(AnalogInput input)
         {
+            float value = 0.0f;
+
             switch (input)
             {
                 case AnalogInput.LeftStickX:
-                    return m_State.ThumbSticks.Left.X;
+                    value = m_State.ThumbSticks.Left.X;
+                    break;
                 case AnalogInput.LeftStickY:
-                    return m_State.ThumbSticks.Left.Y;
+                    value = m_State.ThumbSticks.Left.Y;
+                    break;
                 case AnalogInput.RightStickX:
-                    return m_State.ThumbSticks.Right.X;
+                    value = m_State.ThumbSticks.Right.X;
+                    break;
                 case AnalogInput.RightStickY:
-                    return m_State.ThumbSticks.Right.Y;
+                    value = m_State.ThumbSticks.Right.Y;
+                    break;
                 case AnalogInput.LeftTrigger:
-                    return m_State.Triggers.Left;
+                    value = m_State.Triggers.Left;
+                    break;
                 case AnalogInput.RightTrigger:
-                    return m_State.Triggers.Right;
+                    value = m_State.Triggers.Right;
+                    break;
             }
 
-            return 0.0f;
+            return analogInputEvaluationCurve.Evaluate(value);
         }
 
     }
