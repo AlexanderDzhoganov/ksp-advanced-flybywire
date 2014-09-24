@@ -10,6 +10,8 @@ namespace KSPAdvancedFlyByWire
     public enum DiscreteAction
     {
         None,
+        Modifier,
+        
         // yaw, pitch, roll, x, y, z, throttle
 
         YawPlus,
@@ -128,42 +130,51 @@ namespace KSPAdvancedFlyByWire
 
         public ControllerPreset()
         {
-            discreteActionsMap[(int)Button.Start] = DiscreteAction.SAS;
+            for (int i = 0; i < 30; i++)
+            {
+                discreteActionsMap[i] = DiscreteAction.None;
+            }
+
+            for (int i = 0; i < 12; i++)
+            {
+                continousActionsMap[i] = ContinuousAction.None;
+                discretizedContinousActionsMap[i] = DiscreteAction.None;
+            }
         }
 
         public string name = "Default preset";
-        public DiscreteAction[] discreteActionsMap = new DiscreteAction[15];
-        public ContinuousAction[] continousActionsMap = new ContinuousAction[6];
-        public DiscreteAction[] discretizedContinousActionsMap = new DiscreteAction[6];
+        public DiscreteAction[] discreteActionsMap = new DiscreteAction[30];
+        public ContinuousAction[] continousActionsMap = new ContinuousAction[12];
+        public DiscreteAction[] discretizedContinousActionsMap = new DiscreteAction[12];
 
-        public void SetButton(Button button, DiscreteAction action)
+        public void SetButton(Button button, DiscreteAction action, bool modifier = false)
         {
-            discreteActionsMap[(int)button] = action;
+            discreteActionsMap[(int)button + (modifier ? 15 : 0)] = action;
         }
 
-        public DiscreteAction GetButton(Button button)
+        public DiscreteAction GetButton(Button button, bool modifier = false)
         {
-            return discreteActionsMap[(int)button];
+            return discreteActionsMap[(int)button + (modifier ? 15 : 0)];
         }
 
-        public void SetAnalogInput(AnalogInput input, ContinuousAction action)
+        public void SetAnalogInput(AnalogInput input, ContinuousAction action, bool modifier = false)
         {
-            continousActionsMap[(int)input] = action;
+            continousActionsMap[(int)input + (modifier ? 6 : 0)] = action;
         }
 
-        public ContinuousAction GetAnalogInput(AnalogInput input)
+        public ContinuousAction GetAnalogInput(AnalogInput input, bool modifier = false)
         {
-            return continousActionsMap[(int)input];
+            return continousActionsMap[(int)input + (modifier ? 6 : 0)];
         }
 
-        public void SetDiscretizedAnalogInput(AnalogInput input, DiscreteAction action)
+        public void SetDiscretizedAnalogInput(AnalogInput input, DiscreteAction action, bool modifier = false)
         {
-            discretizedContinousActionsMap[(int)input] = action;
+            discretizedContinousActionsMap[(int)input + (modifier ? 6 : 0)] = action;
         }
 
-        public DiscreteAction GetDiscretizedAnalogInput(AnalogInput input)
+        public DiscreteAction GetDiscretizedAnalogInput(AnalogInput input, bool modifier = false)
         {
-            return discretizedContinousActionsMap[(int)input];
+            return discretizedContinousActionsMap[(int)input + (modifier ? 6 : 0)];
         }
 
     }

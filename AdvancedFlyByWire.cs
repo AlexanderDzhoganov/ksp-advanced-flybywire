@@ -23,6 +23,7 @@ namespace KSPAdvancedFlyByWire
         private CurveType m_AnalogInputCurveType = CurveType.Identity;
 
         private float m_Throttle = 0.0f;
+        private bool m_Modifier = false;
 
         private bool m_CallbackSet = false;
 
@@ -107,17 +108,17 @@ namespace KSPAdvancedFlyByWire
 
         void ButtonPressedCallback(Button button, FlightCtrlState state)
         {
-            EvaluateDiscreteAction(GetCurrentPreset().GetButton(button), state);
+            EvaluateDiscreteAction(GetCurrentPreset().GetButton(button, m_Modifier), state);
         }
 
         void ButtonReleasedCallback(Button button, FlightCtrlState state)
         {
-            EvaluateDiscreteActionRelease(GetCurrentPreset().GetButton(button), state);
+            EvaluateDiscreteActionRelease(GetCurrentPreset().GetButton(button, m_Modifier), state);
         }
 
         void DiscretizedAnalogInputPressedCallback(AnalogInput input, FlightCtrlState state)
         {
-            EvaluateDiscreteAction(GetCurrentPreset().GetDiscretizedAnalogInput(input), state);
+            EvaluateDiscreteAction(GetCurrentPreset().GetDiscretizedAnalogInput(input, m_Modifier), state);
         }
 
         private void OnFlyByWire(FlightCtrlState state)
@@ -130,7 +131,7 @@ namespace KSPAdvancedFlyByWire
             for (int i = 0; i < 6; i++)
             {
                 AnalogInput input = (AnalogInput)i;
-                EvaluateContinuousAction(GetCurrentPreset().GetAnalogInput(input), m_Controller.GetAnalogInput(input), state);
+                EvaluateContinuousAction(GetCurrentPreset().GetAnalogInput(input, m_Modifier), m_Controller.GetAnalogInput(input), state);
             }
 
             FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
@@ -138,9 +139,18 @@ namespace KSPAdvancedFlyByWire
         
         private void EvaluateDiscreteAction(DiscreteAction action, FlightCtrlState state)
         {
+            KerbalEVA eva = null;
+            if (FlightGlobals.ActiveVessel.isEVA)
+            {
+                eva = FlightGlobals.ActiveVessel.GetComponent<KerbalEVA>();
+            }
+
             switch (action)
             {
             case DiscreteAction.None:
+                return;
+            case DiscreteAction.Modifier:
+                m_Modifier = true;
                 return;
             case DiscreteAction.YawPlus:
                 state.yaw += m_DiscreteActionStep;
@@ -236,6 +246,10 @@ namespace KSPAdvancedFlyByWire
                 FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom10);
                 return;
             case DiscreteAction.EVAJetpackActivate:
+                if (eva != null)
+                {
+                    eva.JetpackDeployed = !eva.JetpackDeployed;
+                }
                 return;
             case DiscreteAction.EVAJetCounterClockwise:
                 return;
@@ -256,6 +270,10 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.EVASprint:
                 return;
             case DiscreteAction.EVAHeadlamps:
+                if (eva != null)
+                {
+                    eva.lampOn = !eva.lampOn;
+                }
                 return;
             case DiscreteAction.CutThrottle:
                 m_Throttle = 0.0f;
@@ -275,8 +293,10 @@ namespace KSPAdvancedFlyByWire
                 m_CurrentPreset--;
                 return;
             case DiscreteAction.ZoomIn:
-                return;
+                FlightCamera.fetch.zoomScaleFactor += m_DiscreteActionStep;
+                return; 
             case DiscreteAction.ZoomOut:
+                FlightCamera.fetch.zoomScaleFactor -= m_DiscreteActionStep;
                 return;
             case DiscreteAction.OpenDebugConsole:
                 return;
@@ -391,6 +411,11 @@ namespace KSPAdvancedFlyByWire
         {
             switch (action)
             {
+            case DiscreteAction.None:
+                return;
+            case DiscreteAction.Modifier:
+                m_Modifier = false;
+                return;
             case DiscreteAction.SASHold:
                 FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
                 return;
@@ -429,7 +454,7 @@ namespace KSPAdvancedFlyByWire
 
         private void Update()
         {
-            if (!m_CallbackSet && FlightGlobals.ActiveVessel != null)
+            if (!m_CallbackSet && HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
                 FlightGlobals.ActiveVessel.OnFlyByWire += new FlightInputCallback(OnFlyByWire);
                 m_CallbackSet = true;
