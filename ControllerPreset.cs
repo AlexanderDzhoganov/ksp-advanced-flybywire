@@ -130,7 +130,7 @@ namespace KSPAdvancedFlyByWire
         CameraY
     }
 
-    class ControllerPreset
+    /*class ControllerPreset
     {
 
         public ControllerPreset(IController controller)
@@ -187,6 +187,75 @@ namespace KSPAdvancedFlyByWire
         public DiscreteAction GetDiscretizedAnalogInput(int input, bool modifier = false)
         {
             return discretizedContinousActionsMap[input + (modifier ? 6 : 0)];
+        }
+
+    }*/
+
+    class ControllerPreset
+    {
+
+        public ControllerPreset(IController controller)
+        {
+            int buttonsCount = controller.GetButtonsCount();
+            int axesCount = controller.GetAxesCount();
+
+            for (int i = 0; i < buttonsCount * 2; i++)
+            {
+                discreteActionsMap[i] = DiscreteAction.None;
+            }
+
+            for (int i = 0; i < axesCount * 2; i++)
+            {
+                continuousActionsMap[i] = new KeyValuePair<int,ContinuousAction>(0, ContinuousAction.None);
+            }
+        }
+
+        public string name = "Default preset";
+
+        public Dictionary<int, DiscreteAction> discreteActionsMap = new Dictionary<int, DiscreteAction>();
+        public Dictionary<int, KeyValuePair<int, ContinuousAction>> continuousActionsMap = new Dictionary<int, KeyValuePair<int, ContinuousAction>>();
+
+        public void SetDiscreteBinding(int state, DiscreteAction action)
+        {
+            discreteActionsMap[state] = action;
+        }
+
+        public DiscreteAction GetDiscreteBinding(int state)
+        {
+            if (discreteActionsMap.ContainsKey(state))
+            {
+                return discreteActionsMap[state];
+            }
+
+            return DiscreteAction.None;
+        }
+
+        public void SetContinuousBinding(int axis, int state, ContinuousAction action)
+        {
+            continuousActionsMap[axis] = new KeyValuePair<int, ContinuousAction>(state, action);
+        }
+
+        public ContinuousAction GetContinuousBinding(int axis, int state)
+        {
+            if (continuousActionsMap.ContainsKey(axis))
+            {
+                int expectedState = continuousActionsMap[axis].Key;
+
+                for (int i = 0; i < 32; i++)
+                {
+                    if (((1 << i) & expectedState) != 0)
+                    {
+                        if (((1 << i) & state) == 0)
+                        {
+                            return ContinuousAction.None;
+                        }
+                    }
+                }
+
+                return continuousActionsMap[axis].Value;
+            }
+
+            return ContinuousAction.None;
         }
 
     }
