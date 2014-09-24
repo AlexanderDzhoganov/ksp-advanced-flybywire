@@ -73,12 +73,20 @@ namespace KSPAdvancedFlyByWire
             m_AnalogInputCurveType = m_Config.GetValue<CurveType>("AnalogInputCurveType", CurveType.Identity);
             m_AnalogDiscretizationCutoff = m_Config.GetValue<float>("AnalogInputDiscretizationCutoff", 0.8f);
 
+            m_Controller = new XInputController();
+            m_Controller.analogDiscretizationCutoff = m_AnalogDiscretizationCutoff;
+            m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
+
+            m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
+            m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
+            m_Controller.discretizedAnalogInputPressedCallback = new XInputController.DiscretizedAnalogInputPressedCallback(DiscretizedAnalogInputPressedCallback);
+
             int presetsCount = m_Config.GetValue<int>("PresetsCount", 0);
             int selectedPreset = m_Config.GetValue<int>("SelectedPreset", 0);
 
             if (presetsCount == 0)
             {
-                m_Presets = DefaultControllerPresets.GetDefaultPresets();
+                m_Presets = DefaultControllerPresets.GetDefaultPresets(m_Controller);
                 SavePresetsToDisk();
             }
             else
@@ -92,14 +100,6 @@ namespace KSPAdvancedFlyByWire
             }
 
             m_CurrentPreset = selectedPreset;
-
-            m_Controller = new XInputController();
-            m_Controller.analogDiscretizationCutoff = m_AnalogDiscretizationCutoff;
-            m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
-
-            m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
-            m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
-            m_Controller.discretizedAnalogInputPressedCallback = new XInputController.DiscretizedAnalogInputPressedCallback(DiscretizedAnalogInputPressedCallback);
         }
 
         public void OnDestroy()
@@ -110,17 +110,17 @@ namespace KSPAdvancedFlyByWire
         {
         }
 
-        void ButtonPressedCallback(Button button, FlightCtrlState state)
+        void ButtonPressedCallback(int button, FlightCtrlState state)
         {
             EvaluateDiscreteAction(GetCurrentPreset().GetButton(button, m_Modifier), state);
         }
 
-        void ButtonReleasedCallback(Button button, FlightCtrlState state)
+        void ButtonReleasedCallback(int button, FlightCtrlState state)
         {
             EvaluateDiscreteActionRelease(GetCurrentPreset().GetButton(button, m_Modifier), state);
         }
 
-        void DiscretizedAnalogInputPressedCallback(AnalogInput input, FlightCtrlState state)
+        void DiscretizedAnalogInputPressedCallback(int input, FlightCtrlState state)
         {
             EvaluateDiscreteAction(GetCurrentPreset().GetDiscretizedAnalogInput(input, m_Modifier), state);
         }
@@ -134,8 +134,7 @@ namespace KSPAdvancedFlyByWire
             
             for (int i = 0; i < 6; i++)
             {
-                AnalogInput input = (AnalogInput)i;
-                EvaluateContinuousAction(GetCurrentPreset().GetAnalogInput(input, m_Modifier), m_Controller.GetAnalogInput(input), state);
+                EvaluateContinuousAction(GetCurrentPreset().GetAnalogInput(i, m_Modifier), m_Controller.GetAnalogInputState(i), state);
             }
 
             FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);

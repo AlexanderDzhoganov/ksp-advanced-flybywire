@@ -9,6 +9,35 @@ using XInputDotNetPure;
 namespace KSPAdvancedFlyByWire
 {
 
+    public enum Button
+    {
+        DPadLeft = 0,
+        DPadRight = 1,
+        DPadUp = 2,
+        DPadDown = 3,
+        Back = 4,
+        Start = 5,
+        LeftShoulder = 6,
+        RightShoulder = 7,
+        X = 8,
+        Y = 9,
+        A = 10,
+        B = 11,
+        LeftStick = 12,
+        RightStick = 13,
+        Guide = 14
+    }
+
+    public enum AnalogInput
+    {
+        LeftStickX = 0,
+        LeftStickY = 1,
+        RightStickX = 2,
+        RightStickY = 3,
+        LeftTrigger = 4,
+        RightTrigger = 5
+    }
+
     public class XInputController : IController
     {
 
@@ -37,52 +66,122 @@ namespace KSPAdvancedFlyByWire
 
             for(int i = 0; i < 15; i++)
             {
-                if(GetButton((Button)i) && !m_ButtonStates[i])
+                if(GetButtonState(i) && !m_ButtonStates[i])
                 {
                     m_ButtonStates[i] = true;
 
                     if(buttonPressedCallback != null)
                     {
-                        buttonPressedCallback((Button)i, state);
+                        buttonPressedCallback(i, state);
                     }
                 }
-                else if(!GetButton((Button)i) && m_ButtonStates[i])
+                else if(!GetButtonState(i) && m_ButtonStates[i])
                 {
                     m_ButtonStates[i] = false;
 
                     if(buttonReleasedCallback != null)
                     {
-                        buttonReleasedCallback((Button)i, state);
+                        buttonReleasedCallback(i, state);
                     }
                 }
             }
 
             for (int i = 0; i < 15; i++)
             {
-                if (GetDiscreteAnalogInput((AnalogInput)i, analogDiscretizationCutoff) && !m_DiscretizedAnalogInputStates[i])
+                if (GetDiscreteAnalogInputState(i, analogDiscretizationCutoff) && !m_DiscretizedAnalogInputStates[i])
                 {
                     m_DiscretizedAnalogInputStates[i] = true;
 
                     if (discretizedAnalogInputPressedCallback != null)
                     {
-                        discretizedAnalogInputPressedCallback((AnalogInput)i, state);
+                        discretizedAnalogInputPressedCallback(i, state);
                     }
                 }
-                else if (!GetDiscreteAnalogInput((AnalogInput)i, analogDiscretizationCutoff) && m_DiscretizedAnalogInputStates[i])
+                else if (!GetDiscreteAnalogInputState(i, analogDiscretizationCutoff) && m_DiscretizedAnalogInputStates[i])
                 {
                     m_DiscretizedAnalogInputStates[i] = false;
 
                     if (discretizedAnalogInputReleasedCallback != null)
                     {
-                        discretizedAnalogInputReleasedCallback((AnalogInput)i, state);
+                        discretizedAnalogInputReleasedCallback(i, state);
                     }
                 }
             }
         }
 
-        public override bool GetButton(Button button)
+        public override int GetButtonsCount()
         {
-            switch (button)
+            return 15;
+        }
+
+        public override string GetButtonName(int id)
+        {
+            switch ((Button)id)
+            {
+            case Button.DPadLeft:
+                return "DPad left";
+            case Button.DPadRight:
+                return "DPad right";
+            case Button.DPadUp:
+                return "DPad up";
+            case Button.DPadDown:
+                return "DPad down";
+            case Button.Back:
+                return "Back";
+            case Button.Start:
+                return "Start";
+            case Button.LeftShoulder:
+                return "Left shoulder";
+            case Button.RightShoulder:
+                return "Right shoulder";
+            case Button.X:
+                return "X";
+            case Button.Y:
+                return "Y";
+            case Button.A:
+                return "A";
+            case Button.B:
+                return "B";
+            case Button.LeftStick:
+                return "Left stick";
+            case Button.RightStick:
+                return "Right stick";
+            case Button.Guide:
+                return "Guide";
+            }
+
+            return "";
+        }
+
+        public override int GetAxesCount()
+        {
+            return 6;
+        }
+
+        public override string GetAxisName(int id)
+        {
+            switch ((AnalogInput)id)
+            {
+                case AnalogInput.LeftStickX:
+                    return "Left stick X";
+                case AnalogInput.LeftStickY:
+                    return "Left stick Y";
+                case AnalogInput.RightStickX:
+                    return "Right stick X";
+                case AnalogInput.RightStickY:
+                    return "Right stick Y";
+                case AnalogInput.LeftTrigger:
+                    return "Left trigger";
+                case AnalogInput.RightTrigger:
+                    return "Right trigger";
+            }
+
+            return "";
+        }
+
+        public override bool GetButtonState(int button)
+        {
+            switch ((Button)button)
             {
                 case Button.DPadLeft:
                     return m_State.DPad.Left == ButtonState.Pressed;
@@ -119,11 +218,11 @@ namespace KSPAdvancedFlyByWire
             return false;
         }
 
-        public override float GetAnalogInput(AnalogInput input)
+        public override float GetAnalogInputState(int input)
         {
             float value = 0.0f;
 
-            switch (input)
+            switch ((AnalogInput)input)
             {
                 case AnalogInput.LeftStickX:
                     value = m_State.ThumbSticks.Left.X;
@@ -148,11 +247,11 @@ namespace KSPAdvancedFlyByWire
             return analogInputEvaluationCurve.Evaluate(value);
         }
 
-        public override bool GetDiscreteAnalogInput(AnalogInput input, float cutoff = 0.5f)
+        public override bool GetDiscreteAnalogInputState(int input, float cutoff = 0.5f)
         {
             float value = 0.0f;
 
-            switch (input)
+            switch ((AnalogInput)input)
             {
                 case AnalogInput.LeftStickX:
                     value = m_State.ThumbSticks.Left.X;

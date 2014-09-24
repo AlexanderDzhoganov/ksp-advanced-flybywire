@@ -133,14 +133,21 @@ namespace KSPAdvancedFlyByWire
     class ControllerPreset
     {
 
-        public ControllerPreset()
+        public ControllerPreset(IController controller)
         {
-            for (int i = 0; i < 30; i++)
+            int buttonsCount = controller.GetButtonsCount();
+            int axesCount = controller.GetAxesCount();
+
+            discreteActionsMap = new DiscreteAction [buttonsCount * 2];
+            continousActionsMap = new ContinuousAction [axesCount * 2];
+            discretizedContinousActionsMap = new DiscreteAction [axesCount * 2];
+
+            for (int i = 0; i < buttonsCount * 2; i++)
             {
                 discreteActionsMap[i] = DiscreteAction.None;
             }
 
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < axesCount * 2; i++)
             {
                 continousActionsMap[i] = ContinuousAction.None;
                 discretizedContinousActionsMap[i] = DiscreteAction.None;
@@ -148,38 +155,38 @@ namespace KSPAdvancedFlyByWire
         }
 
         public string name = "Default preset";
-        public DiscreteAction[] discreteActionsMap = new DiscreteAction[30];
-        public ContinuousAction[] continousActionsMap = new ContinuousAction[12];
-        public DiscreteAction[] discretizedContinousActionsMap = new DiscreteAction[12];
+        public DiscreteAction[] discreteActionsMap = null;
+        public ContinuousAction[] continousActionsMap = null;
+        public DiscreteAction[] discretizedContinousActionsMap = null;
 
-        public void SetButton(Button button, DiscreteAction action, bool modifier = false)
+        public void SetButton(int button, DiscreteAction action, bool modifier = false)
         {
-            discreteActionsMap[(int)button + (modifier ? 15 : 0)] = action;
+            discreteActionsMap[button + (modifier ? 15 : 0)] = action;
         }
 
-        public DiscreteAction GetButton(Button button, bool modifier = false)
+        public DiscreteAction GetButton(int button, bool modifier = false)
         {
-            return discreteActionsMap[(int)button + (modifier ? 15 : 0)];
+            return discreteActionsMap[button + (modifier ? 15 : 0)];
         }
 
-        public void SetAnalogInput(AnalogInput input, ContinuousAction action, bool modifier = false)
+        public void SetAnalogInput(int input, ContinuousAction action, bool modifier = false)
         {
-            continousActionsMap[(int)input + (modifier ? 6 : 0)] = action;
+            continousActionsMap[input + (modifier ? 6 : 0)] = action;
         }
 
-        public ContinuousAction GetAnalogInput(AnalogInput input, bool modifier = false)
+        public ContinuousAction GetAnalogInput(int input, bool modifier = false)
         {
-            return continousActionsMap[(int)input + (modifier ? 6 : 0)];
+            return continousActionsMap[input + (modifier ? 6 : 0)];
         }
 
-        public void SetDiscretizedAnalogInput(AnalogInput input, DiscreteAction action, bool modifier = false)
+        public void SetDiscretizedAnalogInput(int input, DiscreteAction action, bool modifier = false)
         {
-            discretizedContinousActionsMap[(int)input + (modifier ? 6 : 0)] = action;
+            discretizedContinousActionsMap[input + (modifier ? 6 : 0)] = action;
         }
 
-        public DiscreteAction GetDiscretizedAnalogInput(AnalogInput input, bool modifier = false)
+        public DiscreteAction GetDiscretizedAnalogInput(int input, bool modifier = false)
         {
-            return discretizedContinousActionsMap[(int)input + (modifier ? 6 : 0)];
+            return discretizedContinousActionsMap[input + (modifier ? 6 : 0)];
         }
 
     }

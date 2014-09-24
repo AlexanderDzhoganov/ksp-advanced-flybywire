@@ -7,42 +7,13 @@ using System.Threading.Tasks;
 namespace KSPAdvancedFlyByWire
 {
 
-    public enum Button
-    {
-        DPadLeft = 0,
-        DPadRight = 1,
-        DPadUp = 2,
-        DPadDown = 3,
-        Back = 4,
-        Start = 5,
-        LeftShoulder = 6,
-        RightShoulder = 7,
-        X = 8,
-        Y = 9,
-        A = 10,
-        B = 11,
-        LeftStick = 12,
-        RightStick = 13,
-        Guide = 14
-    }
-
-    public enum AnalogInput
-    {
-        LeftStickX = 0,
-        LeftStickY = 1,
-        RightStickX = 2,
-        RightStickY = 3,
-        LeftTrigger = 4,
-        RightTrigger = 5
-    }
-
     public class IController
     {
 
-        public delegate void ButtonPressedCallback(Button button, FlightCtrlState state);
-        public delegate void ButtonReleasedCallback(Button button, FlightCtrlState state);
-        public delegate void DiscretizedAnalogInputPressedCallback(AnalogInput input, FlightCtrlState state);
-        public delegate void DiscretizedAnalogInputReleasedCallback(AnalogInput input, FlightCtrlState state);
+        public delegate void ButtonPressedCallback(int button, FlightCtrlState state);
+        public delegate void ButtonReleasedCallback(int button, FlightCtrlState state);
+        public delegate void DiscretizedAnalogInputPressedCallback(int input, FlightCtrlState state);
+        public delegate void DiscretizedAnalogInputReleasedCallback(int input, FlightCtrlState state);
 
         public ButtonPressedCallback buttonPressedCallback = null;
         public ButtonReleasedCallback buttonReleasedCallback = null;
@@ -54,11 +25,19 @@ namespace KSPAdvancedFlyByWire
 
         public virtual void Update(FlightCtrlState state) { }
 
-        public virtual bool GetButton(Button button) { return false; }
+        public virtual int GetButtonsCount() { return 0; }
 
-        public virtual float GetAnalogInput(AnalogInput input) { return 0.0f; }
+        public virtual string GetButtonName(int id) { return ""; }
 
-        public virtual bool GetDiscreteAnalogInput(AnalogInput input, float cutoff = 0.5f) { return false; }
+        public virtual int GetAxesCount() { return 0; }
+
+        public virtual string GetAxisName(int id) { return ""; }
+
+        public virtual bool GetButtonState(int button) { return false; }
+
+        public virtual float GetAnalogInputState(int analogInput) { return 0.0f; }
+
+        public virtual bool GetDiscreteAnalogInputState(int analogInput, float cutoff = 0.5f) { return false; }
 
     }
 
