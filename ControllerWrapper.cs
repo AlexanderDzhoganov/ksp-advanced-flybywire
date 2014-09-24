@@ -59,8 +59,8 @@ namespace KSPAdvancedFlyByWire
         public bool[] m_DiscretizedAnalogInputStates = new bool[6];
 
         public Curve analogInputEvaluationCurve = new Curve();
-        public float analogInputDiscretizationCutoff = 0.5f;
-        
+        private float analogDiscretizationCutoff = 0.8f;
+
         public ControllerWrapper()
         {
             for(int i = 0; i < 15; i++)
@@ -102,7 +102,7 @@ namespace KSPAdvancedFlyByWire
 
             for (int i = 0; i < 15; i++)
             {
-                if (GetDiscreteAnalogInput((AnalogInput)i) && !m_DiscretizedAnalogInputStates[i])
+                if (GetDiscreteAnalogInput((AnalogInput)i, analogDiscretizationCutoff) && !m_DiscretizedAnalogInputStates[i])
                 {
                     m_DiscretizedAnalogInputStates[i] = true;
 
@@ -111,7 +111,7 @@ namespace KSPAdvancedFlyByWire
                         discretizedAnalogInputPressedCallback((AnalogInput)i, state);
                     }
                 }
-                else if (!GetDiscreteAnalogInput((AnalogInput)i) && m_DiscretizedAnalogInputStates[i])
+                else if (!GetDiscreteAnalogInput((AnalogInput)i, analogDiscretizationCutoff) && m_DiscretizedAnalogInputStates[i])
                 {
                     m_DiscretizedAnalogInputStates[i] = false;
 
@@ -191,7 +191,7 @@ namespace KSPAdvancedFlyByWire
             return analogInputEvaluationCurve.Evaluate(value);
         }
 
-        public bool GetDiscreteAnalogInput(AnalogInput input)
+        public bool GetDiscreteAnalogInput(AnalogInput input, float cutoff = 0.5f)
         {
             float value = 0.0f;
 
@@ -217,7 +217,7 @@ namespace KSPAdvancedFlyByWire
                     break;
             }
 
-            return value >= analogInputDiscretizationCutoff;
+            return value >= cutoff;
         }
 
     }
