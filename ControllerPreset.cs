@@ -11,6 +11,7 @@ namespace KSPAdvancedFlyByWire
     {
         None,
         // yaw, pitch, roll, x, y, z, throttle
+
         YawPlus,
         YawMinus,
         PitchPlus,
@@ -25,6 +26,7 @@ namespace KSPAdvancedFlyByWire
         ZMinus,
         ThrottlePlus,
         ThrottleMinus,
+
         // Action groups
         Stage,
         Gear,
@@ -43,23 +45,25 @@ namespace KSPAdvancedFlyByWire
         Custom08,
         Custom09,
         Custom10,
-        //EVA
-        Forward,
-        Backward,
-        Left,
-        Right,
-        JetPack,
-        JetCC,
-        JetClockwise,
-        JetPitchUp,
-        JetPitchDown,
-        Jump,
-        ReorientAttitude,
-        UseBoard,
-        DirectionJump,
-        Sprint,
-        Headlamps,
-        // 
+
+        // EVA
+        EVAForward,
+        EVABackward,
+        EVALeft,
+        EVARight,
+        EVAJetpackActivate,
+        EVAJetCounterClockwise,
+        EVAJetpackClockwise,
+        EVAJetPitchPlus,
+        EVAJetPitchMinus,
+        EVAJump,
+        EVAReorientAttitude,
+        EVAUseBoard,
+        EVADirectionJump,
+        EVASprint,
+        EVAHeadlamps,
+
+        // Various
         KillThrottle,
         NextPreset,
         PreviousPreset,
@@ -72,7 +76,7 @@ namespace KSPAdvancedFlyByWire
         TimeWarpPlus,
         TimeWarpMinus,
         PhysicalTimeWarpPlus,
-        PhysicalTimewWarpMinus,
+        PhysicalTimeWarpMinus,
         NavballToggle,
         CycleActiveShipsForward,
         CycleActiveShipsBackward,
@@ -106,28 +110,15 @@ namespace KSPAdvancedFlyByWire
         RotatePartCC,
         RotateParkClockwise,
         ResetPartRotation,
-        //Docking
-        PitchUp,
+
+        // Docking
         PitchBack,
-        TranslateForward,
         PitchDown,
-        PitchForward,
-        TranslateBackward,
-        YawLeft,
         YawPort,
-        TranslateLeft,
-        YawStarboard,
-        YawRight,
-        TranslateRight,
-        Roll,
-        TranslateUp,
-        TranslateDown,
-
-
-
-
+        YawStarboard
 
     }
+
     public enum ContinuousAction
     {
         None,
