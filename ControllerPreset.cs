@@ -67,6 +67,8 @@ namespace KSPAdvancedFlyByWire
         PreviousPreset,
         ZoomIn,
         ZoomOut,
+        CameraX,
+        CameraY,
         OpenDebugConsole,
         OrbitMapToggle,
         ReverseCycleFocusOrbitMap,
@@ -122,29 +124,8 @@ namespace KSPAdvancedFlyByWire
         Throttle,
         ZoomIn,
         ZoomOut,
-
-        Forward,
-        Backward,
-        Left,
-        Right,
-        JetCC,
-        JetClockwise,
-        JetPitch,
-        DirectionJump,
-        // 
-        ShipZoomIn,
-        ShipZoomOut,
-        View,
-        ZoomShipIn,
-        ZoomShipOut,
-        RotatePart,
-        RotatePartCC,
-        RotateParkClockwise,
-        //Docking
-        DockPitch,
-        Translate,
-        DockYaw,
-        DockRoll,
+        CameraX,
+        CameraY
     }
 
     class ControllerPreset

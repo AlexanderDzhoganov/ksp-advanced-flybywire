@@ -70,7 +70,7 @@
   <ItemGroup>
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="ControllerWrapper.cs" />
-    <Compile Include="Curves.cs" />
+    <Compile Include="EvaluationCurves.cs" />
     <Compile Include="DropDownList.cs" />
     <Compile Include="AdvancedFlyByWire.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

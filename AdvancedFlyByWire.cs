@@ -298,6 +298,10 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.ZoomOut:
                 FlightCamera.fetch.zoomScaleFactor -= m_DiscreteActionStep;
                 return;
+            case DiscreteAction.CameraX:
+                return;
+            case DiscreteAction.CameraY:
+                return;
             case DiscreteAction.OpenDebugConsole:
                 return;
             case DiscreteAction.OrbitMapToggle:
