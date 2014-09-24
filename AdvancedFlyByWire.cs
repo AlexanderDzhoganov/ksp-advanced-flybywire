@@ -78,10 +78,13 @@ namespace KSPAdvancedFlyByWire
 
             if (presetsCount == 0)
             {
-                m_Config.SetValue("Preset0", new ControllerPreset());
+                m_Presets = DefaultControllerPresets.GetDefaultPresets();
+                SavePresetsToDisk();
             }
-            
-            m_Config.save();
+            else
+            {
+                m_Config.save();
+            }
 
             for (int i = 0; i < presetsCount; i++)
             {
@@ -333,6 +336,10 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.PhysicalTimeWarpMinus:
                 return;
             case DiscreteAction.NavballToggle:
+                if (MapView.MapIsEnabled)
+                {
+                    MapView.fetch.maneuverModeToggle.OnPress.Invoke();
+                }
                 return;
             case DiscreteAction.CycleActiveShipsForward:
                 return;
@@ -453,6 +460,12 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case ContinuousAction.Throttle:
                     m_Throttle += value;
+                    return;
+                case ContinuousAction.ThrottleIncrement:
+                    m_Throttle += value;
+                    return;
+                case ContinuousAction.ThrottleDecrement:
+                    m_Throttle -= value;
                     return;
             }
         }

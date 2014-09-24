@@ -122,6 +122,8 @@ namespace KSPAdvancedFlyByWire
         Y,
         Z,
         Throttle,
+        ThrottleIncrement,
+        ThrottleDecrement,
         ZoomIn,
         ZoomOut,
         CameraX,

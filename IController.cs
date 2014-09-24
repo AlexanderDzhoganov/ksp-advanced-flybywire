@@ -28,12 +28,12 @@ namespace KSPAdvancedFlyByWire
 
     public enum AnalogInput
     {
-        LeftStickX,
-        LeftStickY,
-        RightStickX,
-        RightStickY,
-        LeftTrigger,
-        RightTrigger
+        LeftStickX = 0,
+        LeftStickY = 1,
+        RightStickX = 2,
+        RightStickY = 3,
+        LeftTrigger = 4,
+        RightTrigger = 5
     }
 
     public class IController
