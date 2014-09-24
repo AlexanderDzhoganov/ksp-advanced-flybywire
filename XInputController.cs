@@ -88,7 +88,7 @@ namespace KSPAdvancedFlyByWire
 
             for (int i = 0; i < 15; i++)
             {
-                if (GetDiscreteAnalogInputState(i, analogDiscretizationCutoff) && !m_DiscretizedAnalogInputStates[i])
+                if (GetDiscreteAnalogInputState(i) && !m_DiscretizedAnalogInputStates[i])
                 {
                     m_DiscretizedAnalogInputStates[i] = true;
 
@@ -97,7 +97,7 @@ namespace KSPAdvancedFlyByWire
                         discretizedAnalogInputPressedCallback(i, state);
                     }
                 }
-                else if (!GetDiscreteAnalogInputState(i, analogDiscretizationCutoff) && m_DiscretizedAnalogInputStates[i])
+                else if (!GetDiscreteAnalogInputState(i) && m_DiscretizedAnalogInputStates[i])
                 {
                     m_DiscretizedAnalogInputStates[i] = false;
 
@@ -119,13 +119,13 @@ namespace KSPAdvancedFlyByWire
             switch ((Button)id)
             {
             case Button.DPadLeft:
-                return "DPad left";
+                return "Dpad left";
             case Button.DPadRight:
-                return "DPad right";
+                return "Dpad right";
             case Button.DPadUp:
-                return "DPad up";
+                return "Dpad up";
             case Button.DPadDown:
-                return "DPad down";
+                return "Dpad down";
             case Button.Back:
                 return "Back";
             case Button.Start:
@@ -247,7 +247,7 @@ namespace KSPAdvancedFlyByWire
             return analogInputEvaluationCurve.Evaluate(value);
         }
 
-        public override bool GetDiscreteAnalogInputState(int input, float cutoff = 0.5f)
+        public override bool GetDiscreteAnalogInputState(int input)
         {
             float value = 0.0f;
 
@@ -273,7 +273,7 @@ namespace KSPAdvancedFlyByWire
                     break;
             }
 
-            return Math.Abs(value) >= cutoff;
+            return Math.Abs(value) >= analogDiscretizationCutoff;
         }
 
     }

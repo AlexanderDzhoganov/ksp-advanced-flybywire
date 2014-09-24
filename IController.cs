@@ -37,7 +37,7 @@ namespace KSPAdvancedFlyByWire
 
         public virtual float GetAnalogInputState(int analogInput) { return 0.0f; }
 
-        public virtual bool GetDiscreteAnalogInputState(int analogInput, float cutoff = 0.5f) { return false; }
+        public virtual bool GetDiscreteAnalogInputState(int analogInput) { return false; }
 
     }
 
