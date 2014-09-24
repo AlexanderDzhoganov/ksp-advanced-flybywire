@@ -126,10 +126,9 @@ namespace KSPAdvancedFlyByWire
         Throttle,
         ThrottleIncrement,
         ThrottleDecrement,
-        ZoomIn,
-        ZoomOut,
         CameraX,
-        CameraY
+        CameraY,
+        CameraZoom
     }
     class ControllerPreset
     {

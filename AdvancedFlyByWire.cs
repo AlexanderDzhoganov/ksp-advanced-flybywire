@@ -524,10 +524,13 @@ namespace KSPAdvancedFlyByWire
                     m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.CameraX:
-                    FlightGlobals.camera_position.x += value;
+                    FlightCamera.CamHdg += value;
                     break;
                 case ContinuousAction.CameraY:
-                    FlightGlobals.camera_position.y += value;
+                    FlightCamera.CamPitch += value;
+                    break;
+                case ContinuousAction.CameraZoom:
+                    FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + value);
                     break;
             }
         }
