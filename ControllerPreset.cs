@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using UnityEngine;
+
 namespace KSPAdvancedFlyByWire
 {
 
     public enum DiscreteAction
     {
         None,
-        Modifier,
-        
         // yaw, pitch, roll, x, y, z, throttle
 
         YawPlus,
@@ -129,68 +129,6 @@ namespace KSPAdvancedFlyByWire
         CameraX,
         CameraY
     }
-
-    /*class ControllerPreset
-    {
-
-        public ControllerPreset(IController controller)
-        {
-            int buttonsCount = controller.GetButtonsCount();
-            int axesCount = controller.GetAxesCount();
-
-            discreteActionsMap = new DiscreteAction [buttonsCount * 2];
-            continousActionsMap = new ContinuousAction [axesCount * 2];
-            discretizedContinousActionsMap = new DiscreteAction [axesCount * 2];
-
-            for (int i = 0; i < buttonsCount * 2; i++)
-            {
-                discreteActionsMap[i] = DiscreteAction.None;
-            }
-
-            for (int i = 0; i < axesCount * 2; i++)
-            {
-                continousActionsMap[i] = ContinuousAction.None;
-                discretizedContinousActionsMap[i] = DiscreteAction.None;
-            }
-        }
-
-        public string name = "Default preset";
-        public DiscreteAction[] discreteActionsMap = null;
-        public ContinuousAction[] continousActionsMap = null;
-        public DiscreteAction[] discretizedContinousActionsMap = null;
-
-        public void SetButton(int button, DiscreteAction action, bool modifier = false)
-        {
-            discreteActionsMap[button + (modifier ? 15 : 0)] = action;
-        }
-
-        public DiscreteAction GetButton(int button, bool modifier = false)
-        {
-            return discreteActionsMap[button + (modifier ? 15 : 0)];
-        }
-
-        public void SetAnalogInput(int input, ContinuousAction action, bool modifier = false)
-        {
-            continousActionsMap[input + (modifier ? 6 : 0)] = action;
-        }
-
-        public ContinuousAction GetAnalogInput(int input, bool modifier = false)
-        {
-            return continousActionsMap[input + (modifier ? 6 : 0)];
-        }
-
-        public void SetDiscretizedAnalogInput(int input, DiscreteAction action, bool modifier = false)
-        {
-            discretizedContinousActionsMap[input + (modifier ? 6 : 0)] = action;
-        }
-
-        public DiscreteAction GetDiscretizedAnalogInput(int input, bool modifier = false)
-        {
-            return discretizedContinousActionsMap[input + (modifier ? 6 : 0)];
-        }
-
-    }*/
-
     class ControllerPreset
     {
 
@@ -198,48 +136,25 @@ namespace KSPAdvancedFlyByWire
         {
             int buttonsCount = controller.GetButtonsCount();
             int axesCount = controller.GetAxesCount();
-
-            for (int i = 0; i < buttonsCount * 2; i++)
-            {
-                discreteActionsMap[i] = DiscreteAction.None;
-            }
-
-            for (int i = 0; i < axesCount * 2; i++)
-            {
-                continuousActionsMap[i] = new KeyValuePair<int,ContinuousAction>(0, ContinuousAction.None);
-            }
         }
 
         public string name = "Default preset";
 
-        public Dictionary<int, DiscreteAction> discreteActionsMap = new Dictionary<int, DiscreteAction>();
-        public Dictionary<int, KeyValuePair<int, ContinuousAction>> continuousActionsMap = new Dictionary<int, KeyValuePair<int, ContinuousAction>>();
+        public List<KeyValuePair<int, DiscreteAction>> discreteActionsMap = new List<KeyValuePair<int, DiscreteAction>>();
+        public Dictionary<int, List<KeyValuePair<int, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<int, ContinuousAction>>>();
 
         public void SetDiscreteBinding(int state, DiscreteAction action)
         {
-            discreteActionsMap[state] = action;
+            discreteActionsMap.Add(new KeyValuePair<int,DiscreteAction>(state, action));
         }
 
         public DiscreteAction GetDiscreteBinding(int state)
         {
-            if (discreteActionsMap.ContainsKey(state))
+            foreach (var maskActionPair in discreteActionsMap)
             {
-                return discreteActionsMap[state];
-            }
+                int expectedState = maskActionPair.Key;
 
-            return DiscreteAction.None;
-        }
-
-        public void SetContinuousBinding(int axis, int state, ContinuousAction action)
-        {
-            continuousActionsMap[axis] = new KeyValuePair<int, ContinuousAction>(state, action);
-        }
-
-        public ContinuousAction GetContinuousBinding(int axis, int state)
-        {
-            if (continuousActionsMap.ContainsKey(axis))
-            {
-                int expectedState = continuousActionsMap[axis].Key;
+                bool match = true;
 
                 for (int i = 0; i < 32; i++)
                 {
@@ -247,15 +162,101 @@ namespace KSPAdvancedFlyByWire
                     {
                         if (((1 << i) & state) == 0)
                         {
-                            return ContinuousAction.None;
+                            match = false;
+                            break;
                         }
                     }
                 }
 
-                return continuousActionsMap[axis].Value;
+                if(match)
+                {
+                    return maskActionPair.Value;
+                }
             }
 
-            return ContinuousAction.None;
+            return DiscreteAction.None;
+        }
+
+        public void SetContinuousBinding(int axis, int state, ContinuousAction action)
+        {
+            if(!continuousActionsMap.ContainsKey(axis))
+            {
+                continuousActionsMap[axis] = new List<KeyValuePair<int, ContinuousAction>>();
+            }
+
+            continuousActionsMap[axis].Add(new KeyValuePair<int, ContinuousAction>(state, action));
+        }
+
+        public List<ContinuousAction> GetContinuousBinding(int axis, int state)
+        {
+            if (!continuousActionsMap.ContainsKey(axis))
+            {
+                return null;
+            }
+
+            List<KeyValuePair<int, ContinuousAction>> matches = new List<KeyValuePair<int, ContinuousAction>>();
+
+            foreach (var stateActionPair in continuousActionsMap[axis])
+            {
+                int expectedState = stateActionPair.Key;
+                bool match = true;
+                    
+                for (int i = 0; i < 32; i++)
+                {
+                    if (((1 << i) & expectedState) != 0)
+                    {
+                        if (((1 << i) & state) == 0)
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+                }
+                    
+                if(match)
+                {
+                    matches.Add(stateActionPair);
+                }
+            }
+
+            for (int i = 0; i < matches.Count; i++)
+            {
+                int bits = 0;
+                for(int q = 0; q < 32; q++)
+                {
+                    if((matches[i].Key & (1 << q)) != 0)
+                    {
+                        bits++;
+                    }
+                }
+
+                var value = matches[i].Value;
+                matches[i] = new KeyValuePair<int, ContinuousAction>(bits, value);
+            }
+
+            matches.Sort(CompareKeys);
+
+            int minBits = matches[matches.Count - 1].Key;
+           // print("minBits: " + minBits.ToString());
+
+            List<ContinuousAction> actions = new List<ContinuousAction>();
+
+            for (var i = 0; i < matches.Count; i++)
+            {
+                //print("match - " + matches[i].Key.ToString() + " - " + matches[i].Value.ToString());
+
+                if(matches[i].Key >= minBits)
+                {
+                    actions.Add(matches[i].Value);
+                }
+            }
+            
+            return actions;
+        }
+
+        private static int CompareKeys(KeyValuePair<int, ContinuousAction> a, KeyValuePair<int, ContinuousAction> b)
+        {
+            return a.Key.CompareTo(b.Key);
         }
 
     }

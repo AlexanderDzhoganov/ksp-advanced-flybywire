@@ -1,13 +1,3 @@
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\ksp-advanced-flybywire.dll
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\ksp-advanced-flybywire.pdb
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\Assembly-CSharp.dll
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\UnityEngine.dll
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\XInputDotNetPure.dll
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\Assembly-CSharp.xml
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\UnityEngine.xml
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.dll
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.pdb
-C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.csprojResolveAssemblyReference.cache
 D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\ksp-advanced-flybywire.dll
 D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\ksp-advanced-flybywire.pdb
 D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\Assembly-CSharp.dll
@@ -28,3 +18,13 @@ C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\Un
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.csprojResolveAssemblyReference.cache
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.dll
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.pdb
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\ksp-advanced-flybywire.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\ksp-advanced-flybywire.pdb
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\Assembly-CSharp.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\UnityEngine.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\XInputDotNetPure.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\Assembly-CSharp.xml
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\UnityEngine.xml
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.dll
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.pdb
+C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.csprojResolveAssemblyReference.cache

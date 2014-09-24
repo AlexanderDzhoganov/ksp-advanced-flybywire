@@ -11,21 +11,21 @@ namespace KSPAdvancedFlyByWire
 
     public enum Button
     {
-        DPadLeft = 0,
-        DPadRight = 1,
-        DPadUp = 2,
-        DPadDown = 3,
-        Back = 4,
-        Start = 5,
-        LeftShoulder = 6,
-        RightShoulder = 7,
-        X = 8,
-        Y = 9,
-        A = 10,
-        B = 11,
-        LeftStick = 12,
-        RightStick = 13,
-        Guide = 14
+        DPadLeft = 1 << 0,
+        DPadRight = 1 << 1,
+        DPadUp = 1 << 2,
+        DPadDown = 1 << 3,
+        Back = 1 << 4,
+        Start = 1 << 5,
+        LB = 1 << 6,
+        RB = 1 << 7,
+        X = 1 << 8,
+        Y = 1 << 9,
+        A = 1 << 10,
+        B = 1 << 11,
+        LeftStick = 1 << 12,
+        RightStick = 1 << 13,
+        Guide = 1 << 14
     }
 
     public enum AnalogInput
@@ -45,7 +45,8 @@ namespace KSPAdvancedFlyByWire
         private PlayerIndex m_ControllerIndex = PlayerIndex.One;
 
         public bool[] m_ButtonStates = new bool[15];
-        public bool[] m_DiscretizedAnalogInputStates = new bool[6];
+        public float[] m_AxisPositiveDeadZones = new float[6];
+        public float[] m_AxisNegativeDeadZones = new float[6];
 
         public XInputController()
         {
@@ -56,7 +57,8 @@ namespace KSPAdvancedFlyByWire
 
             for (int i = 0; i < 6; i++)
             {
-                m_DiscretizedAnalogInputStates[i] = false;
+                m_AxisNegativeDeadZones[i] = 0.0f;
+                m_AxisPositiveDeadZones[i] = 0.0f;
             }
         }
 
@@ -85,28 +87,6 @@ namespace KSPAdvancedFlyByWire
                     }
                 }
             }
-
-            for (int i = 0; i < 15; i++)
-            {
-                if (GetDiscreteAnalogInputState(i) && !m_DiscretizedAnalogInputStates[i])
-                {
-                    m_DiscretizedAnalogInputStates[i] = true;
-
-                    if (discretizedAnalogInputPressedCallback != null)
-                    {
-                        discretizedAnalogInputPressedCallback(i, state);
-                    }
-                }
-                else if (!GetDiscreteAnalogInputState(i) && m_DiscretizedAnalogInputStates[i])
-                {
-                    m_DiscretizedAnalogInputStates[i] = false;
-
-                    if (discretizedAnalogInputReleasedCallback != null)
-                    {
-                        discretizedAnalogInputReleasedCallback(i, state);
-                    }
-                }
-            }
         }
 
         public override int GetButtonsCount()
@@ -130,9 +110,9 @@ namespace KSPAdvancedFlyByWire
                 return "Back";
             case Button.Start:
                 return "Start";
-            case Button.LeftShoulder:
+            case Button.LB:
                 return "Left shoulder";
-            case Button.RightShoulder:
+            case Button.RB:
                 return "Right shoulder";
             case Button.X:
                 return "X";
@@ -181,7 +161,7 @@ namespace KSPAdvancedFlyByWire
 
         public override bool GetButtonState(int button)
         {
-            switch ((Button)button)
+            switch ((Button)(1 << button))
             {
                 case Button.DPadLeft:
                     return m_State.DPad.Left == ButtonState.Pressed;
@@ -195,9 +175,9 @@ namespace KSPAdvancedFlyByWire
                     return m_State.Buttons.Back == ButtonState.Pressed;
                 case Button.Start:
                     return m_State.Buttons.Start == ButtonState.Pressed;
-                case Button.LeftShoulder:
+                case Button.LB:
                     return m_State.Buttons.LeftShoulder == ButtonState.Pressed;
-                case Button.RightShoulder:
+                case Button.RB:
                     return m_State.Buttons.RightShoulder == ButtonState.Pressed;
                 case Button.X:
                     return m_State.Buttons.X == ButtonState.Pressed;
@@ -244,7 +224,29 @@ namespace KSPAdvancedFlyByWire
                     break;
             }
 
-            return analogInputEvaluationCurve.Evaluate(value);
+            if (value > 0.0f)
+            {
+                if(value < m_AxisPositiveDeadZones[input])
+                {
+                    m_AxisPositiveDeadZones[input] = value;
+                }
+
+                float deadZone = m_AxisPositiveDeadZones[input];
+                value = (value - m_AxisPositiveDeadZones[input]) * (1.0f + deadZone);
+            }
+            else
+            {
+                if(Math.Abs(value) < m_AxisNegativeDeadZones[input])
+                {
+                    m_AxisNegativeDeadZones[input] = Math.Abs(value);
+                }
+
+                float deadZone = m_AxisPositiveDeadZones[input];
+                value = (Math.Abs(value) - m_AxisPositiveDeadZones[input]) * (1.0f + deadZone);
+                value *= -1.0f;
+            }
+
+            return Math.Sign(value) * analogInputEvaluationCurve.Evaluate(Math.Abs(value));
         }
 
         public override bool GetDiscreteAnalogInputState(int input)
@@ -274,6 +276,21 @@ namespace KSPAdvancedFlyByWire
             }
 
             return Math.Abs(value) >= analogDiscretizationCutoff;
+        }
+
+        public override int GetButtonsMask()
+        {
+            int mask = 0;
+
+            for (int i = 0; i < 15; i++)
+            {
+                if(GetButtonState(i))
+                {
+                    mask |= 1 << i;
+                }
+            }
+
+            return mask;
         }
 
     }

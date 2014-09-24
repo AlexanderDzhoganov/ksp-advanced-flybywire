@@ -20,11 +20,10 @@ namespace KSPAdvancedFlyByWire
         private int m_CurrentPreset = 0;
 
         private float m_DiscreteActionStep = 0.15f;
-        private float m_AnalogDiscretizationCutoff = 0.8f;
         private CurveType m_AnalogInputCurveType = CurveType.Identity;
+        private float m_IncrementalThrottleSensitivity = 0.05f;
 
         private float m_Throttle = 0.0f;
-        private bool m_Modifier = false;
 
         private bool m_CallbackSet = false;
 
@@ -32,7 +31,8 @@ namespace KSPAdvancedFlyByWire
 
         private ControllerPreset GetCurrentPreset()
         {
-            return m_Presets[m_CurrentPreset];
+            var preset = m_Presets[m_CurrentPreset];
+            return preset;
         }
 
         void SetAnalogInputCurveType(CurveType type)
@@ -41,24 +41,18 @@ namespace KSPAdvancedFlyByWire
             m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(type);
         }
 
-        void SetAnalogDiscretizationCutoff(float cutoff)
-        {
-            m_AnalogDiscretizationCutoff = cutoff;
-            m_Controller.analogDiscretizationCutoff = cutoff;
-        }
 
         private void SavePresetsToDisk()
         {
             m_Config.SetValue("AnalogInputCurveType", m_AnalogInputCurveType);
-            m_Config.SetValue("AnalogInputDiscretizationCutoff", m_AnalogDiscretizationCutoff);
 
             m_Config.SetValue("PresetsCount", m_Presets.Count);
             m_Config.SetValue("SelectedPreset", m_CurrentPreset);
 
-            for (int i = 0; i < m_Presets.Count; i++)
+          /*  for (int i = 0; i < m_Presets.Count; i++)
             {
                 m_Config.SetValue("Preset" + i, m_Presets[i]);
-            }
+            }*/
 
             m_Config.save();
         }
@@ -70,36 +64,15 @@ namespace KSPAdvancedFlyByWire
             m_Config = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
             m_Config.load();
 
-            m_AnalogInputCurveType = m_Config.GetValue<CurveType>("AnalogInputCurveType", CurveType.Identity);
-            m_AnalogDiscretizationCutoff = m_Config.GetValue<float>("AnalogInputDiscretizationCutoff", 0.8f);
+            m_AnalogInputCurveType = m_Config.GetValue<CurveType>("AnalogInputCurveType", CurveType.XSquared);
 
             m_Controller = new XInputController();
-            m_Controller.analogDiscretizationCutoff = m_AnalogDiscretizationCutoff;
             m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
-
             m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
             m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
-            m_Controller.discretizedAnalogInputPressedCallback = new XInputController.DiscretizedAnalogInputPressedCallback(DiscretizedAnalogInputPressedCallback);
 
-            int presetsCount = m_Config.GetValue<int>("PresetsCount", 0);
-            int selectedPreset = m_Config.GetValue<int>("SelectedPreset", 0);
-
-            if (presetsCount == 0)
-            {
-                m_Presets = DefaultControllerPresets.GetDefaultPresets(m_Controller);
-                SavePresetsToDisk();
-            }
-            else
-            {
-                m_Config.save();
-            }
-
-            for (int i = 0; i < presetsCount; i++)
-            {
-                m_Presets.Add(m_Config.GetValue<ControllerPreset>("Preset" + i));
-            }
-
-            m_CurrentPreset = selectedPreset;
+            m_Presets = DefaultControllerPresets.GetDefaultPresets(m_Controller);
+            m_CurrentPreset = 0;
         }
 
         public void OnDestroy()
@@ -108,36 +81,92 @@ namespace KSPAdvancedFlyByWire
 
         void DoMainWindow(int index)
         {
+            string buttonsMask = "";
+
+            for (int i = 0; i < m_Controller.GetButtonsCount(); i++)
+            {
+                buttonsMask = (m_Controller.GetButtonState(i) ? "1" : "0") + buttonsMask;
+            }
+
+            GUILayout.Label(buttonsMask);
+            GUILayout.Label(m_Controller.GetButtonsMask().ToString());
+
+            for (int i = 0; i < m_Controller.GetAxesCount(); i++)
+            {
+                string label = "";
+                label += m_Controller.GetAxisName(i) + " ";
+                label += m_Controller.GetAnalogInputState(i);
+                GUILayout.Label(label);
+            }
         }
+
+        private HashSet<int> m_EvaluatedDiscreteActionMasks = new HashSet<int>();
 
         void ButtonPressedCallback(int button, FlightCtrlState state)
         {
-            EvaluateDiscreteAction(GetCurrentPreset().GetButton(button, m_Modifier), state);
+            int mask = m_Controller.GetButtonsMask();
+
+            if(m_EvaluatedDiscreteActionMasks.Contains(mask))
+            {
+                return;
+            }
+
+            DiscreteAction action = GetCurrentPreset().GetDiscreteBinding(mask);
+            if(action != DiscreteAction.None)
+            {
+                EvaluateDiscreteAction(action, state);
+                m_EvaluatedDiscreteActionMasks.Add(mask);
+            }
         }
 
         void ButtonReleasedCallback(int button, FlightCtrlState state)
         {
-            EvaluateDiscreteActionRelease(GetCurrentPreset().GetButton(button, m_Modifier), state);
-        }
+            List<int> masksToRemove = new List<int>();
 
-        void DiscretizedAnalogInputPressedCallback(int input, FlightCtrlState state)
-        {
-            EvaluateDiscreteAction(GetCurrentPreset().GetDiscretizedAnalogInput(input, m_Modifier), state);
+            foreach(int evaluatedMask in m_EvaluatedDiscreteActionMasks)
+            {
+                for(int i = 0; i < m_Controller.GetButtonsCount(); i++)
+                {
+                   bool maskHasBitSet = (evaluatedMask & (1 << i)) != 0;
+
+                   if (!m_Controller.GetButtonState(i) && maskHasBitSet)
+                   {
+                       masksToRemove.Add(evaluatedMask);
+                       break;
+                   }
+                }
+            }
+
+            foreach(int maskRemove in masksToRemove)
+            {
+                m_EvaluatedDiscreteActionMasks.Remove(maskRemove);
+            }
+
+            EvaluateDiscreteActionRelease(GetCurrentPreset().GetDiscreteBinding(m_Controller.GetButtonsMask()), state);
         }
 
         private void OnFlyByWire(FlightCtrlState state)
         {
             FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(true);
+
             m_Controller.Update(state);
-            
             state.mainThrottle = m_Throttle;
-            
+
             for (int i = 0; i < 6; i++)
             {
-                EvaluateContinuousAction(GetCurrentPreset().GetAnalogInput(i, m_Modifier), m_Controller.GetAnalogInputState(i), state);
+                List<ContinuousAction> actions = GetCurrentPreset().GetContinuousBinding(i, m_Controller.GetButtonsMask());
+
+                foreach (var action in actions)
+                {
+                    float input = m_Controller.GetAnalogInputState(i);
+                    if(input != 0.0f)
+                    {
+                        EvaluateContinuousAction(action, m_Controller.GetAnalogInputState(i), state);
+                    }
+                }
             }
 
-            FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
+           FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
         }
         
         private void EvaluateDiscreteAction(DiscreteAction action, FlightCtrlState state)
@@ -151,9 +180,6 @@ namespace KSPAdvancedFlyByWire
             switch (action)
             {
             case DiscreteAction.None:
-                return;
-            case DiscreteAction.Modifier:
-                m_Modifier = true;
                 return;
             case DiscreteAction.YawPlus:
                 state.yaw += m_DiscreteActionStep;
@@ -198,7 +224,8 @@ namespace KSPAdvancedFlyByWire
                 m_Throttle -= m_DiscreteActionStep;
                 return;
             case DiscreteAction.Stage:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Stage);
+                Staging.ActivateNextStage();
+               // FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Stage);
                 return;
             case DiscreteAction.Gear:
                 FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
@@ -282,16 +309,16 @@ namespace KSPAdvancedFlyByWire
                 m_Throttle = 0.0f;
                 return;
             case DiscreteAction.NextPreset:
-                if (m_CurrentPreset >= m_Presets.Count)
+                if (m_CurrentPreset >= m_Presets.Count - 1)
                 {
-                    break;
+                    return;
                 }
                 m_CurrentPreset++;
                 return;
             case DiscreteAction.PreviousPreset:
                 if (m_CurrentPreset <= 0)   
                 {
-                    break;
+                    return;
                 }
                 m_CurrentPreset--;
                 return;
@@ -424,13 +451,15 @@ namespace KSPAdvancedFlyByWire
             {
             case DiscreteAction.None:
                 return;
-            case DiscreteAction.Modifier:
-                m_Modifier = false;
-                return;
             case DiscreteAction.SASHold:
                 FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
                 return;
             }
+        }
+
+        private float Clamp(float x, float min, float max)
+        {
+            return x < min ? min : x > max ? max : x;
         }
 
         private void EvaluateContinuousAction(ContinuousAction action, float value, FlightCtrlState state)
@@ -440,43 +469,63 @@ namespace KSPAdvancedFlyByWire
                 case ContinuousAction.None:
                     return;
                 case ContinuousAction.Yaw:
-                    state.yaw += value;
+                    state.yaw = value;
+                    state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Pitch:
-                    state.pitch += value;
+                    state.pitch = value;
+                    state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Roll:
-                    state.roll += value;
+                    state.roll = value;
+                    state.roll = Clamp(state.roll, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.X:
-                    state.X += value;
+                    state.X = value;
+                    state.X = Clamp(state.X, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Y:
-                    state.Y += value;
+                    state.Y = value;
+                    state.Y = Clamp(state.Y, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Z:
-                    state.Z += value;
+                    state.Z = value;
+                    state.Z = Clamp(state.Z, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Throttle:
                     m_Throttle += value;
+                    m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.ThrottleIncrement:
-                    m_Throttle += value;
+                    m_Throttle += value * m_IncrementalThrottleSensitivity;
+                    m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.ThrottleDecrement:
-                    m_Throttle -= value;
+                    m_Throttle -= value * m_IncrementalThrottleSensitivity;
+                    m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
             }
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
-            if (!m_CallbackSet && HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
+            if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
-                FlightGlobals.ActiveVessel.OnFlyByWire += new FlightInputCallback(OnFlyByWire);
+                if(!m_CallbackSet)
+                {
+                    m_Callback = new FlightInputCallback(OnFlyByWire);
+                }
+                else
+                {
+                    FlightGlobals.ActiveVessel.OnFlyByWire -= m_Callback;
+                }
+
+                FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
                 m_CallbackSet = true;
             }
         }
+
+        private FlightInputCallback m_Callback;
 
         void OnGUI()
         {

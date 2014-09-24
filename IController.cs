@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace KSPAdvancedFlyByWire
 {
 
-    public class IController
+    public abstract class IController
     {
 
         public delegate void ButtonPressedCallback(int button, FlightCtrlState state);
@@ -23,21 +23,23 @@ namespace KSPAdvancedFlyByWire
         public Curve analogInputEvaluationCurve = new Curve();
         public float analogDiscretizationCutoff = 0.8f;
 
-        public virtual void Update(FlightCtrlState state) { }
+        public abstract void Update(FlightCtrlState state);
 
-        public virtual int GetButtonsCount() { return 0; }
+        public abstract int GetButtonsCount();
 
-        public virtual string GetButtonName(int id) { return ""; }
+        public abstract string GetButtonName(int id);
 
-        public virtual int GetAxesCount() { return 0; }
+        public abstract int GetAxesCount();
 
-        public virtual string GetAxisName(int id) { return ""; }
+        public abstract string GetAxisName(int id);
 
-        public virtual bool GetButtonState(int button) { return false; }
+        public abstract bool GetButtonState(int button);
 
-        public virtual float GetAnalogInputState(int analogInput) { return 0.0f; }
+        public abstract float GetAnalogInputState(int analogInput);
 
-        public virtual bool GetDiscreteAnalogInputState(int analogInput) { return false; }
+        public abstract bool GetDiscreteAnalogInputState(int analogInput);
+
+        public abstract int GetButtonsMask();
 
     }
 

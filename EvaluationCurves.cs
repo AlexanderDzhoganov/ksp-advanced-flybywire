@@ -12,7 +12,8 @@ namespace KSPAdvancedFlyByWire
         Identity,
         XSquared,
         SqrtX,
-        SqrtOfOneMinusXSquared
+        SqrtOfOneMinusXSquared,
+        OneOverMinusLnX
     }
 
     public class Curve
@@ -47,6 +48,14 @@ namespace KSPAdvancedFlyByWire
         }
     }
 
+    public class OneOverMinusLnX : Curve
+    {
+        public override float Evaluate(float x)
+        {
+            return (float)Math.Sign(x) * 1.0f / (float)-Math.Log((float)Math.Abs(x)) - (float)Math.Sign(x);
+        }
+    }
+
     public class CurveFactory
     {
 
@@ -55,13 +64,15 @@ namespace KSPAdvancedFlyByWire
             switch (type)
             {
             case CurveType.Identity:
-                    return new Curve();
+                return new Curve();
             case CurveType.XSquared:
-                    return new XSquared();
+                return new XSquared();
             case CurveType.SqrtX:
-                    return new SqrtX();
+                return new SqrtX();
             case CurveType.SqrtOfOneMinusXSquared:
-                    return new SqrtOfOneMinusXSquared();
+                return new SqrtOfOneMinusXSquared();
+            case CurveType.OneOverMinusLnX:
+                return new OneOverMinusLnX();
             }
 
             return null;

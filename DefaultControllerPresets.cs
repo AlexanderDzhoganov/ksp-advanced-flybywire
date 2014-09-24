@@ -28,36 +28,36 @@ namespace KSPAdvancedFlyByWire
 
             preset.name = "Rocket (default)";
 
-            preset.SetButton((int)Button.DPadLeft, DiscreteAction.SAS, false);
-            preset.SetButton((int)Button.DPadRight, DiscreteAction.Light, false);
-            preset.SetButton((int)Button.DPadUp, DiscreteAction.RCS, false);
-            preset.SetButton((int)Button.DPadDown, DiscreteAction.Gear, false);
+            preset.SetDiscreteBinding((int)Button.DPadLeft, DiscreteAction.SAS);
+            preset.SetDiscreteBinding((int)Button.DPadRight, DiscreteAction.Light);
+            preset.SetDiscreteBinding((int)Button.DPadUp, DiscreteAction.RCS);
+            preset.SetDiscreteBinding((int)Button.DPadDown, DiscreteAction.Gear);
 
-            preset.SetButton((int)Button.Back, DiscreteAction.Abort, false);
-            preset.SetButton((int)Button.Start, DiscreteAction.QuickSave, false);
+            preset.SetDiscreteBinding((int)Button.Back, DiscreteAction.Abort);
+            preset.SetDiscreteBinding((int)Button.Start, DiscreteAction.QuickSave);
 
-            preset.SetButton((int)Button.LeftShoulder, DiscreteAction.Modifier, false);
-            preset.SetButton((int)Button.RightShoulder, DiscreteAction.NextPreset, false);
+           // preset.SetDiscreteBinding((int)Button.LB, DiscreteAction.PreviousPreset);
+            preset.SetDiscreteBinding((int)Button.RB, DiscreteAction.NextPreset);
 
             //         preset.SetButton((int)Button.X, DiscreteAction.SAS, false);
             //         preset.SetButton((int)Button.Y, DiscreteAction.SAS, false);
-            preset.SetButton((int)Button.A, DiscreteAction.Stage, false);
-            preset.SetButton((int)Button.B, DiscreteAction.CutThrottle, false);
+            preset.SetDiscreteBinding((int)Button.A, DiscreteAction.Stage);
+            preset.SetDiscreteBinding((int)Button.B, DiscreteAction.CutThrottle);
 
-            preset.SetButton((int)Button.LeftStick, DiscreteAction.NavballToggle, false);
+            preset.SetDiscreteBinding((int)Button.LeftStick, DiscreteAction.NavballToggle);
             //         preset.SetButton((int)Button.RightStick, DiscreteAction.SAS, false);
 
-            preset.SetButton((int)Button.Guide, DiscreteAction.OrbitMapToggle, false);
+            preset.SetDiscreteBinding((int)Button.Guide, DiscreteAction.OrbitMapToggle);
 
-            preset.SetAnalogInput((int)AnalogInput.LeftStickX, ContinuousAction.CameraX, false);
-            preset.SetAnalogInput((int)AnalogInput.LeftStickY, ContinuousAction.CameraY, false);
+            preset.SetContinuousBinding((int)AnalogInput.LeftStickX, 0, ContinuousAction.CameraX);
+            preset.SetContinuousBinding((int)AnalogInput.LeftStickY, 0, ContinuousAction.CameraY);
 
-            preset.SetAnalogInput((int)AnalogInput.RightStickX, ContinuousAction.Yaw, false);
-            preset.SetAnalogInput((int)AnalogInput.RightStickY, ContinuousAction.Pitch, false);
-            preset.SetAnalogInput((int)AnalogInput.RightStickY, ContinuousAction.Roll, true);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickX, 0, ContinuousAction.Yaw);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickY, 0, ContinuousAction.Pitch);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickX, (int)Button.LB, ContinuousAction.Roll);
 
-            preset.SetAnalogInput((int)AnalogInput.LeftTrigger, ContinuousAction.ThrottleDecrement, false);
-            preset.SetAnalogInput((int)AnalogInput.RightTrigger, ContinuousAction.ThrottleIncrement, false);
+            preset.SetContinuousBinding((int)AnalogInput.LeftTrigger, 0, ContinuousAction.ThrottleDecrement);
+            preset.SetContinuousBinding((int)AnalogInput.RightTrigger, 0, ContinuousAction.ThrottleIncrement);
 
             return preset;
         }
