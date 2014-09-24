@@ -59,7 +59,7 @@ namespace KSPAdvancedFlyByWire
         public bool[] m_DiscretizedAnalogInputStates = new bool[6];
 
         public Curve analogInputEvaluationCurve = new Curve();
-        private float analogDiscretizationCutoff = 0.8f;
+        public float analogDiscretizationCutoff = 0.8f;
 
         public ControllerWrapper()
         {
@@ -217,7 +217,7 @@ namespace KSPAdvancedFlyByWire
                     break;
             }
 
-            return value >= cutoff;
+            return Math.Abs(value) >= cutoff;
         }
 
     }

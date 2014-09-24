@@ -19,6 +19,8 @@ namespace KSPAdvancedFlyByWire
         private int m_CurrentPreset = 0;
 
         private float m_DiscreteActionStep = 0.15f;
+        private float m_AnalogDiscretizationCutoff = 0.8f;
+        private CurveType m_AnalogInputCurveType = CurveType.Identity;
 
         private float m_Throttle = 0.0f;
 
@@ -29,8 +31,23 @@ namespace KSPAdvancedFlyByWire
             return m_Presets[m_CurrentPreset];
         }
 
+        void SetAnalogInputCurveType(CurveType type)
+        {
+            m_AnalogInputCurveType = type;
+            m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(type);
+        }
+
+        void SetAnalogDiscretizationCutoff(float cutoff)
+        {
+            m_AnalogDiscretizationCutoff = cutoff;
+            m_Controller.analogDiscretizationCutoff = cutoff;
+        }
+
         private void SavePresetsToDisk()
         {
+            m_Config.SetValue("AnalogInputCurveType", m_AnalogInputCurveType);
+            m_Config.SetValue("AnalogInputDiscretizationCutoff", m_AnalogDiscretizationCutoff);
+
             m_Config.SetValue("PresetsCount", m_Presets.Count);
             m_Config.SetValue("SelectedPreset", m_CurrentPreset);
 
@@ -49,6 +66,9 @@ namespace KSPAdvancedFlyByWire
             m_Config = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
             m_Config.load();
 
+            m_AnalogInputCurveType = m_Config.GetValue<CurveType>("AnalogInputCurveType", CurveType.Identity);
+            m_AnalogDiscretizationCutoff = m_Config.GetValue<float>("AnalogInputDiscretizationCutoff", 0.8f);
+
             int presetsCount = m_Config.GetValue<int>("PresetsCount", 0);
             int selectedPreset = m_Config.GetValue<int>("SelectedPreset", 0);
 
@@ -56,7 +76,7 @@ namespace KSPAdvancedFlyByWire
             {
                 m_Config.SetValue("Preset0", new ControllerPreset());
             }
-                
+            
             m_Config.save();
 
             for (int i = 0; i < presetsCount; i++)
@@ -67,13 +87,15 @@ namespace KSPAdvancedFlyByWire
             m_CurrentPreset = selectedPreset;
 
             m_Controller = new ControllerWrapper();
+            m_Controller.analogDiscretizationCutoff = m_AnalogDiscretizationCutoff;
+            m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
+
             m_Controller.buttonPressedCallback = new ControllerWrapper.ButtonPressedCallback(ButtonPressedCallback);
             m_Controller.discretizedAnalogInputPressedCallback = new ControllerWrapper.DiscretizedAnalogInputPressedCallback(DiscretizedAnalogInputPressedCallback);
         }
 
         public void OnDestroy()
         {
-            print("KSPAdvancedFlyByWire: destroyed");
         }
 
         void DoMainWindow(int index)

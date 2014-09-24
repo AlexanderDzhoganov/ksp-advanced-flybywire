@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 namespace KSPAdvancedFlyByWire
 {
 
+    public enum CurveType
+    {
+        Identity,
+        XSquared,
+        SqrtX,
+        SqrtOfOneMinusXSquared
+    }
+
     public class Curve
     {
         public virtual float Evaluate(float x)
@@ -37,6 +45,28 @@ namespace KSPAdvancedFlyByWire
         {
             return (float)Math.Sqrt(1.0 - x * x);
         }
+    }
+
+    public class CurveFactory
+    {
+
+        public static Curve Instantiate(CurveType type)
+        {
+            switch (type)
+            {
+            case CurveType.Identity:
+                    return new Curve();
+            case CurveType.XSquared:
+                    return new XSquared();
+            case CurveType.SqrtX:
+                    return new SqrtX();
+            case CurveType.SqrtOfOneMinusXSquared:
+                    return new SqrtOfOneMinusXSquared();
+            }
+
+            return null;
+        }
+
     }
 
 }
