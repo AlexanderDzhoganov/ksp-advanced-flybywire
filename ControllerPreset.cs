@@ -123,6 +123,28 @@ namespace KSPAdvancedFlyByWire
         ZoomIn,
         ZoomOut,
 
+        Forward,
+        Backward,
+        Left,
+        Right,
+        JetCC,
+        JetClockwise,
+        JetPitch,
+        DirectionJump,
+        // 
+        ShipZoomIn,
+        ShipZoomOut,
+        View,
+        ZoomShipIn,
+        ZoomShipOut,
+        RotatePart,
+        RotatePartCC,
+        RotateParkClockwise,
+        //Docking
+        DockPitch,
+        Translate,
+        DockYaw,
+        DockRoll,
     }
 
     class ControllerPreset
