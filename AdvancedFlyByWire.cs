@@ -14,7 +14,8 @@ namespace KSPAdvancedFlyByWire
     {
 
         private KSP.IO.PluginConfiguration m_Config;
-        private ControllerWrapper m_Controller = null;
+        private IController m_Controller = null;
+
         private List<ControllerPreset> m_Presets = new List<ControllerPreset>();
         private int m_CurrentPreset = 0;
 
@@ -89,13 +90,13 @@ namespace KSPAdvancedFlyByWire
 
             m_CurrentPreset = selectedPreset;
 
-            m_Controller = new ControllerWrapper();
+            m_Controller = new XInputController();
             m_Controller.analogDiscretizationCutoff = m_AnalogDiscretizationCutoff;
             m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
 
-            m_Controller.buttonPressedCallback = new ControllerWrapper.ButtonPressedCallback(ButtonPressedCallback);
-            m_Controller.buttonReleasedCallback = new ControllerWrapper.ButtonReleasedCallback(ButtonReleasedCallback);
-            m_Controller.discretizedAnalogInputPressedCallback = new ControllerWrapper.DiscretizedAnalogInputPressedCallback(DiscretizedAnalogInputPressedCallback);
+            m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
+            m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
+            m_Controller.discretizedAnalogInputPressedCallback = new XInputController.DiscretizedAnalogInputPressedCallback(DiscretizedAnalogInputPressedCallback);
         }
 
         public void OnDestroy()

@@ -9,59 +9,16 @@ using XInputDotNetPure;
 namespace KSPAdvancedFlyByWire
 {
 
-    public enum Button
-    {
-        DPadLeft = 0,
-        DPadRight = 1,
-        DPadUp = 2,
-        DPadDown = 3,
-        Back = 4,
-        Start = 5,
-        LeftShoulder = 6,
-        RightShoulder = 7,
-        X = 8,
-        Y = 9,
-        A = 10,
-        B = 11,
-        LeftStick = 12,
-        RightStick = 13,
-        Guide = 14
-    }
-
-    public enum AnalogInput
-    {
-        LeftStickX,
-        LeftStickY,
-        RightStickX,
-        RightStickY,
-        LeftTrigger,
-        RightTrigger
-    }
-
-    public class ControllerWrapper
+    public class XInputController : IController
     {
 
         private GamePadState m_State;
         private PlayerIndex m_ControllerIndex = PlayerIndex.One;
 
-        public delegate void ButtonPressedCallback(Button button, FlightCtrlState state);
-        public delegate void ButtonReleasedCallback(Button button, FlightCtrlState state);
-
-        public delegate void DiscretizedAnalogInputPressedCallback(AnalogInput input, FlightCtrlState state);
-        public delegate void DiscretizedAnalogInputReleasedCallback(AnalogInput input, FlightCtrlState state);
-
-        public ButtonPressedCallback buttonPressedCallback = null;
-        public ButtonReleasedCallback buttonReleasedCallback = null;
-        public DiscretizedAnalogInputPressedCallback discretizedAnalogInputPressedCallback = null;
-        public DiscretizedAnalogInputReleasedCallback discretizedAnalogInputReleasedCallback = null;
-
         public bool[] m_ButtonStates = new bool[15];
         public bool[] m_DiscretizedAnalogInputStates = new bool[6];
 
-        public Curve analogInputEvaluationCurve = new Curve();
-        public float analogDiscretizationCutoff = 0.8f;
-
-        public ControllerWrapper()
+        public XInputController()
         {
             for(int i = 0; i < 15; i++)
             {
@@ -74,7 +31,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        public void Update(FlightCtrlState state)
+        public override void Update(FlightCtrlState state)
         {
             m_State = GamePad.GetState(m_ControllerIndex);
 
@@ -123,7 +80,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        public bool GetButton(Button button)
+        public override bool GetButton(Button button)
         {
             switch (button)
             {
@@ -162,7 +119,7 @@ namespace KSPAdvancedFlyByWire
             return false;
         }
 
-        public float GetAnalogInput(AnalogInput input)
+        public override float GetAnalogInput(AnalogInput input)
         {
             float value = 0.0f;
 
@@ -191,7 +148,7 @@ namespace KSPAdvancedFlyByWire
             return analogInputEvaluationCurve.Evaluate(value);
         }
 
-        public bool GetDiscreteAnalogInput(AnalogInput input, float cutoff = 0.5f)
+        public override bool GetDiscreteAnalogInput(AnalogInput input, float cutoff = 0.5f)
         {
             float value = 0.0f;
 

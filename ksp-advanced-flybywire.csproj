@@ -69,10 +69,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControllerPreset.cs" />
-    <Compile Include="ControllerWrapper.cs" />
+    <Compile Include="XInputController.cs" />
     <Compile Include="EvaluationCurves.cs" />
     <Compile Include="DropDownList.cs" />
     <Compile Include="AdvancedFlyByWire.cs" />
+    <Compile Include="IController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
