@@ -23,8 +23,8 @@ namespace KSPAdvancedFlyByWire
         private Rect rectButton;
         private Rect rectListBox;
 
-        internal GUIStyle styleListItem;
-        internal GUIStyle styleListBox;
+        internal GUIStyle styleListItem = new GUIStyle();
+        internal GUIStyle styleListBox = new GUIStyle();
         internal GUIStyle styleListBlocker = new GUIStyle();
         internal Int32 ListItemHeight = 20;
 
@@ -32,23 +32,37 @@ namespace KSPAdvancedFlyByWire
         public delegate void SelectionChangedEventHandler(Int32 OldIndex, Int32 NewIndex);
         public event SelectionChangedEventHandler SelectionChanged;
 
+
+        private Texture2D black;
+
         //Constructors
-        public DropDownList(List<String> Items)
-            : this()
-        {
-            this.Items = Items;
-        }
         public DropDownList()
         {
             ListVisible = false;
             SelectedIndex = 0;
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.SetPixel(0, 0, new Color(0, 0, 0, 1));
+            tex.Apply();
+            black = tex;
+
+            Texture2D tex2 = new Texture2D(1, 1);
+            tex2.SetPixel(0, 0, new Color(0.3f, 0.3f, 0.3f, 1));
+            tex2.Apply();
+
+            styleListBox.normal.background = tex;
+            styleListBlocker.normal.background = tex;
+            styleListBlocker.onHover.background = tex;
+            styleListItem.normal.background = tex;
+            styleListItem.onHover.background = tex;
+            styleListItem.normal.textColor = new Color(1, 1, 1, 1);
         }
 
         //Draw the button behind everything else to catch the first mouse click
         internal void DrawBlockingSelector()
         {
             //do we need to draw the blocker
-            if (ListVisible)
+            if (ListVisible && rectListBox != null)
             {
                 //This will collect the click event before any other controls under the listrect
                 if (GUI.Button(rectListBox, "", styleListBlocker))

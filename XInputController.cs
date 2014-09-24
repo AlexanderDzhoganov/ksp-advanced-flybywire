@@ -35,7 +35,13 @@ namespace KSPAdvancedFlyByWire
         RightStickX = 2,
         RightStickY = 3,
         LeftTrigger = 4,
-        RightTrigger = 5
+        RightTrigger = 5,
+        LeftStickXInverted = 6,
+        LeftStickYInverted = 7,
+        RightStickXInverted = 8,
+        RightStickYInverted = 9,
+        LeftTriggerInverted = 10,
+        RightTriggerInverted = 11
     }
 
     public class XInputController : IController
@@ -45,8 +51,8 @@ namespace KSPAdvancedFlyByWire
         private PlayerIndex m_ControllerIndex = PlayerIndex.One;
 
         public bool[] m_ButtonStates = new bool[15];
-        public float[] m_AxisPositiveDeadZones = new float[6];
-        public float[] m_AxisNegativeDeadZones = new float[6];
+        public float[] m_AxisPositiveDeadZones = new float[12];
+        public float[] m_AxisNegativeDeadZones = new float[12];
 
         public XInputController()
         {
@@ -55,7 +61,7 @@ namespace KSPAdvancedFlyByWire
                 m_ButtonStates[i] = false;
             }
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 12; i++)
             {
                 m_AxisNegativeDeadZones[i] = 0.0f;
                 m_AxisPositiveDeadZones[i] = 0.0f;
@@ -135,7 +141,7 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetAxesCount()
         {
-            return 6;
+            return 12;
         }
 
         public override string GetAxisName(int id)
@@ -154,6 +160,18 @@ namespace KSPAdvancedFlyByWire
                     return "Left trigger";
                 case AnalogInput.RightTrigger:
                     return "Right trigger";
+                case AnalogInput.LeftStickXInverted:
+                    return "Left stick X Inverted";
+                case AnalogInput.LeftStickYInverted:
+                    return "Left stick Y Inverted";
+                case AnalogInput.RightStickXInverted:
+                    return "Right stick X Inverted";
+                case AnalogInput.RightStickYInverted:
+                    return "Right stick Y Inverted";
+                case AnalogInput.LeftTriggerInverted:
+                    return "Left trigger Inverted";
+                case AnalogInput.RightTriggerInverted:
+                    return "Right trigger Inverted";
             }
 
             return "";
@@ -222,6 +240,24 @@ namespace KSPAdvancedFlyByWire
                 case AnalogInput.RightTrigger:
                     value = m_State.Triggers.Right;
                     break;
+                case AnalogInput.LeftStickXInverted:
+                    value = -m_State.ThumbSticks.Left.X;
+                    break;
+                case AnalogInput.LeftStickYInverted:
+                    value = -m_State.ThumbSticks.Left.Y;
+                    break;
+                case AnalogInput.RightStickXInverted:
+                    value = -m_State.ThumbSticks.Right.X;
+                    break;
+                case AnalogInput.RightStickYInverted:
+                    value = -m_State.ThumbSticks.Right.Y;
+                    break;
+                case AnalogInput.LeftTriggerInverted:
+                    value = -m_State.Triggers.Left;
+                    break;
+                case AnalogInput.RightTriggerInverted:
+                    value = -m_State.Triggers.Right;
+                    break;
             }
 
             if (value > 0.0f)
@@ -246,7 +282,7 @@ namespace KSPAdvancedFlyByWire
                 value *= -1.0f;
             }
 
-            return Math.Sign(value) * analogInputEvaluationCurve.Evaluate(Math.Abs(value));
+            return Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
         }
 
     }

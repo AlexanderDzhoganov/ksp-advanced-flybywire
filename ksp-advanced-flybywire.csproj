@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
+    <Compile Include="PresetEditor.cs" />
     <Compile Include="XInputController.cs" />
     <Compile Include="EvaluationCurves.cs" />
     <Compile Include="DropDownList.cs" />

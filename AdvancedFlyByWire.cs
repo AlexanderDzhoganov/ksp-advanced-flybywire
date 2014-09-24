@@ -12,7 +12,6 @@ namespace KSPAdvancedFlyByWire
     [KSPAddon(KSPAddon.Startup.Flight, true)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
-
         private KSP.IO.PluginConfiguration m_Config;
         private IController m_Controller = null;
 
@@ -31,13 +30,18 @@ namespace KSPAdvancedFlyByWire
         private ControllerPreset GetCurrentPreset()
         {
             var preset = m_Presets[m_CurrentPreset];
+            if(preset == null)
+            {
+                print("invalid preset");
+            }
+            
             return preset;
         }
 
         void SetAnalogInputCurveType(CurveType type)
         {
             m_AnalogInputCurveType = type;
-            m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(type);
+            m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(type);
         }
 
         private void SavePresetsToDisk()
@@ -65,7 +69,7 @@ namespace KSPAdvancedFlyByWire
             m_AnalogInputCurveType = m_Config.GetValue<CurveType>("AnalogInputCurveType", CurveType.XSquared);
 
             m_Controller = new XInputController();
-            m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
+            m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
             m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
             m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
 
@@ -150,9 +154,13 @@ namespace KSPAdvancedFlyByWire
             m_Controller.Update(state);
             state.mainThrottle = m_Throttle;
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < m_Controller.GetAxesCount(); i++)
             {
                 List<ContinuousAction> actions = GetCurrentPreset().GetContinuousBinding(i, m_Controller.GetButtonsMask());
+                if(actions == null)
+                {
+                    continue;
+                }
 
                 foreach (var action in actions)
                 {
@@ -323,6 +331,9 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.CutThrottle:
                 m_Throttle = 0.0f;
                 return;
+            case DiscreteAction.FullThrottle:
+                m_Throttle = 1.0f;
+                return;
             case DiscreteAction.NextPreset:
                 if (m_CurrentPreset >= m_Presets.Count - 1)
                 {
@@ -339,21 +350,23 @@ namespace KSPAdvancedFlyByWire
 
                 m_CurrentPreset--;
                 return;
-            case DiscreteAction.ZoomIn:
-                FlightCamera.fetch.zoomScaleFactor += m_DiscreteActionStep;
+            case DiscreteAction.CameraZoomPlus:
+                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_DiscreteActionStep);
                 return; 
-            case DiscreteAction.ZoomOut:
-                FlightCamera.fetch.zoomScaleFactor -= m_DiscreteActionStep;
+            case DiscreteAction.CameraZoomMinus:
+                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance - m_DiscreteActionStep);
                 return;
             case DiscreteAction.CameraXPlus:
+                FlightCamera.CamHdg += m_DiscreteActionStep;
                 return;
             case DiscreteAction.CameraXMinus:
+                FlightCamera.CamHdg -= m_DiscreteActionStep;
                 return;
             case DiscreteAction.CameraYPlus:
+                FlightCamera.CamPitch += m_DiscreteActionStep;
                 return;
             case DiscreteAction.CameraYMinus:
-                return;
-            case DiscreteAction.OpenDebugConsole:
+                FlightCamera.CamPitch -= m_DiscreteActionStep;
                 return;
             case DiscreteAction.OrbitMapToggle:
                 if(!MapView.MapIsEnabled)
@@ -364,10 +377,6 @@ namespace KSPAdvancedFlyByWire
                 {
                     MapView.ExitMapView();
                 }
-                return;
-            case DiscreteAction.ReverseCycleFocusOrbitMap:
-                return;
-            case DiscreteAction.ResetFocusOrbitMap:
                 return;
             case DiscreteAction.TimeWarpPlus:
                 TimeWarp.SetRate(TimeWarp.CurrentRateIndex + 1, false);
@@ -380,10 +389,6 @@ namespace KSPAdvancedFlyByWire
 
                 TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, false);
                 return;
-            case DiscreteAction.PhysicalTimeWarpPlus:
-                return;
-            case DiscreteAction.PhysicalTimeWarpMinus:
-                return;
             case DiscreteAction.NavballToggle:
                 if (MapView.MapIsEnabled)
                 {
@@ -391,19 +396,9 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 return;
-            case DiscreteAction.CycleActiveShipsForward:
-                return;
-            case DiscreteAction.CycleActiveShipsBackward:
-                return;
             case DiscreteAction.Screenshot:
                 return;
             case DiscreteAction.QuickSave:
-                return;
-            case DiscreteAction.LoadQuickSave:
-                return;
-            case DiscreteAction.LoadSaveGameStateDialog:
-                return;
-            case DiscreteAction.DebugCheatMenu:
                 return;
             case DiscreteAction.IVAViewToggle:
                 if (CameraManager.Instance.currentCameraMode != CameraManager.CameraMode.IVA)
@@ -417,7 +412,7 @@ namespace KSPAdvancedFlyByWire
                 }
                 return;
             case DiscreteAction.CameraViewToggle:
-                CameraManager.Instance.NextCamera();
+                FlightCamera.fetch.SetNextMode();
                 return;
             case DiscreteAction.SASHold:
                 FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
@@ -427,44 +422,6 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.TogglePrecisionControls:
                 return;
             case DiscreteAction.ResetTrim:
-                return;
-            case DiscreteAction.PartInfo:
-                return;
-            case DiscreteAction.FuelInfo:
-                return;
-            case DiscreteAction.ScrollStageUp:
-                return;
-            case DiscreteAction.ScrollStageDown:
-                return;
-            case DiscreteAction.UndoAction:
-                return;
-            case DiscreteAction.RedoAction:
-                return;
-            case DiscreteAction.DuplicatePart:
-                return;
-            case DiscreteAction.AngleSnap:
-                return;
-            case DiscreteAction.CycleSymmetry:
-                return;
-            case DiscreteAction.ViewUp:
-                return;
-            case DiscreteAction.ViewDown:
-                return;
-            case DiscreteAction.MoveShip:
-                return;
-            case DiscreteAction.ZoomShipIn:
-                return;
-            case DiscreteAction.ZoomShipOut:
-                return;
-            case DiscreteAction.RotatePartBackwards:
-                return;
-            case DiscreteAction.RotatePartForwards:
-                return;
-            case DiscreteAction.RotatePartCC:
-                return;
-            case DiscreteAction.RotateParkClockwise:
-                return;
-            case DiscreteAction.ResetPartRotation:
                 return;
             }
         }
@@ -557,7 +514,8 @@ namespace KSPAdvancedFlyByWire
 
         void OnGUI()
         {
-            GUI.Window(0, new Rect(32, 32, 400, 600), DoMainWindow, "Advanced FlyByWire");
+           // GUI.Window(0, new Rect(32, 32, 400, 600), DoMainWindow, "Advanced FlyByWire");
+            PresetEditor.OnGUI();
         }
 
     }

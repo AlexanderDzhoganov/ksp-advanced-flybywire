@@ -12,8 +12,8 @@ namespace KSPAdvancedFlyByWire
     public enum DiscreteAction
     {
         None,
-        // yaw, pitch, roll, x, y, z, throttle
 
+        // yaw, pitch, roll, x, y, z, throttle
         YawPlus,
         YawMinus,
         PitchPlus,
@@ -63,55 +63,31 @@ namespace KSPAdvancedFlyByWire
 
         // Various
         CutThrottle,
+        FullThrottle,
+        
         NextPreset,
         PreviousPreset,
-        ZoomIn,
-        ZoomOut,
+        
+        // Camera
         CameraXPlus,
         CameraXMinus,
         CameraYPlus,
         CameraYMinus,
-        OpenDebugConsole,
+        CameraZoomPlus,
+        CameraZoomMinus,
+
         OrbitMapToggle,
-        ReverseCycleFocusOrbitMap,
-        ResetFocusOrbitMap,
         TimeWarpPlus,
         TimeWarpMinus,
-        PhysicalTimeWarpPlus,
-        PhysicalTimeWarpMinus,
         NavballToggle,
-        CycleActiveShipsForward,
-        CycleActiveShipsBackward,
         Screenshot,
         QuickSave,
-        LoadQuickSave,
-        LoadSaveGameStateDialog,
-        DebugCheatMenu,
         IVAViewToggle,
         CameraViewToggle,
         SASHold,
         LockStage,
         TogglePrecisionControls,
         ResetTrim,
-        PartInfo,
-        FuelInfo,
-        ScrollStageUp,
-        ScrollStageDown,
-        UndoAction,
-        RedoAction,
-        DuplicatePart,
-        AngleSnap,
-        CycleSymmetry,
-        ViewUp,
-        ViewDown,
-        MoveShip,
-        ZoomShipIn,
-        ZoomShipOut,
-        RotatePartBackwards,
-        RotatePartForwards,
-        RotatePartCC,
-        RotateParkClockwise,
-        ResetPartRotation
     }
 
     public enum ContinuousAction
@@ -130,6 +106,7 @@ namespace KSPAdvancedFlyByWire
         CameraY,
         CameraZoom
     }
+
     class ControllerPreset
     {
 
@@ -235,17 +212,18 @@ namespace KSPAdvancedFlyByWire
                 matches[i] = new KeyValuePair<int, ContinuousAction>(bits, value);
             }
 
+            if(matches.Count == 0)
+            {
+                return null;
+            }
+
             matches.Sort(CompareKeys);
 
             int minBits = matches[matches.Count - 1].Key;
-           // print("minBits: " + minBits.ToString());
-
             List<ContinuousAction> actions = new List<ContinuousAction>();
 
             for (var i = 0; i < matches.Count; i++)
             {
-                //print("match - " + matches[i].Key.ToString() + " - " + matches[i].Value.ToString());
-
                 if(matches[i].Key >= minBits)
                 {
                     actions.Add(matches[i].Value);

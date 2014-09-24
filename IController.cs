@@ -16,7 +16,7 @@ namespace KSPAdvancedFlyByWire
         public ButtonPressedCallback buttonPressedCallback = null;
         public ButtonReleasedCallback buttonReleasedCallback = null;
 
-        public Curve analogInputEvaluationCurve = new Curve();
+        public Curve analogEvaluationCurve = new Curve();
 
         public abstract void Update(FlightCtrlState state);
 
