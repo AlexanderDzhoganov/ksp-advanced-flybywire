@@ -29,6 +29,19 @@ namespace KSPAdvancedFlyByWire
             return m_Presets[m_CurrentPreset];
         }
 
+        private void SavePresetsToDisk()
+        {
+            m_Config.SetValue("PresetsCount", m_Presets.Count);
+            m_Config.SetValue("SelectedPreset", m_CurrentPreset);
+
+            for (int i = 0; i < m_Presets.Count; i++)
+            {
+                m_Config.SetValue("Preset" + i, m_Presets[i]);
+            }
+
+            m_Config.save();
+        }
+
         public void Awake()
         {
             print("KSPAdvancedFlyByWire: initialized");
@@ -200,15 +213,13 @@ namespace KSPAdvancedFlyByWire
                 {
                     break;
                 }
-
                 m_CurrentPreset++;
                 return;
             case DiscreteAction.PreviousPreset:
-                if (m_CurrentPreset <= 0)
+                if (m_CurrentPreset <= 0)   
                 {
                     break;
                 }
-
                 m_CurrentPreset--;
                 return;
             }
