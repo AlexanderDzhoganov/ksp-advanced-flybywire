@@ -12,16 +12,11 @@ namespace KSPAdvancedFlyByWire
 
         public delegate void ButtonPressedCallback(int button, FlightCtrlState state);
         public delegate void ButtonReleasedCallback(int button, FlightCtrlState state);
-        public delegate void DiscretizedAnalogInputPressedCallback(int input, FlightCtrlState state);
-        public delegate void DiscretizedAnalogInputReleasedCallback(int input, FlightCtrlState state);
 
         public ButtonPressedCallback buttonPressedCallback = null;
         public ButtonReleasedCallback buttonReleasedCallback = null;
-        public DiscretizedAnalogInputPressedCallback discretizedAnalogInputPressedCallback = null;
-        public DiscretizedAnalogInputReleasedCallback discretizedAnalogInputReleasedCallback = null;
 
         public Curve analogInputEvaluationCurve = new Curve();
-        public float analogDiscretizationCutoff = 0.8f;
 
         public abstract void Update(FlightCtrlState state);
 
@@ -37,9 +32,20 @@ namespace KSPAdvancedFlyByWire
 
         public abstract float GetAnalogInputState(int analogInput);
 
-        public abstract bool GetDiscreteAnalogInputState(int analogInput);
+        public int GetButtonsMask()
+        {
+            int mask = 0;
 
-        public abstract int GetButtonsMask();
+            for (int i = 0; i < 15; i++)
+            {
+                if (GetButtonState(i))
+                {
+                    mask |= 1 << i;
+                }
+            }
+
+            return mask;
+        }
 
     }
 

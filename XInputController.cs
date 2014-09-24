@@ -249,50 +249,6 @@ namespace KSPAdvancedFlyByWire
             return Math.Sign(value) * analogInputEvaluationCurve.Evaluate(Math.Abs(value));
         }
 
-        public override bool GetDiscreteAnalogInputState(int input)
-        {
-            float value = 0.0f;
-
-            switch ((AnalogInput)input)
-            {
-                case AnalogInput.LeftStickX:
-                    value = m_State.ThumbSticks.Left.X;
-                    break;
-                case AnalogInput.LeftStickY:
-                    value = m_State.ThumbSticks.Left.Y;
-                    break;
-                case AnalogInput.RightStickX:
-                    value = m_State.ThumbSticks.Right.X;
-                    break;
-                case AnalogInput.RightStickY:
-                    value = m_State.ThumbSticks.Right.Y;
-                    break;
-                case AnalogInput.LeftTrigger:
-                    value = m_State.Triggers.Left;
-                    break;
-                case AnalogInput.RightTrigger:
-                    value = m_State.Triggers.Right;
-                    break;
-            }
-
-            return Math.Abs(value) >= analogDiscretizationCutoff;
-        }
-
-        public override int GetButtonsMask()
-        {
-            int mask = 0;
-
-            for (int i = 0; i < 15; i++)
-            {
-                if(GetButtonState(i))
-                {
-                    mask |= 1 << i;
-                }
-            }
-
-            return mask;
-        }
-
     }
 
 }
