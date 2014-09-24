@@ -26,6 +26,8 @@ namespace KSPAdvancedFlyByWire
 
         private bool m_CallbackSet = false;
 
+        private CameraManager.CameraMode m_OriginalCameraMode;
+
         private ControllerPreset GetCurrentPreset()
         {
             return m_Presets[m_CurrentPreset];
@@ -91,6 +93,7 @@ namespace KSPAdvancedFlyByWire
             m_Controller.analogInputEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
 
             m_Controller.buttonPressedCallback = new ControllerWrapper.ButtonPressedCallback(ButtonPressedCallback);
+            m_Controller.buttonReleasedCallback = new ControllerWrapper.ButtonReleasedCallback(ButtonReleasedCallback);
             m_Controller.discretizedAnalogInputPressedCallback = new ControllerWrapper.DiscretizedAnalogInputPressedCallback(DiscretizedAnalogInputPressedCallback);
         }
 
@@ -105,6 +108,11 @@ namespace KSPAdvancedFlyByWire
         void ButtonPressedCallback(Button button, FlightCtrlState state)
         {
             EvaluateDiscreteAction(GetCurrentPreset().GetButton(button), state);
+        }
+
+        void ButtonReleasedCallback(Button button, FlightCtrlState state)
+        {
+            EvaluateDiscreteActionRelease(GetCurrentPreset().GetButton(button), state);
         }
 
         void DiscretizedAnalogInputPressedCallback(AnalogInput input, FlightCtrlState state)
@@ -227,7 +235,29 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.Custom10:
                 FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom10);
                 return;
-            case DiscreteAction.KillThrottle:
+            case DiscreteAction.EVAJetpackActivate:
+                return;
+            case DiscreteAction.EVAJetCounterClockwise:
+                return;
+            case DiscreteAction.EVAJetpackClockwise:
+                return;
+            case DiscreteAction.EVAJetPitchPlus:
+                return;
+            case DiscreteAction.EVAJetPitchMinus:
+                return;
+            case DiscreteAction.EVAJump:
+                return;
+            case DiscreteAction.EVAReorientAttitude:
+                return;
+            case DiscreteAction.EVAUseBoard:
+                return;
+            case DiscreteAction.EVADirectionJump:
+                return;
+            case DiscreteAction.EVASprint:
+                return;
+            case DiscreteAction.EVAHeadlamps:
+                return;
+            case DiscreteAction.CutThrottle:
                 m_Throttle = 0.0f;
                 return;
             case DiscreteAction.NextPreset:
@@ -243,6 +273,126 @@ namespace KSPAdvancedFlyByWire
                     break;
                 }
                 m_CurrentPreset--;
+                return;
+            case DiscreteAction.ZoomIn:
+                return;
+            case DiscreteAction.ZoomOut:
+                return;
+            case DiscreteAction.OpenDebugConsole:
+                return;
+            case DiscreteAction.OrbitMapToggle:
+                if (CameraManager.Instance.currentCameraMode != CameraManager.CameraMode.Map)
+                {
+                    m_OriginalCameraMode = CameraManager.Instance.currentCameraMode;
+                    CameraManager.Instance.SetCameraMode(CameraManager.CameraMode.Map);
+                }
+                else
+                {
+                    CameraManager.Instance.SetCameraMode(CameraManager.CameraMode.Map);
+                }
+                return;
+            case DiscreteAction.ReverseCycleFocusOrbitMap:
+                return;
+            case DiscreteAction.ResetFocusOrbitMap:
+                return;
+            case DiscreteAction.TimeWarpPlus:
+                TimeWarp.SetRate(TimeWarp.CurrentRateIndex + 1, false);
+                return;
+            case DiscreteAction.TimeWarpMinus:
+                if (TimeWarp.CurrentRateIndex <= 0)
+                    break;
+                TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, false);
+                return;
+            case DiscreteAction.PhysicalTimeWarpPlus:
+                return;
+            case DiscreteAction.PhysicalTimeWarpMinus:
+                return;
+            case DiscreteAction.NavballToggle:
+                return;
+            case DiscreteAction.CycleActiveShipsForward:
+                return;
+            case DiscreteAction.CycleActiveShipsBackward:
+                return;
+            case DiscreteAction.Screenshot:
+                return;
+            case DiscreteAction.QuickSave:
+                return;
+            case DiscreteAction.LoadQuickSave:
+                return;
+            case DiscreteAction.LoadSaveGameStateDialog:
+                return;
+            case DiscreteAction.DebugCheatMenu:
+                return;
+            case DiscreteAction.IVAViewToggle:
+                if (CameraManager.Instance.currentCameraMode != CameraManager.CameraMode.IVA)
+                {
+                    m_OriginalCameraMode = CameraManager.Instance.currentCameraMode;
+                    CameraManager.Instance.SetCameraMode(CameraManager.CameraMode.IVA);
+                }
+                else
+                {
+                    CameraManager.Instance.SetCameraMode(CameraManager.CameraMode.IVA);
+                }
+                return;
+            case DiscreteAction.CameraViewToggle:
+                CameraManager.Instance.NextCamera();
+                return;
+            case DiscreteAction.SASHold:
+                FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
+                return;
+            case DiscreteAction.LockStage:
+                return;
+            case DiscreteAction.TogglePrecisionControls:
+                return;
+            case DiscreteAction.ResetTrim:
+                return;
+            case DiscreteAction.PartInfo:
+                return;
+            case DiscreteAction.FuelInfo:
+                return;
+            case DiscreteAction.ScrollStageUp:
+                return;
+            case DiscreteAction.ScrollStageDown:
+                return;
+            case DiscreteAction.UndoAction:
+                return;
+            case DiscreteAction.RedoAction:
+                return;
+            case DiscreteAction.DuplicatePart:
+                return;
+            case DiscreteAction.AngleSnap:
+                return;
+            case DiscreteAction.CycleSymmetry:
+                return;
+            case DiscreteAction.ViewUp:
+                return;
+            case DiscreteAction.ViewDown:
+                return;
+            case DiscreteAction.MoveShip:
+                return;
+            case DiscreteAction.ZoomShipIn:
+                return;
+            case DiscreteAction.ZoomShipOut:
+                return;
+            case DiscreteAction.RotatePartBackwards:
+                return;
+            case DiscreteAction.RotatePartForwards:
+                return;
+            case DiscreteAction.RotatePartCC:
+                return;
+            case DiscreteAction.RotateParkClockwise:
+                return;
+            case DiscreteAction.ResetPartRotation:
+                return;
+            }
+        }
+
+        private void EvaluateDiscreteActionRelease(DiscreteAction action, FlightCtrlState state)
+        {
+            switch (action)
+            {
+            case DiscreteAction.SASHold:
+                FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
                 return;
             }
         }

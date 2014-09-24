@@ -47,10 +47,6 @@ namespace KSPAdvancedFlyByWire
         Custom10,
 
         // EVA
-        EVAForward,
-        EVABackward,
-        EVALeft,
-        EVARight,
         EVAJetpackActivate,
         EVAJetCounterClockwise,
         EVAJetpackClockwise,
@@ -64,7 +60,7 @@ namespace KSPAdvancedFlyByWire
         EVAHeadlamps,
 
         // Various
-        KillThrottle,
+        CutThrottle,
         NextPreset,
         PreviousPreset,
         ZoomIn,
@@ -87,7 +83,7 @@ namespace KSPAdvancedFlyByWire
         DebugCheatMenu,
         IVAViewToggle,
         CameraViewToggle,
-        InvertSASTemp,
+        SASHold,
         LockStage,
         TogglePrecisionControls,
         ResetTrim,
@@ -109,14 +105,7 @@ namespace KSPAdvancedFlyByWire
         RotatePartForwards,
         RotatePartCC,
         RotateParkClockwise,
-        ResetPartRotation,
-
-        // Docking
-        PitchBack,
-        PitchDown,
-        YawPort,
-        YawStarboard
-
+        ResetPartRotation
     }
 
     public enum ContinuousAction
