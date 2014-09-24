@@ -8,6 +8,7 @@ using XInputDotNetPure;
 
 namespace KSPAdvancedFlyByWire
 {
+
     public enum Button
     {
         DPadLeft = 0,
@@ -46,9 +47,16 @@ namespace KSPAdvancedFlyByWire
         public delegate void ButtonPressedCallback(Button button, FlightCtrlState state);
         public delegate void ButtonReleasedCallback(Button button, FlightCtrlState state);
 
+        public delegate void DiscretizedAnalogInputPressedCallback(AnalogInput input, FlightCtrlState state);
+        public delegate void DiscretizedAnalogInputReleasedCallback(AnalogInput input, FlightCtrlState state);
+
         public ButtonPressedCallback buttonPressedCallback = null;
         public ButtonReleasedCallback buttonReleasedCallback = null;
+        public DiscretizedAnalogInputPressedCallback discretizedAnalogInputPressedCallback = null;
+        public DiscretizedAnalogInputReleasedCallback discretizedAnalogInputReleasedCallback = null;
+
         public bool[] m_ButtonStates = new bool[15];
+        public bool[] m_DiscretizedAnalogInputStates = new bool[6];
 
         public Curve analogInputEvaluationCurve = new Curve();
         public float analogInputDiscretizationCutoff = 0.5f;
@@ -58,6 +66,11 @@ namespace KSPAdvancedFlyByWire
             for(int i = 0; i < 15; i++)
             {
                 m_ButtonStates[i] = false;
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                m_DiscretizedAnalogInputStates[i] = false;
             }
         }
 
@@ -83,6 +96,28 @@ namespace KSPAdvancedFlyByWire
                     if(buttonReleasedCallback != null)
                     {
                         buttonReleasedCallback((Button)i, state);
+                    }
+                }
+            }
+
+            for (int i = 0; i < 15; i++)
+            {
+                if (GetDiscreteAnalogInput((AnalogInput)i) && !m_DiscretizedAnalogInputStates[i])
+                {
+                    m_DiscretizedAnalogInputStates[i] = true;
+
+                    if (discretizedAnalogInputPressedCallback != null)
+                    {
+                        discretizedAnalogInputPressedCallback((AnalogInput)i, state);
+                    }
+                }
+                else if (!GetDiscreteAnalogInput((AnalogInput)i) && m_DiscretizedAnalogInputStates[i])
+                {
+                    m_DiscretizedAnalogInputStates[i] = false;
+
+                    if (discretizedAnalogInputReleasedCallback != null)
+                    {
+                        discretizedAnalogInputReleasedCallback((AnalogInput)i, state);
                     }
                 }
             }

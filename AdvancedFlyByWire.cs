@@ -16,13 +16,18 @@ namespace KSPAdvancedFlyByWire
         private KSP.IO.PluginConfiguration m_Config;
         private ControllerWrapper m_Controller = null;
         private List<ControllerPreset> m_Presets = new List<ControllerPreset>();
-        private ControllerPreset m_CurrentPreset = null;
+        private int m_CurrentPreset = 0;
 
         private float m_DiscreteActionStep = 0.15f;
 
         private float m_Throttle = 0.0f;
 
         private bool m_CallbackSet = false;
+
+        private ControllerPreset GetCurrentPreset()
+        {
+            return m_Presets[m_CurrentPreset];
+        }
 
         public void Awake()
         {
@@ -38,7 +43,7 @@ namespace KSPAdvancedFlyByWire
             {
                 m_Config.SetValue("Preset0", new ControllerPreset());
             }
-
+                
             m_Config.save();
 
             for (int i = 0; i < presetsCount; i++)
@@ -46,11 +51,11 @@ namespace KSPAdvancedFlyByWire
                 m_Presets.Add(m_Config.GetValue<ControllerPreset>("Preset" + i));
             }
 
-            m_CurrentPreset = m_Presets[selectedPreset];
+            m_CurrentPreset = selectedPreset;
 
             m_Controller = new ControllerWrapper();
             m_Controller.buttonPressedCallback = new ControllerWrapper.ButtonPressedCallback(ButtonPressedCallback);
-            m_CurrentPreset = new ControllerPreset();
+            m_Controller.discretizedAnalogInputPressedCallback = new ControllerWrapper.DiscretizedAnalogInputPressedCallback(DiscretizedAnalogInputPressedCallback);
         }
 
         public void OnDestroy()
@@ -64,7 +69,12 @@ namespace KSPAdvancedFlyByWire
 
         void ButtonPressedCallback(Button button, FlightCtrlState state)
         {
-            EvaluateDiscreteAction(m_CurrentPreset.GetButton(button), state);
+            EvaluateDiscreteAction(GetCurrentPreset().GetButton(button), state);
+        }
+
+        void DiscretizedAnalogInputPressedCallback(AnalogInput input, FlightCtrlState state)
+        {
+            EvaluateDiscreteAction(GetCurrentPreset().GetDiscretizedAnalogInput(input), state);
         }
 
         private void OnFlyByWire(FlightCtrlState state)
@@ -77,7 +87,7 @@ namespace KSPAdvancedFlyByWire
             for (int i = 0; i < 6; i++)
             {
                 AnalogInput input = (AnalogInput)i;
-                EvaluateContinuousAction(m_CurrentPreset.GetAnalogInput(input), m_Controller.GetAnalogInput(input), state);
+                EvaluateContinuousAction(GetCurrentPreset().GetAnalogInput(input), m_Controller.GetAnalogInput(input), state);
             }
 
             FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
@@ -186,8 +196,20 @@ namespace KSPAdvancedFlyByWire
                 m_Throttle = 0.0f;
                 return;
             case DiscreteAction.NextPreset:
+                if (m_CurrentPreset >= m_Presets.Count)
+                {
+                    break;
+                }
+
+                m_CurrentPreset++;
                 return;
             case DiscreteAction.PreviousPreset:
+                if (m_CurrentPreset <= 0)
+                {
+                    break;
+                }
+
+                m_CurrentPreset--;
                 return;
             }
         }

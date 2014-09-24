@@ -71,6 +71,7 @@ namespace KSPAdvancedFlyByWire
         public string name = "Default preset";
         public DiscreteAction[] discreteActionsMap = new DiscreteAction[15];
         public ContinuousAction[] continousActionsMap = new ContinuousAction[6];
+        public DiscreteAction[] discretizedContinousActionsMap = new DiscreteAction[6];
 
         public void SetButton(Button button, DiscreteAction action)
         {
@@ -90,6 +91,16 @@ namespace KSPAdvancedFlyByWire
         public ContinuousAction GetAnalogInput(AnalogInput input)
         {
             return continousActionsMap[(int)input];
+        }
+
+        public void SetDiscretizedAnalogInput(AnalogInput input, DiscreteAction action)
+        {
+            discretizedContinousActionsMap[(int)input] = action;
+        }
+
+        public DiscreteAction GetDiscretizedAnalogInput(AnalogInput input)
+        {
+            return discretizedContinousActionsMap[(int)input];
         }
 
     }
