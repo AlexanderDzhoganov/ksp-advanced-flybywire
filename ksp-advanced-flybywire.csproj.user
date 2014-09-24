@@ -8,7 +8,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <StartProgram>C:\Users\nlight\Desktop\ksp_test\KSP.exe</StartProgram>
-    <StartWorkingDirectory>C:\Users\nlight\Desktop\ksp_test\</StartWorkingDirectory>
+    <StartWorkingDirectory>D:\Projects\ksp-advanced-flybywire\bin\Debug\</StartWorkingDirectory>
     <StartArguments>-popupwindow</StartArguments>
     <StartAction>Program</StartAction>
   </PropertyGroup>

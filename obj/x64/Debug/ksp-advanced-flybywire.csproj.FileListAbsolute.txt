@@ -8,3 +8,13 @@ C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\UnityEngin
 C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.dll
 C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.pdb
 C:\Users\nlight\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.csprojResolveAssemblyReference.cache
+D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\ksp-advanced-flybywire.dll
+D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\ksp-advanced-flybywire.pdb
+D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\Assembly-CSharp.dll
+D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\UnityEngine.dll
+D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\XInputDotNetPure.dll
+D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\Assembly-CSharp.xml
+D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\UnityEngine.xml
+D:\Projects\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.dll
+D:\Projects\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.pdb
+D:\Projects\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.csprojResolveAssemblyReference.cache
