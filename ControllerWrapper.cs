@@ -51,6 +51,7 @@ namespace KSPAdvancedFlyByWire
         public bool[] m_ButtonStates = new bool[15];
 
         public Curve analogInputEvaluationCurve = new Curve();
+        public float analogInputDiscretizationCutoff = 0.5f;
         
         public ControllerWrapper()
         {
@@ -153,6 +154,35 @@ namespace KSPAdvancedFlyByWire
             }
 
             return analogInputEvaluationCurve.Evaluate(value);
+        }
+
+        public bool GetDiscreteAnalogInput(AnalogInput input)
+        {
+            float value = 0.0f;
+
+            switch (input)
+            {
+                case AnalogInput.LeftStickX:
+                    value = m_State.ThumbSticks.Left.X;
+                    break;
+                case AnalogInput.LeftStickY:
+                    value = m_State.ThumbSticks.Left.Y;
+                    break;
+                case AnalogInput.RightStickX:
+                    value = m_State.ThumbSticks.Right.X;
+                    break;
+                case AnalogInput.RightStickY:
+                    value = m_State.ThumbSticks.Right.Y;
+                    break;
+                case AnalogInput.LeftTrigger:
+                    value = m_State.Triggers.Left;
+                    break;
+                case AnalogInput.RightTrigger:
+                    value = m_State.Triggers.Right;
+                    break;
+            }
+
+            return value >= analogInputDiscretizationCutoff;
         }
 
     }
