@@ -26,5 +26,6 @@ C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\XI
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\Assembly-CSharp.xml
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\SDL2-CS.pdb
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\bin\x64\Debug\UnityEngine.xml
+C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.csprojResolveAssemblyReference.cache
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.dll
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.pdb

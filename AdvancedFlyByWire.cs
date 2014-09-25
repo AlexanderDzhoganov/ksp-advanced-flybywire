@@ -35,7 +35,7 @@ namespace KSPAdvancedFlyByWire
 
         private FlightInputCallback m_Callback;
 
-        private HashSet<int> m_EvaluatedDiscreteActionMasks = new HashSet<int>();
+        private HashSet<Bitset> m_EvaluatedDiscreteActionMasks = new HashSet<Bitset>();
 
         private List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>> m_CustomActions = new List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>>();
 
@@ -129,7 +129,7 @@ namespace KSPAdvancedFlyByWire
 
         void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
         {
-            int mask = m_Controller.GetButtonsMask();
+            Bitset mask = m_Controller.GetButtonsMask();
 
             if(m_EvaluatedDiscreteActionMasks.Contains(mask))
             {
@@ -153,15 +153,13 @@ namespace KSPAdvancedFlyByWire
 
         void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state)
         {
-            List<int> masksToRemove = new List<int>();
+            List<Bitset> masksToRemove = new List<Bitset>();
 
-            foreach(int evaluatedMask in m_EvaluatedDiscreteActionMasks)
+            foreach (Bitset evaluatedMask in m_EvaluatedDiscreteActionMasks)
             {
                 for(int i = 0; i < m_Controller.GetButtonsCount(); i++)
                 {
-                   bool maskHasBitSet = (evaluatedMask & (1 << i)) != 0;
-
-                   if (!m_Controller.GetButtonState(i) && maskHasBitSet)
+                   if (!m_Controller.GetButtonState(i) && evaluatedMask.Get(i))
                    {
                        masksToRemove.Add(evaluatedMask);
                        break;
@@ -169,7 +167,7 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
-            foreach(int maskRemove in masksToRemove)
+            foreach (Bitset maskRemove in masksToRemove)
             {
                 m_EvaluatedDiscreteActionMasks.Remove(maskRemove);
             }

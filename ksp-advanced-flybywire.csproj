@@ -72,6 +72,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bitset.cs" />
     <Compile Include="ConfigWindow.cs" />
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="DefaultControllerPresets.cs" />

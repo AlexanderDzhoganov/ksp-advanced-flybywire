@@ -59,15 +59,16 @@ namespace KSPAdvancedFlyByWire
 
         public abstract float GetAnalogInputState(int analogInput);
 
-        public virtual int GetButtonsMask()
+        public virtual Bitset GetButtonsMask()
         {
-            int mask = 0;
+            int buttonsCount = GetButtonsCount();
+            Bitset mask = new Bitset(buttonsCount);
 
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < buttonsCount; i++)
             {
                 if (GetButtonState(i))
                 {
-                    mask |= 1 << i;
+                    mask.Set(i);
                 }
             }
 
