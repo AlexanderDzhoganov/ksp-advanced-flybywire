@@ -13,9 +13,13 @@ namespace KSPAdvancedFlyByWire
     class SDLController : IController
     {
 
+        private bool m_Initialized = false;
         private int m_AxesCount = 0;
         private int m_ButtonsCount = 0;
+
         private IntPtr m_Joystick = IntPtr.Zero;
+
+        static bool SDLInitialized = false;
 
         SDLController(int controllerIndex)
         {
@@ -29,15 +33,18 @@ namespace KSPAdvancedFlyByWire
 
             if (m_Joystick == IntPtr.Zero || SDL.SDL_JoystickOpened(controllerIndex) == 0)
             {
-                //  print("couldn't open joystick " + controllerIndex);
                 return;
             }
 
             m_AxesCount = SDL.SDL_JoystickNumAxes(m_Joystick);
             m_ButtonsCount = SDL.SDL_JoystickNumButtons(m_Joystick);
+            m_Initialized = true;
         }
 
-        static bool SDLInitialized = false;
+        bool IsConnected()
+        {
+            return m_Initialized;
+        }
 
         static int EnumerateControllers()
         {
@@ -87,6 +94,7 @@ namespace KSPAdvancedFlyByWire
 
         public override void Update(FlightCtrlState state)
         {
+            SDL.SDL_JoystickUpdate();
             base.Update(state);
         }
 
