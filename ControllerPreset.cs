@@ -171,11 +171,22 @@ namespace KSPAdvancedFlyByWire
 
         public void SetDiscreteBinding(Bitset state, DiscreteAction action)
         {
+            foreach (var keyVal in discreteActionsMap)
+            {
+                if(keyVal.Value.Equals(state))
+                {
+                    discreteActionsMap.Remove(keyVal.Key);
+                    break;
+                }
+            }
+
             discreteActionsMap[action] = state;
         }
 
-        public DiscreteAction GetDiscreteBinding(Bitset state)
+        public List<DiscreteAction> GetDiscreteBinding(Bitset state)
         {
+            List<KeyValuePair<Bitset, DiscreteAction>> matches = new List<KeyValuePair<Bitset, DiscreteAction>>();
+
             foreach (var maskActionPair in discreteActionsMap)
             {
                 Bitset expectedState = maskActionPair.Value;
@@ -195,11 +206,45 @@ namespace KSPAdvancedFlyByWire
 
                 if(match)
                 {
-                    return maskActionPair.Key;
+                    matches.Add(new KeyValuePair<Bitset, DiscreteAction>(maskActionPair.Value, maskActionPair.Key));
                 }
             }
 
-            return DiscreteAction.None;
+            List<KeyValuePair<int, DiscreteAction>> matchResults = new List<KeyValuePair<int, DiscreteAction>>();
+            for (int i = 0; i < matches.Count; i++)
+            {
+                int bits = 0;
+                for (int q = 0; q < state.m_NumBits; q++)
+                {
+                    if (matches[i].Key.Get(q))
+                    {
+                        bits++;
+                    }
+                }
+
+                var value = matches[i].Value;
+                matchResults.Add(new KeyValuePair<int, DiscreteAction>(bits, value));
+            }
+
+            if (matches.Count == 0)
+            {
+                return null;
+            }
+
+            matchResults.Sort(CompareKeys2);
+
+            int minBits = matchResults[matches.Count - 1].Key;
+            List<DiscreteAction> actions = new List<DiscreteAction>();
+
+            for (var i = 0; i < matches.Count; i++)
+            {
+                if (matchResults[i].Key >= minBits)
+                {
+                    actions.Add(matches[i].Value);
+                }
+            }
+
+            return actions;
         }
 
         public Bitset GetBitsetForDiscreteBinding(DiscreteAction action)
@@ -337,6 +382,11 @@ namespace KSPAdvancedFlyByWire
         }
 
         private static int CompareKeys(KeyValuePair<int, ContinuousAction> a, KeyValuePair<int, ContinuousAction> b)
+        {
+            return a.Key.CompareTo(b.Key);
+        }
+
+        private static int CompareKeys2(KeyValuePair<int, DiscreteAction> a, KeyValuePair<int, DiscreteAction> b)
         {
             return a.Key.CompareTo(b.Key);
         }

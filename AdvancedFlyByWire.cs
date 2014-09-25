@@ -217,8 +217,8 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
-            DiscreteAction action = GetCurrentPreset(controller).GetDiscreteBinding(mask);
-            if(action != DiscreteAction.None)
+            List<DiscreteAction> actions = GetCurrentPreset(controller).GetDiscreteBinding(mask);
+            foreach(DiscreteAction action in actions)
             {
                 EvaluateDiscreteAction(config, action, state);
                 config.evaluatedDiscreteActionMasks.Add(mask);
@@ -263,7 +263,11 @@ namespace KSPAdvancedFlyByWire
                 presetEditor.SetCurrentBitmask(bitset);
             }
 
-            EvaluateDiscreteActionRelease(config, GetCurrentPreset(controller).GetDiscreteBinding(controller.GetButtonsMask()), state);
+            var actions = GetCurrentPreset(controller).GetDiscreteBinding(controller.GetButtonsMask());
+            foreach (DiscreteAction action in actions)
+            {
+                EvaluateDiscreteActionRelease(config, action, state);
+            }
         }
 
         private void OnFlyByWire(FlightCtrlState state)
