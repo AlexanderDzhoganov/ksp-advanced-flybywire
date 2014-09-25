@@ -10,7 +10,7 @@ using SDL2;
 namespace KSPAdvancedFlyByWire
 {
 
-    class SDLController : IController
+    public class SDLController : IController
     {
 
         private bool m_Initialized = false;
@@ -21,7 +21,7 @@ namespace KSPAdvancedFlyByWire
 
         static bool SDLInitialized = false;
 
-        SDLController(int controllerIndex)
+        public SDLController(int controllerIndex)
         {
             if (!SDLInitialized)
             {

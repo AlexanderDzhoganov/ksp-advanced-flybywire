@@ -9,6 +9,12 @@ using UnityEngine;
 namespace KSPAdvancedFlyByWire
 {
 
+    public enum InputWrapper
+    {
+        XInput = 0,
+        SDL = 1,
+    }
+
     [KSPAddon(KSPAddon.Startup.Flight, true)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
@@ -26,6 +32,43 @@ namespace KSPAdvancedFlyByWire
         private bool m_CallbackSet = false;
 
         private CameraManager.CameraMode m_OriginalCameraMode;
+
+        private InputWrapper m_InputWrapper = InputWrapper.XInput;
+        private int m_ControllerIndex = 0;
+
+        public void SwapController(InputWrapper wrapper, int controllerIndex)
+        {
+            m_InputWrapper = wrapper;
+            m_ControllerIndex = controllerIndex;
+
+            if (wrapper == InputWrapper.XInput)
+            {
+                m_Controller = new XInputController(m_ControllerIndex);
+            }
+            else
+            {
+                m_Controller = new SDLController(m_ControllerIndex);
+            }
+
+            m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
+            m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
+            m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
+
+            m_Presets = DefaultControllerPresets.GetDefaultPresets(m_Controller);
+            m_CurrentPreset = 0;
+        }
+
+        public void Awake()
+        {
+            print("KSPAdvancedFlyByWire: initialized");
+
+            m_Config = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
+            m_Config.load();
+
+            m_AnalogInputCurveType = m_Config.GetValue<CurveType>("AnalogInputCurveType", CurveType.XSquared);
+
+            SwapController(m_InputWrapper, m_ControllerIndex);
+        }
 
         private ControllerPreset GetCurrentPreset()
         {
@@ -57,24 +100,6 @@ namespace KSPAdvancedFlyByWire
             }*/
 
             m_Config.save();
-        }
-
-        public void Awake()
-        {
-            print("KSPAdvancedFlyByWire: initialized");
-
-            m_Config = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
-            m_Config.load();
-
-            m_AnalogInputCurveType = m_Config.GetValue<CurveType>("AnalogInputCurveType", CurveType.XSquared);
-
-            m_Controller = new XInputController();
-            m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
-            m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
-            m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
-
-            m_Presets = DefaultControllerPresets.GetDefaultPresets(m_Controller);
-            m_CurrentPreset = 0;
         }
 
         public void OnDestroy()
@@ -399,6 +424,7 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.Screenshot:
                 return;
             case DiscreteAction.QuickSave:
+                GamePersistence.SaveGame("persistent", HighLogic.SaveFolder, SaveMode.OVERWRITE);
                 return;
             case DiscreteAction.IVAViewToggle:
                 if (CameraManager.Instance.currentCameraMode != CameraManager.CameraMode.IVA)
@@ -418,8 +444,10 @@ namespace KSPAdvancedFlyByWire
                 FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
                 return;
             case DiscreteAction.LockStage:
+                FlightInputHandler.fetch.stageLock = !FlightInputHandler.fetch.stageLock;
                 return;
             case DiscreteAction.TogglePrecisionControls:
+                FlightInputHandler.fetch.precisionMode = !FlightInputHandler.fetch.precisionMode;
                 return;
             case DiscreteAction.ResetTrim:
                 state.ResetTrim();
