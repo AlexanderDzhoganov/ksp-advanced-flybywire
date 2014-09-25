@@ -10,31 +10,34 @@ namespace KSPAdvancedFlyByWire
     public class Bitset
     {
 
-        private List<int> m_Data = new List<int>();
-
+        private int[] m_Data = null;
         private int m_NumBits = 0;
 
         public Bitset(int numBits)
         {
-            m_NumBits = numBits;
-
-            int numInts = numBits / 32;
-
-            for (var i = 0; i < numInts; i++)
+            if (numBits < 32)
             {
-                m_Data.Add(0);
+                numBits = 32;
+            }
+
+            m_Data = new int[numBits / 32];
+            for (var i = 0; i < numBits / 32; i++)
+            {
+                m_Data[i] = 0;
             }
         }
 
         public Bitset(int numBits, int initialValue)
         {
-            m_NumBits = numBits;
-
-            int numInts = numBits / 32;
-
-            for (var i = 0; i < numInts; i++)
+            if (numBits < 32)
             {
-                m_Data.Add(0);
+                numBits = 32;
+            }
+
+            m_Data = new int[numBits / 32];
+            for (var i = 0; i < numBits / 32; i++)
+            {
+                m_Data[i] = 0;
             }
 
             m_Data[0] = initialValue;
