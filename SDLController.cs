@@ -38,6 +38,22 @@ namespace KSPAdvancedFlyByWire
 
             m_AxesCount = SDL.SDL_JoystickNumAxes(m_Joystick);
             m_ButtonsCount = SDL.SDL_JoystickNumButtons(m_Joystick);
+
+            buttonStates = new bool[m_ButtonsCount];
+            axisPositiveDeadZones = new float[m_AxesCount * 2];
+            axisNegativeDeadZones = new float[m_AxesCount * 2];
+
+            for (int i = 0; i < m_ButtonsCount; i++)
+            {
+                buttonStates[i] = false;
+            }
+
+            for (int i = 0; i < m_AxesCount * 2; i++)
+            {
+                axisNegativeDeadZones[i] = 0.0f;
+                axisPositiveDeadZones[i] = 0.0f;
+            }
+
             m_Initialized = true;
         }
 
@@ -137,7 +153,31 @@ namespace KSPAdvancedFlyByWire
                 sign = -1.0f;
             }
 
-            return SDL.SDL_JoystickGetAxis(m_Joystick, analogInput) * sign;
+            float value = SDL.SDL_JoystickGetAxis(m_Joystick, analogInput) * sign;
+
+            if (value > 0.0f)
+            {
+                if (value < axisPositiveDeadZones[analogInput])
+                {
+                    axisPositiveDeadZones[analogInput] = value;
+                }
+
+                float deadZone = axisPositiveDeadZones[analogInput];
+                value = (value - axisPositiveDeadZones[analogInput]) * (1.0f + deadZone);
+            }
+            else
+            {
+                if (Math.Abs(value) < axisNegativeDeadZones[analogInput])
+                {
+                    axisNegativeDeadZones[analogInput] = Math.Abs(value);
+                }
+
+                float deadZone = axisPositiveDeadZones[analogInput];
+                value = (Math.Abs(value) - axisPositiveDeadZones[analogInput]) * (1.0f + deadZone);
+                value *= -1.0f;
+            }
+
+            return Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
         }
 
     }

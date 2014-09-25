@@ -50,10 +50,10 @@ namespace KSPAdvancedFlyByWire
         private GamePadState m_State;
         private PlayerIndex m_ControllerIndex = PlayerIndex.One;
 
-       
-
-        public XInputController()
+        public XInputController(PlayerIndex controllerIndex = PlayerIndex.One)
         {
+            m_ControllerIndex = controllerIndex;
+
             buttonStates = new bool[15];
             axisPositiveDeadZones = new float[12];
             axisNegativeDeadZones = new float[12];

@@ -26,7 +26,7 @@ namespace KSPAdvancedFlyByWire
         {
             ControllerPreset preset = new ControllerPreset(controller);
 
-            preset.name = "Rocket (default)";
+            preset.name = "XInput Default";
 
             preset.SetDiscreteBinding((int)Button.DPadLeft, DiscreteAction.SAS);
             preset.SetDiscreteBinding((int)Button.DPadRight, DiscreteAction.Light);
