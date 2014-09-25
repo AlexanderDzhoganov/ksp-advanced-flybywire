@@ -126,8 +126,6 @@ namespace KSPAdvancedFlyByWire
 
         public List<KeyValuePair<Bitset, DiscreteAction>> discreteActionsMap = new List<KeyValuePair<Bitset, DiscreteAction>>();
         public Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>();
-
-        [NonSerialized]
         public List<KeyValuePair<Bitset, OnCustomActionCallback>> customActionsMap = new List<KeyValuePair<Bitset, OnCustomActionCallback>>();
 
         public void SetDiscreteBinding(Bitset state, DiscreteAction action)

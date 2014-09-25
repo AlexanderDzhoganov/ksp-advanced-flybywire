@@ -33,8 +33,16 @@ namespace KSPAdvancedFlyByWire
             m_CustomActions.Add(new KeyValuePair<string, ControllerPreset.OnCustomActionCallback>(name, callback));
         }
 
-        public void AddController(InputWrapper wrapper, int controllerIndex)
+        public void ActivateController(InputWrapper wrapper, int controllerIndex)
         {
+            foreach (var contrlr in m_Configuration.controllers)
+            {
+                if (contrlr.wrapper == wrapper && contrlr.controllerIndex == controllerIndex)
+                {
+                    return;
+                }
+            }
+
             ControllerConfiguration controller = new ControllerConfiguration();
 
             controller.wrapper = wrapper;
@@ -44,14 +52,18 @@ namespace KSPAdvancedFlyByWire
             {
                 controller.iface = new XInputController(controller.controllerIndex);
             }
-            else
+            else if (wrapper == InputWrapper.SDL)
             {
                 controller.iface = new SDLController(controller.controllerIndex);
             }
+            else if (wrapper == InputWrapper.KeyboardMouse)
+            {
+                controller.iface = new KeyboardMouseController();
+            }
 
             controller.iface.analogEvaluationCurve = CurveFactory.Instantiate(controller.analogInputCurve);
-            controller.iface.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
-            controller.iface.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
+            controller.iface.buttonPressedCallback = new IController.ButtonPressedCallback(ButtonPressedCallback);
+            controller.iface.buttonReleasedCallback = new IController.ButtonReleasedCallback(ButtonReleasedCallback);
 
             controller.presets = DefaultControllerPresets.GetDefaultPresets(controller.iface);
             controller.currentPreset = 0;
@@ -59,7 +71,31 @@ namespace KSPAdvancedFlyByWire
             m_Configuration.controllers.Add(controller);
         }
 
-        public void SaveConfigurationToDisk()
+        public void DeactivateController(InputWrapper wrapper, int controllerIndex)
+        {
+            for (int i = 0; i < m_Configuration.controllers.Count; i++)
+            {
+                var contrlr = m_Configuration.controllers[i];
+
+                if (contrlr.wrapper == wrapper && contrlr.controllerIndex == controllerIndex)
+                {
+                    m_Configuration.controllers.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+
+        private void LoadState(Game data)
+        {
+            m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
+            if (m_Configuration == null)
+            {
+                m_Configuration = new Configuration();
+                Configuration.Serialize(m_ConfigurationPath, m_Configuration);
+            }
+        }
+
+        public void SaveState(Game data)
         {
             Configuration.Serialize(m_ConfigurationPath, m_Configuration);
         }
@@ -94,8 +130,9 @@ namespace KSPAdvancedFlyByWire
 
             if (m_Configuration.controllers.Count == 0)
             {
-                AddController(InputWrapper.XInput, 0);
+                ActivateController(InputWrapper.XInput, 0);
             }
+            
         }
 
         private ControllerPreset GetCurrentPreset(IController controller)
@@ -424,7 +461,6 @@ namespace KSPAdvancedFlyByWire
                 {
                     MapView.ExitMapView();
                 }
-
                 return;
             case DiscreteAction.TimeWarpPlus:
                 TimeWarp.SetRate(TimeWarp.CurrentRateIndex + 1, false);
