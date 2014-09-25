@@ -28,38 +28,38 @@ namespace KSPAdvancedFlyByWire
 
             preset.name = "XInput Default";
 
-            preset.SetDiscreteBinding((int)Button.DPadLeft, DiscreteAction.SAS);
-            preset.SetDiscreteBinding((int)Button.DPadRight, DiscreteAction.Light);
-            preset.SetDiscreteBinding((int)Button.DPadUp, DiscreteAction.RCS);
-            preset.SetDiscreteBinding((int)Button.DPadDown, DiscreteAction.Gear);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.DPadLeft), DiscreteAction.SAS);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.DPadRight), DiscreteAction.Light);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.DPadUp), DiscreteAction.RCS);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.DPadDown), DiscreteAction.Gear);
 
-            preset.SetDiscreteBinding((int)Button.Back, DiscreteAction.Abort);
-            preset.SetDiscreteBinding((int)Button.Start, DiscreteAction.QuickSave);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.Back), DiscreteAction.Abort);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.Start), DiscreteAction.QuickSave);
 
-            preset.SetDiscreteBinding((int)Button.X, DiscreteAction.NextPreset);
-            preset.SetDiscreteBinding((int)Button.Y, DiscreteAction.FullThrottle);
-            preset.SetDiscreteBinding((int)Button.A, DiscreteAction.Stage);
-            preset.SetDiscreteBinding((int)Button.B, DiscreteAction.CutThrottle);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.X), DiscreteAction.NextPreset);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.Y), DiscreteAction.FullThrottle);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.A), DiscreteAction.Stage);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.B), DiscreteAction.CutThrottle);
 
-            preset.SetDiscreteBinding((int)Button.LeftStick, DiscreteAction.CameraViewToggle);
-            preset.SetDiscreteBinding((int)Button.RightStick, DiscreteAction.NavballToggle);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.LeftStick), DiscreteAction.CameraViewToggle);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.RightStick), DiscreteAction.NavballToggle);
 
-            preset.SetDiscreteBinding((int)Button.Guide, DiscreteAction.OrbitMapToggle);
+            preset.SetDiscreteBinding(new Bitset(32, (int)Button.Guide), DiscreteAction.OrbitMapToggle);
 
-            preset.SetContinuousBinding((int)AnalogInput.LeftStickX, 0, ContinuousAction.CameraX);
-            preset.SetContinuousBinding((int)AnalogInput.LeftStickY, 0, ContinuousAction.CameraY);
-            preset.SetContinuousBinding((int)AnalogInput.LeftStickYInverted, (int)Button.LB, ContinuousAction.CameraZoom);
+            preset.SetContinuousBinding((int)AnalogInput.LeftStickX, new Bitset(32), ContinuousAction.CameraX);
+            preset.SetContinuousBinding((int)AnalogInput.LeftStickY, new Bitset(32), ContinuousAction.CameraY);
+            preset.SetContinuousBinding((int)AnalogInput.LeftStickYInverted, new Bitset(32, (int)Button.LB), ContinuousAction.CameraZoom);
 
-            preset.SetContinuousBinding((int)AnalogInput.RightStickX, 0, ContinuousAction.Yaw);
-            preset.SetContinuousBinding((int)AnalogInput.RightStickY, 0, ContinuousAction.Pitch);
-            preset.SetContinuousBinding((int)AnalogInput.RightStickX, (int)Button.LB, ContinuousAction.Roll);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickX, new Bitset(32), ContinuousAction.Yaw);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickY, new Bitset(32), ContinuousAction.Pitch);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickX, new Bitset(32, (int)Button.LB), ContinuousAction.Roll);
 
-            preset.SetContinuousBinding((int)AnalogInput.RightStickX, (int)Button.RB, ContinuousAction.X);
-            preset.SetContinuousBinding((int)AnalogInput.RightStickY, (int)Button.RB, ContinuousAction.Y);
-            preset.SetContinuousBinding((int)AnalogInput.RightStickX, (int)Button.LB | (int)Button.RB, ContinuousAction.Z);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickX, new Bitset(32, (int)Button.RB), ContinuousAction.X);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickY, new Bitset(32, (int)Button.RB), ContinuousAction.Y);
+            preset.SetContinuousBinding((int)AnalogInput.RightStickX, new Bitset(32, (int)Button.LB | (int)Button.RB), ContinuousAction.Z);
 
-            preset.SetContinuousBinding((int)AnalogInput.LeftTrigger, 0, ContinuousAction.ThrottleDecrement);
-            preset.SetContinuousBinding((int)AnalogInput.RightTrigger, 0, ContinuousAction.ThrottleIncrement);
+            preset.SetContinuousBinding((int)AnalogInput.LeftTrigger, new Bitset(32), ContinuousAction.ThrottleDecrement);
+            preset.SetContinuousBinding((int)AnalogInput.RightTrigger, new Bitset(32), ContinuousAction.ThrottleIncrement);
 
             return preset;
         }

@@ -110,6 +110,7 @@ namespace KSPAdvancedFlyByWire
         CameraZoom
     }
 
+    [Serializable]
     public class ControllerPreset
     {
 
@@ -123,27 +124,29 @@ namespace KSPAdvancedFlyByWire
 
         public delegate void OnCustomActionCallback();
 
-        public List<KeyValuePair<int, DiscreteAction>> discreteActionsMap = new List<KeyValuePair<int, DiscreteAction>>();
-        public Dictionary<int, List<KeyValuePair<int, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<int, ContinuousAction>>>();
-        public List<KeyValuePair<int, OnCustomActionCallback>> customActionsMap = new List<KeyValuePair<int, OnCustomActionCallback>>();
+        public List<KeyValuePair<Bitset, DiscreteAction>> discreteActionsMap = new List<KeyValuePair<Bitset, DiscreteAction>>();
+        public Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>();
 
-        public void SetDiscreteBinding(int state, DiscreteAction action)
+        [NonSerialized]
+        public List<KeyValuePair<Bitset, OnCustomActionCallback>> customActionsMap = new List<KeyValuePair<Bitset, OnCustomActionCallback>>();
+
+        public void SetDiscreteBinding(Bitset state, DiscreteAction action)
         {
-            discreteActionsMap.Add(new KeyValuePair<int,DiscreteAction>(state, action));
+            discreteActionsMap.Add(new KeyValuePair<Bitset, DiscreteAction>(state, action));
         }
 
-        public DiscreteAction GetDiscreteBinding(int state)
+        public DiscreteAction GetDiscreteBinding(Bitset state)
         {
             foreach (var maskActionPair in discreteActionsMap)
             {
-                int expectedState = maskActionPair.Key;
+                Bitset expectedState = maskActionPair.Key;
                 bool match = true;
 
                 for (int i = 0; i < 32; i++)
                 {
-                    if (((1 << i) & expectedState) != 0)
+                    if (expectedState.Get(i))
                     {
-                        if (((1 << i) & state) == 0)
+                        if (!state.Get(i))
                         {
                             match = false;
                             break;
@@ -160,35 +163,35 @@ namespace KSPAdvancedFlyByWire
             return DiscreteAction.None;
         }
 
-        public void SetContinuousBinding(int axis, int state, ContinuousAction action)
+        public void SetContinuousBinding(int axis, Bitset state, ContinuousAction action)
         {
             if(!continuousActionsMap.ContainsKey(axis))
             {
-                continuousActionsMap[axis] = new List<KeyValuePair<int, ContinuousAction>>();
+                continuousActionsMap[axis] = new List<KeyValuePair<Bitset, ContinuousAction>>();
             }
 
-            continuousActionsMap[axis].Add(new KeyValuePair<int, ContinuousAction>(state, action));
+            continuousActionsMap[axis].Add(new KeyValuePair<Bitset, ContinuousAction>(state, action));
         }
 
-        public List<ContinuousAction> GetContinuousBinding(int axis, int state)
+        public List<ContinuousAction> GetContinuousBinding(int axis, Bitset state)
         {
             if (!continuousActionsMap.ContainsKey(axis))
             {
                 return null;
             }
 
-            List<KeyValuePair<int, ContinuousAction>> matches = new List<KeyValuePair<int, ContinuousAction>>();
+            List<KeyValuePair<Bitset, ContinuousAction>> matches = new List<KeyValuePair<Bitset, ContinuousAction>>();
 
             foreach (var stateActionPair in continuousActionsMap[axis])
             {
-                int expectedState = stateActionPair.Key;
+                Bitset expectedState = stateActionPair.Key;
                 bool match = true;
                     
                 for (int i = 0; i < 32; i++)
                 {
-                    if (((1 << i) & expectedState) != 0)
+                    if (expectedState.Get(i))
                     {
-                        if (((1 << i) & state) == 0)
+                        if (!state.Get(i))
                         {
                             match = false;
                             break;
@@ -202,19 +205,20 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
+            List<KeyValuePair<int, ContinuousAction>> matchResults = new List<KeyValuePair<int, ContinuousAction>>();
             for (int i = 0; i < matches.Count; i++)
             {
                 int bits = 0;
                 for(int q = 0; q < 32; q++)
                 {
-                    if((matches[i].Key & (1 << q)) != 0)
+                    if(matches[i].Key.Get(q))
                     {
                         bits++;
                     }
                 }
 
                 var value = matches[i].Value;
-                matches[i] = new KeyValuePair<int, ContinuousAction>(bits, value);
+                matchResults.Add(new KeyValuePair<int, ContinuousAction>(bits, value));
             }
 
             if(matches.Count == 0)
@@ -222,14 +226,14 @@ namespace KSPAdvancedFlyByWire
                 return null;
             }
 
-            matches.Sort(CompareKeys);
+            matchResults.Sort(CompareKeys);
 
-            int minBits = matches[matches.Count - 1].Key;
+            int minBits = matchResults[matches.Count - 1].Key;
             List<ContinuousAction> actions = new List<ContinuousAction>();
 
             for (var i = 0; i < matches.Count; i++)
             {
-                if(matches[i].Key >= minBits)
+                if (matchResults[i].Key >= minBits)
                 {
                     actions.Add(matches[i].Value);
                 }
@@ -238,23 +242,23 @@ namespace KSPAdvancedFlyByWire
             return actions;
         }
 
-        public void SetCustomBinding(int state, OnCustomActionCallback action)
+        public void SetCustomBinding(Bitset state, OnCustomActionCallback action)
         {
-            customActionsMap.Add(new KeyValuePair<int, OnCustomActionCallback>(state, action));
+            customActionsMap.Add(new KeyValuePair<Bitset, OnCustomActionCallback>(state, action));
         }
 
-        public OnCustomActionCallback GetCustomBinding(int state)
+        public OnCustomActionCallback GetCustomBinding(Bitset state)
         {
             foreach (var maskActionPair in customActionsMap)
             {
-                int expectedState = maskActionPair.Key;
+                Bitset expectedState = maskActionPair.Key;
                 bool match = true;
 
                 for (int i = 0; i < 32; i++)
                 {
-                    if (((1 << i) & expectedState) != 0)
+                    if (expectedState.Get(i))
                     {
-                        if (((1 << i) & state) == 0)
+                        if (!state.Get(i))
                         {
                             match = false;
                             break;
