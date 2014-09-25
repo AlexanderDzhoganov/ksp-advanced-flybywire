@@ -114,10 +114,8 @@ namespace KSPAdvancedFlyByWire
     public class ControllerPreset
     {
 
-        public ControllerPreset(IController controller)
+        public ControllerPreset()
         {
-            int buttonsCount = controller.GetButtonsCount();
-            int axesCount = controller.GetAxesCount();
         }
 
         public string name = "Default preset";

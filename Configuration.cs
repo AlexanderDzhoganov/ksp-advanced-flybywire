@@ -43,7 +43,7 @@ namespace KSPAdvancedFlyByWire
                 }
                 else if (config.wrapper == InputWrapper.SDL)
                 {
-                    config.iface = new SDLController(config.controllerIndex);
+                 //   config.iface = new SDLController(config.controllerIndex);
                 }
 
                 config.evaluatedDiscreteActionMasks = new HashSet<Bitset>();

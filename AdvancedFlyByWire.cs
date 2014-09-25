@@ -613,7 +613,7 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
            // GUI.Window(0, new Rect(32, 32, 400, 600), DoMainWindow, "Advanced FlyByWire");
-            PresetEditor.OnGUI();
+            //PresetEditor.OnGUI();
         }
 
         private void OnShowUI()
