@@ -422,6 +422,7 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.TogglePrecisionControls:
                 return;
             case DiscreteAction.ResetTrim:
+                state.ResetTrim();
                 return;
             }
         }
@@ -448,13 +449,25 @@ namespace KSPAdvancedFlyByWire
                     state.yaw = value;
                     state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
                     return;
+                case ContinuousAction.YawTrim:
+                    state.yawTrim = value;
+                    state.yawTrim = Clamp(state.yawTrim, -1.0f, 1.0f);
+                    return;
                 case ContinuousAction.Pitch:
                     state.pitch = value;
                     state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
                     return;
+                case ContinuousAction.PitchTrim:
+                    state.pitchTrim = value;
+                    state.pitchTrim = Clamp(state.pitchTrim, -1.0f, 1.0f);
+                    return;
                 case ContinuousAction.Roll:
                     state.roll = value;
                     state.roll = Clamp(state.roll, -1.0f, 1.0f);
+                    return;
+                case ContinuousAction.RollTrim:
+                    state.rollTrim = value;
+                    state.rollTrim = Clamp(state.rollTrim, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.X:
                     state.X = value;

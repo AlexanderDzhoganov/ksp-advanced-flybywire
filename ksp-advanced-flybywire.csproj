@@ -52,6 +52,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="SDL2-CS">
+      <HintPath>.\SDL2-CS.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -71,12 +74,16 @@
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
     <Compile Include="PresetEditor.cs" />
+    <Compile Include="SDLController.cs" />
     <Compile Include="XInputController.cs" />
     <Compile Include="EvaluationCurves.cs" />
     <Compile Include="DropDownList.cs" />
     <Compile Include="AdvancedFlyByWire.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

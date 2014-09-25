@@ -18,7 +18,34 @@ namespace KSPAdvancedFlyByWire
 
         public Curve analogEvaluationCurve = new Curve();
 
-        public abstract void Update(FlightCtrlState state);
+        public bool[] buttonStates;
+        public float[] axisPositiveDeadZones;
+        public float[] axisNegativeDeadZones;
+
+        public virtual void Update(FlightCtrlState state)
+        {
+            for (int i = 0; i < 15; i++)
+            {
+                if (GetButtonState(i) && !buttonStates[i])
+                {
+                    buttonStates[i] = true;
+
+                    if (buttonPressedCallback != null)
+                    {
+                        buttonPressedCallback(i, state);
+                    }
+                }
+                else if (!GetButtonState(i) && buttonStates[i])
+                {
+                    buttonStates[i] = false;
+
+                    if (buttonReleasedCallback != null)
+                    {
+                        buttonReleasedCallback(i, state);
+                    }
+                }
+            }
+        }
 
         public abstract int GetButtonsCount();
 

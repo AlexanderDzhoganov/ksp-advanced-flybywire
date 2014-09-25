@@ -50,49 +50,30 @@ namespace KSPAdvancedFlyByWire
         private GamePadState m_State;
         private PlayerIndex m_ControllerIndex = PlayerIndex.One;
 
-        public bool[] m_ButtonStates = new bool[15];
-        public float[] m_AxisPositiveDeadZones = new float[12];
-        public float[] m_AxisNegativeDeadZones = new float[12];
+       
 
         public XInputController()
         {
+            buttonStates = new bool[15];
+            axisPositiveDeadZones = new float[12];
+            axisNegativeDeadZones = new float[12];
+
             for(int i = 0; i < 15; i++)
             {
-                m_ButtonStates[i] = false;
+                buttonStates[i] = false;
             }
 
             for (int i = 0; i < 12; i++)
             {
-                m_AxisNegativeDeadZones[i] = 0.0f;
-                m_AxisPositiveDeadZones[i] = 0.0f;
+                axisNegativeDeadZones[i] = 0.0f;
+                axisPositiveDeadZones[i] = 0.0f;
             }
         }
 
         public override void Update(FlightCtrlState state)
         {
             m_State = GamePad.GetState(m_ControllerIndex);
-
-            for(int i = 0; i < 15; i++)
-            {
-                if(GetButtonState(i) && !m_ButtonStates[i])
-                {
-                    m_ButtonStates[i] = true;
-
-                    if(buttonPressedCallback != null)
-                    {
-                        buttonPressedCallback(i, state);
-                    }
-                }
-                else if(!GetButtonState(i) && m_ButtonStates[i])
-                {
-                    m_ButtonStates[i] = false;
-
-                    if(buttonReleasedCallback != null)
-                    {
-                        buttonReleasedCallback(i, state);
-                    }
-                }
-            }
+            base.Update(state);
         }
 
         public override int GetButtonsCount()
@@ -262,23 +243,23 @@ namespace KSPAdvancedFlyByWire
 
             if (value > 0.0f)
             {
-                if(value < m_AxisPositiveDeadZones[input])
+                if(value < axisPositiveDeadZones[input])
                 {
-                    m_AxisPositiveDeadZones[input] = value;
+                    axisPositiveDeadZones[input] = value;
                 }
 
-                float deadZone = m_AxisPositiveDeadZones[input];
-                value = (value - m_AxisPositiveDeadZones[input]) * (1.0f + deadZone);
+                float deadZone = axisPositiveDeadZones[input];
+                value = (value - axisPositiveDeadZones[input]) * (1.0f + deadZone);
             }
             else
             {
-                if(Math.Abs(value) < m_AxisNegativeDeadZones[input])
+                if(Math.Abs(value) < axisNegativeDeadZones[input])
                 {
-                    m_AxisNegativeDeadZones[input] = Math.Abs(value);
+                    axisNegativeDeadZones[input] = Math.Abs(value);
                 }
 
-                float deadZone = m_AxisPositiveDeadZones[input];
-                value = (Math.Abs(value) - m_AxisPositiveDeadZones[input]) * (1.0f + deadZone);
+                float deadZone = axisPositiveDeadZones[input];
+                value = (Math.Abs(value) - axisPositiveDeadZones[input]) * (1.0f + deadZone);
                 value *= -1.0f;
             }
 

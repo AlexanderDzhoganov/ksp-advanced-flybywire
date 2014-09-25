@@ -94,8 +94,11 @@ namespace KSPAdvancedFlyByWire
     {
         None,
         Yaw,
+        YawTrim,
         Pitch,
+        PitchTrim,
         Roll,
+        RollTrim,
         X,
         Y,
         Z,
@@ -131,7 +134,6 @@ namespace KSPAdvancedFlyByWire
             foreach (var maskActionPair in discreteActionsMap)
             {
                 int expectedState = maskActionPair.Key;
-
                 bool match = true;
 
                 for (int i = 0; i < 32; i++)
