@@ -62,20 +62,26 @@ namespace KSPAdvancedFlyByWire
             return m_Initialized;
         }
 
-        static int EnumerateControllers()
+        public static List<KeyValuePair<int, string>> EnumerateControllers()
         {
             if (!SDLInitialized)
             {
                 SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
                 SDLInitialized = true;
             }
-            
+
+            List<KeyValuePair<int, string>> controllers = new List<KeyValuePair<int, string>>();
+
             int numControllers = SDL.SDL_NumJoysticks();
-            SDLInitialized = true;
-            return numControllers;
+            for (int i = 0; i < numControllers; i++)
+            {
+                controllers.Add(new KeyValuePair<int, string>(i, SDL.SDL_JoystickNameForIndex(i)));
+            }
+
+            return controllers;
         }
 
-        static bool IsControllerConnected(int id)
+        public static bool IsControllerConnected(int id)
         {
             if (!SDLInitialized)
             {

@@ -58,6 +58,23 @@ namespace KSPAdvancedFlyByWire
             m_CurrentPreset = 0;
         }
 
+        public static List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> EnumerateAllControllers()
+        {
+            List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> controllers = new List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>>();
+
+            foreach (var controllerName in XInputController.EnumerateControllers())
+            {
+                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.XInput, controllerName));
+            }
+
+            foreach (var controllerName in SDLController.EnumerateControllers())
+            {
+                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.SDL, controllerName));
+            }
+
+            return controllers;
+        }
+
         public void Awake()
         {
             print("KSPAdvancedFlyByWire: initialized");

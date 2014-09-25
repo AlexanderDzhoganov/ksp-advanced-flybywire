@@ -70,16 +70,22 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        static int EnumerateControllers()
+        public static List<KeyValuePair<int, string>> EnumerateControllers()
         {
-            int count = GamePad.GetState(PlayerIndex.One).IsConnected ? 1 : 0;
-            count = GamePad.GetState(PlayerIndex.Two).IsConnected ? 1 : 0;
-            count = GamePad.GetState(PlayerIndex.Three).IsConnected ? 1 : 0;
-            count = GamePad.GetState(PlayerIndex.Four).IsConnected ? 1 : 0;
-            return count;
+            List<KeyValuePair<int, string>> controllers = new List<KeyValuePair<int, string>>();
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (GamePad.GetState((PlayerIndex)i).IsConnected)
+                {
+                    controllers.Add(new KeyValuePair<int, string>(i, String.Format("XInput Controller #{0}", i)));
+                }
+            }
+
+            return controllers;
         }
 
-        static bool IsControllerConnected(int id)
+        public static bool IsControllerConnected(int id)
         {
             switch (id)
             {
