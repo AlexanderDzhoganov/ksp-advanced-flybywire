@@ -79,6 +79,7 @@ namespace KSPAdvancedFlyByWire
 
                 if (contrlr.wrapper == wrapper && contrlr.controllerIndex == controllerIndex)
                 {
+                    m_Configuration.controllers[i].iface = null;
                     m_Configuration.controllers.RemoveAt(i);
                     return;
                 }
@@ -233,6 +234,7 @@ namespace KSPAdvancedFlyByWire
 
         void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state)
         {
+            print("button released " + button.ToString());
             var config = m_Configuration.GetConfigurationByIController(controller);
 
             List<Bitset> masksToRemove = new List<Bitset>();
@@ -252,6 +254,13 @@ namespace KSPAdvancedFlyByWire
             foreach (Bitset maskRemove in masksToRemove)
             {
                 config.evaluatedDiscreteActionMasks.Remove(maskRemove);
+            }
+
+            foreach (var presetEditor in presetEditors)
+            {
+                Bitset bitset = controller.lastUpdateMask.Copy();
+                bitset.Set(button);
+                presetEditor.SetCurrentBitmask(bitset);
             }
 
             EvaluateDiscreteActionRelease(config, GetCurrentPreset(controller).GetDiscreteBinding(controller.GetButtonsMask()), state);

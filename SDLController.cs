@@ -31,7 +31,7 @@ namespace KSPAdvancedFlyByWire
             
             m_Joystick = SDL.SDL_JoystickOpen(controllerIndex);
 
-            if (m_Joystick == IntPtr.Zero || SDL.SDL_JoystickOpened(controllerIndex) == 0)
+            if (m_Joystick == IntPtr.Zero)
             {
                 return;
             }
@@ -91,7 +91,7 @@ namespace KSPAdvancedFlyByWire
 
             var joystick = SDL.SDL_JoystickOpen(id);
 
-            if (joystick == IntPtr.Zero || SDL.SDL_JoystickOpened(id) == 0)
+            if (joystick == IntPtr.Zero)
             {
                 return false;
             }

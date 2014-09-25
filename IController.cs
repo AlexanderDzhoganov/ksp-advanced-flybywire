@@ -22,6 +22,8 @@ namespace KSPAdvancedFlyByWire
         public float[] axisPositiveDeadZones;
         public float[] axisNegativeDeadZones;
 
+        public Bitset lastUpdateMask;
+
         public virtual void Update(FlightCtrlState state)
         {
             for (int i = 0; i < 15; i++)
@@ -45,6 +47,8 @@ namespace KSPAdvancedFlyByWire
                     }
                 }
             }
+
+            lastUpdateMask = GetButtonsMask();
         }
 
         public abstract int GetButtonsCount();

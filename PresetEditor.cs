@@ -29,7 +29,15 @@ namespace KSPAdvancedFlyByWire
 
         }
 
+        private Bitset m_CurrentMask = null;
+
+        public void SetCurrentBitmask(Bitset mask)
+        {
+            m_CurrentMask = mask;
+        }
+
         private DiscreteAction m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+        private ContinuousAction m_CurrentlyEditingContinuousAction = ContinuousAction.None;
 
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
@@ -40,20 +48,81 @@ namespace KSPAdvancedFlyByWire
             GUILayout.Label("Discrete actions:");
 
             var currentPreset = m_Controller.presets[m_Controller.currentPreset];
-            foreach(var discreteAction in (DiscreteAction[])Enum.GetValues(typeof(DiscreteAction)))
+            foreach(var action in (DiscreteAction[])Enum.GetValues(typeof(DiscreteAction)))
             {
+                if(action == DiscreteAction.None)
+                {
+                    continue;
+                }
+
                 GUILayout.BeginHorizontal();
 
-                GUILayout.Label(discreteAction.ToString());
+                GUILayout.Label(action.ToString());
+
+                GUILayout.FlexibleSpace();
+
+                string label = "";
+
+                var bitset = currentPreset.GetBitsetForDiscreteBinding(action);
+                if(m_CurrentlyEditingDiscreteAction == action)
+                {
+                    label = "Press desired combination";
+
+                    if(m_CurrentMask != null)
+                    {
+                        currentPreset.SetDiscreteBinding(m_CurrentMask, action);
+                        m_CurrentMask = null;
+                        m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+                    }
+                }
+
+                bitset = currentPreset.GetBitsetForDiscreteBinding(action);
+                if (m_CurrentlyEditingDiscreteAction != action)
+                {
+                    if (bitset == null)
+                    {
+                        label = "Click to assign";
+                    }
+                    else
+                    {
+                        label = m_Controller.iface.ConvertMaskToName(bitset);
+                    }
+                }
+
+                if(GUILayout.Button(label, GUILayout.Width(256)))
+                {
+                    if (m_CurrentlyEditingDiscreteAction != action)
+                    {
+                        m_CurrentlyEditingDiscreteAction = action;
+                    }
+
+                    m_CurrentMask = null;
+                }
+
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.Label("Continuous actions:");
+
+            foreach (var action in (ContinuousAction[])Enum.GetValues(typeof(ContinuousAction)))
+            {
+                if(action == ContinuousAction.None)
+                {
+                    continue;
+                }
+
+                GUILayout.BeginHorizontal();
+
+                GUILayout.Label(action.ToString());
 
                 GUILayout.FlexibleSpace();
 
                 string label = "FIXME!!!!!";
 
-                var bitset = currentPreset.GetBitsetForDiscreteBinding(discreteAction);
-                if (bitset == null)
+                var bitset = currentPreset.GetBitsetForContinuousBinding(action);
+                if (bitset.Value == null)
                 {
-                    if(m_CurrentlyEditingDiscreteAction == discreteAction)
+                    if (m_CurrentlyEditingContinuousAction == action)
                     {
                         label = "Press desired combination";
                     }
@@ -64,7 +133,7 @@ namespace KSPAdvancedFlyByWire
                 }
                 else
                 {
-                    label = m_Controller.iface.ConvertMaskToName(bitset);
+                    label = m_Controller.iface.ConvertMaskToName(bitset.Value, true, bitset.Key);
                 }
 
                 GUILayout.Button(label);

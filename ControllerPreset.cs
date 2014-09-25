@@ -123,11 +123,13 @@ namespace KSPAdvancedFlyByWire
 
         public delegate void OnCustomActionCallback();
 
-        public List<KeyValuePair<Bitset, DiscreteAction>> discreteActionsMap = new List<KeyValuePair<Bitset, DiscreteAction>>();
+        [XmlIgnore()]
+        public Dictionary<DiscreteAction, Bitset> discreteActionsMap = new Dictionary<DiscreteAction, Bitset>();
 
         [XmlIgnore()]
         public Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>();
 
+        public List<KeyValuePair<DiscreteAction, Bitset>> serializableDiscreteActionMap = new List<KeyValuePair<DiscreteAction, Bitset>>();
         public List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>> serialiazableContinuousActionMap = new List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>>();
 
         [XmlIgnore()]
@@ -141,6 +143,13 @@ namespace KSPAdvancedFlyByWire
             {
                 serialiazableContinuousActionMap.Add(keyValue);
             }
+
+            serializableDiscreteActionMap.Clear();
+
+            foreach(var keyValue in discreteActionsMap)
+            {
+                serializableDiscreteActionMap.Add(keyValue);
+            }
         }
 
         public void OnPostDeserialize()
@@ -151,18 +160,25 @@ namespace KSPAdvancedFlyByWire
             {
                 continuousActionsMap.Add(keyValue.Key, keyValue.Value);
             }
+
+            discreteActionsMap.Clear();
+
+            foreach(var keyValue in serializableDiscreteActionMap)
+            {
+                discreteActionsMap.Add(keyValue.Key, keyValue.Value);
+            }
         }
 
         public void SetDiscreteBinding(Bitset state, DiscreteAction action)
         {
-            discreteActionsMap.Add(new KeyValuePair<Bitset, DiscreteAction>(state, action));
+            discreteActionsMap[action] = state;
         }
 
         public DiscreteAction GetDiscreteBinding(Bitset state)
         {
             foreach (var maskActionPair in discreteActionsMap)
             {
-                Bitset expectedState = maskActionPair.Key;
+                Bitset expectedState = maskActionPair.Value;
                 bool match = true;
 
                 for (int i = 0; i < state.m_NumBits; i++)
@@ -179,7 +195,7 @@ namespace KSPAdvancedFlyByWire
 
                 if(match)
                 {
-                    return maskActionPair.Value;
+                    return maskActionPair.Key;
                 }
             }
 
@@ -188,15 +204,8 @@ namespace KSPAdvancedFlyByWire
 
         public Bitset GetBitsetForDiscreteBinding(DiscreteAction action)
         {
-            foreach (var maskActionPair in discreteActionsMap)
-            {
-                if (maskActionPair.Value == action)
-                {
-                    return maskActionPair.Key;
-                }
-            }
-
-            return null;
+            if (!discreteActionsMap.ContainsKey(action)) return null;
+            return discreteActionsMap[action];
         }
 
         public void SetContinuousBinding(int axis, Bitset state, ContinuousAction action)
@@ -223,7 +232,7 @@ namespace KSPAdvancedFlyByWire
                 Bitset expectedState = stateActionPair.Key;
                 bool match = true;
                     
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < state.m_NumBits; i++)
                 {
                     if (expectedState.Get(i))
                     {
@@ -245,7 +254,7 @@ namespace KSPAdvancedFlyByWire
             for (int i = 0; i < matches.Count; i++)
             {
                 int bits = 0;
-                for(int q = 0; q < 32; q++)
+                for(int q = 0; q < state.m_NumBits; q++)
                 {
                     if(matches[i].Key.Get(q))
                     {
@@ -277,6 +286,22 @@ namespace KSPAdvancedFlyByWire
             
             return actions;
         }
+        
+        public KeyValuePair<int, Bitset> GetBitsetForContinuousBinding(ContinuousAction action)
+        {
+            foreach(var axisMaskActionPair in continuousActionsMap)
+            {
+                foreach (var maskActionPair in axisMaskActionPair.Value)
+                {
+                    if (maskActionPair.Value == action)
+                    {
+                        return new KeyValuePair<int, Bitset>(axisMaskActionPair.Key, maskActionPair.Key.Copy());
+                    }
+                }
+            }
+
+            return new KeyValuePair<int, Bitset>(0, null);
+        }
 
         public void SetCustomBinding(Bitset state, OnCustomActionCallback action)
         {
@@ -290,7 +315,7 @@ namespace KSPAdvancedFlyByWire
                 Bitset expectedState = maskActionPair.Key;
                 bool match = true;
 
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < state.m_NumBits; i++)
                 {
                     if (expectedState.Get(i))
                     {

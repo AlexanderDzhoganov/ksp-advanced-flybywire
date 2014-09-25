@@ -118,21 +118,21 @@ namespace KSPAdvancedFlyByWire
             switch ((Button)(1 << id))
             {
             case Button.DPadLeft:
-                return "Dpad left";
+                return "D-Pad Left";
             case Button.DPadRight:
-                return "Dpad right";
+                return "D-Pad Right";
             case Button.DPadUp:
-                return "Dpad up";
+                return "D-Pad Up";
             case Button.DPadDown:
-                return "Dpad down";
+                return "D-Pad Down";
             case Button.Back:
                 return "Back";
             case Button.Start:
                 return "Start";
             case Button.LB:
-                return "Left shoulder";
+                return "LB";
             case Button.RB:
-                return "Right shoulder";
+                return "RB";
             case Button.X:
                 return "X";
             case Button.Y:
@@ -142,9 +142,9 @@ namespace KSPAdvancedFlyByWire
             case Button.B:
                 return "B";
             case Button.LeftStick:
-                return "Left stick";
+                return "Left Stick (press)";
             case Button.RightStick:
-                return "Right stick";
+                return "Right Stick (press)";
             case Button.Guide:
                 return "Guide";
             default:
@@ -162,29 +162,29 @@ namespace KSPAdvancedFlyByWire
             switch ((AnalogInput)id)
             {
                 case AnalogInput.LeftStickX:
-                    return "Left stick X";
+                    return "Left Stick X";
                 case AnalogInput.LeftStickY:
-                    return "Left stick Y";
+                    return "Left Stick Y";
                 case AnalogInput.RightStickX:
-                    return "Right stick X";
+                    return "Right Stick X";
                 case AnalogInput.RightStickY:
-                    return "Right stick Y";
+                    return "Right Stick Y";
                 case AnalogInput.LeftTrigger:
-                    return "Left trigger";
+                    return "Left Trigger";
                 case AnalogInput.RightTrigger:
-                    return "Right trigger";
+                    return "Right Trigger";
                 case AnalogInput.LeftStickXInverted:
-                    return "Left stick X Inverted";
+                    return "Left Stick X (Inverted)";
                 case AnalogInput.LeftStickYInverted:
-                    return "Left stick Y Inverted";
+                    return "Left Stick Y (Inverted)";
                 case AnalogInput.RightStickXInverted:
-                    return "Right stick X Inverted";
+                    return "Right Stick X (Inverted)";
                 case AnalogInput.RightStickYInverted:
-                    return "Right stick Y Inverted";
+                    return "Right Stick Y (Inverted)";
                 case AnalogInput.LeftTriggerInverted:
-                    return "Left trigger Inverted";
+                    return "Left Trigger (Inverted)";
                 case AnalogInput.RightTriggerInverted:
-                    return "Right trigger Inverted";
+                    return "Right Trigger (Inverted)";
             }
 
             return "";
