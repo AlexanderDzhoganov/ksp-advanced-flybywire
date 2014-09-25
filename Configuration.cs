@@ -20,10 +20,10 @@ namespace KSPAdvancedFlyByWire
         public float discreteActionStep = 0.15f;
         public float incrementalThrottleSensitivity = 0.05f;
 
-        [NonSerialized]
+        [XmlIgnore()]
         public IController iface;
 
-        [NonSerialized]
+        [XmlIgnore()]
         public HashSet<Bitset> evaluatedDiscreteActionMasks = new HashSet<Bitset>();
     }
 
@@ -33,7 +33,18 @@ namespace KSPAdvancedFlyByWire
 
         public Configuration() {}
 
-        public void OnDeserialize()
+        public void OnPreSerialize()
+        {
+            foreach (ControllerConfiguration config in controllers)
+            {
+                foreach (var preset in config.presets)
+                {
+                    preset.OnPreSerialize();
+                }
+            }
+        }
+
+        public void OnPostDeserialize()
         {
             foreach (ControllerConfiguration config in controllers)
             {
@@ -43,10 +54,15 @@ namespace KSPAdvancedFlyByWire
                 }
                 else if (config.wrapper == InputWrapper.SDL)
                 {
-                 //   config.iface = new SDLController(config.controllerIndex);
+                    config.iface = new SDLController(config.controllerIndex);
                 }
 
                 config.evaluatedDiscreteActionMasks = new HashSet<Bitset>();
+
+                foreach (var preset in config.presets)
+                {
+                    preset.OnPostDeserialize();
+                }
             }
         }
 
@@ -71,6 +87,7 @@ namespace KSPAdvancedFlyByWire
 
             using (var writer = new StreamWriter(filename))
             {
+                config.OnPreSerialize();
                 serializer.Serialize(writer, config);
             }
         }
@@ -78,18 +95,23 @@ namespace KSPAdvancedFlyByWire
         public static Configuration Deserialize(string filename)
         {
             var serializer = new XmlSerializer(typeof(Configuration));
-            var reader = new StreamReader(filename);
-            if(reader == null)
+
+            try
             {
-                return null;
+                using (var reader = new StreamReader(filename))
+                {
+                    Configuration config = (Configuration)serializer.Deserialize(reader);
+                    config.OnPostDeserialize();
+                    return config;
+                }
+            }
+            catch
+            {
+                
             }
 
-            Configuration config = (Configuration)serializer.Deserialize(reader);
-            config.OnDeserialize();
-            return config;
+            return null;
         }
-
-
     }
 
 }

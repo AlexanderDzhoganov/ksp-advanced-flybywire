@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 using UnityEngine;
 
@@ -123,8 +124,34 @@ namespace KSPAdvancedFlyByWire
         public delegate void OnCustomActionCallback();
 
         public List<KeyValuePair<Bitset, DiscreteAction>> discreteActionsMap = new List<KeyValuePair<Bitset, DiscreteAction>>();
+
+        [XmlIgnore()]
         public Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>();
+
+        public List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>> serialiazableContinuousActionMap = new List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>>();
+
+        [XmlIgnore()]
         public List<KeyValuePair<Bitset, OnCustomActionCallback>> customActionsMap = new List<KeyValuePair<Bitset, OnCustomActionCallback>>();
+
+        public void OnPreSerialize()
+        {
+            serialiazableContinuousActionMap.Clear();
+
+            foreach(var keyValue in continuousActionsMap)
+            {
+                serialiazableContinuousActionMap.Add(keyValue);
+            }
+        }
+
+        public void OnPostDeserialize()
+        {
+            continuousActionsMap.Clear();
+
+            foreach(var keyValue in serialiazableContinuousActionMap)
+            {
+                continuousActionsMap.Add(keyValue.Key, keyValue.Value);
+            }
+        }
 
         public void SetDiscreteBinding(Bitset state, DiscreteAction action)
         {

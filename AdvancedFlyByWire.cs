@@ -114,6 +114,7 @@ namespace KSPAdvancedFlyByWire
                 controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.SDL, controllerName));
             }
 
+            controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Mouse&Keyboard")));
             return controllers;
         }
 
@@ -126,11 +127,6 @@ namespace KSPAdvancedFlyByWire
             {
                 m_Configuration = new Configuration();
                 Configuration.Serialize(m_ConfigurationPath, m_Configuration);
-            }
-
-            if (m_Configuration.controllers.Count == 0)
-            {
-                ActivateController(InputWrapper.XInput, 0);
             }
 
             GameEvents.onShowUI.Add(OnShowUI);
@@ -160,23 +156,37 @@ namespace KSPAdvancedFlyByWire
 
         void DoMainWindow(int index)
         {
-          /*  string buttonsMask = "";
-
-            for (int i = 0; i < m_Controller.GetButtonsCount(); i++)
+            var controllers = EnumerateAllControllers();
+            foreach(var controller in controllers)
             {
-                buttonsMask = (m_Controller.GetButtonState(i) ? "1" : "0") + buttonsMask;
+                GUILayout.BeginHorizontal();
+
+                GUILayout.Label(controller.Key.ToString() + "-" + controller.Value.ToString());
+
+                bool isEnabled = false;
+                foreach (var ctrl in m_Configuration.controllers)
+                {
+                    if(ctrl.wrapper == controller.Key && ctrl.controllerIndex == controller.Value.Key)
+                    {
+                        isEnabled = true;
+                        break;
+                    }
+                }
+
+                if(!isEnabled && GUILayout.Button("enable"))
+                {
+                    ActivateController(controller.Key, controller.Value.Key); 
+                }
+                else if(isEnabled)
+                {
+                    if(GUILayout.Button("disable"))
+                    {
+                        DeactivateController(controller.Key, controller.Value.Key);
+                    }
+                }
+
+                GUILayout.EndHorizontal();
             }
-
-            GUILayout.Label(buttonsMask);
-            GUILayout.Label(m_Controller.GetButtonsMask().ToString());
-
-            for (int i = 0; i < m_Controller.GetAxesCount(); i++)
-            {
-                string label = "";
-                label += m_Controller.GetAxisName(i) + " ";
-                label += m_Controller.GetAnalogInputState(i);
-                GUILayout.Label(label);
-            }*/
         }
 
         void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
@@ -612,7 +622,8 @@ namespace KSPAdvancedFlyByWire
             {
                 return;
             }
-           // GUI.Window(0, new Rect(32, 32, 400, 600), DoMainWindow, "Advanced FlyByWire");
+           
+            GUI.Window(0, new Rect(32, 32, 400, 600), DoMainWindow, "Advanced FlyByWire");
             //PresetEditor.OnGUI();
         }
 

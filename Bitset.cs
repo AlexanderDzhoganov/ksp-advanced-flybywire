@@ -11,8 +11,10 @@ namespace KSPAdvancedFlyByWire
     public class Bitset
     {
 
-        private int[] m_Data = null;
-        private int m_NumBits = 0;
+        public int[] m_Data = null;
+        public int m_NumBits = 0;
+
+        public Bitset() {}
 
         public Bitset(int numBits)
         {

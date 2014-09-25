@@ -25,7 +25,6 @@ namespace KSPAdvancedFlyByWire
         public static ControllerPreset GetXInputDefaultRocketPreset(IController controller)
         {
             ControllerPreset preset = new ControllerPreset();
-
             preset.name = "XInput Default";
 
             preset.SetDiscreteBinding(new Bitset(32, (int)Button.DPadLeft), DiscreteAction.SAS);
