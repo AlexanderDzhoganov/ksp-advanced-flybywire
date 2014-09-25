@@ -85,7 +85,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void LoadState(Game data)
+        private void LoadState(object data)
         {
             m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
             if (m_Configuration == null)
@@ -95,7 +95,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        public void SaveState(Game data)
+        public void SaveState(object data)
         {
             Configuration.Serialize(m_ConfigurationPath, m_Configuration);
         }
@@ -132,7 +132,11 @@ namespace KSPAdvancedFlyByWire
             {
                 ActivateController(InputWrapper.XInput, 0);
             }
-            
+
+            GameEvents.onShowUI.Add(OnShowUI);
+            GameEvents.onHideUI.Add(OnHideUI);
+            GameEvents.onGameStateSave.Add(new EventData<ConfigNode>.OnEvent(SaveState));
+            GameEvents.onGameStateLoad.Add(new EventData<ConfigNode>.OnEvent(LoadState));
         }
 
         private ControllerPreset GetCurrentPreset(IController controller)
@@ -600,10 +604,26 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
+        private bool m_UIHidden = false;
+
         void OnGUI()
         {
+            if (m_UIHidden)
+            {
+                return;
+            }
            // GUI.Window(0, new Rect(32, 32, 400, 600), DoMainWindow, "Advanced FlyByWire");
             PresetEditor.OnGUI();
+        }
+
+        private void OnShowUI()
+        {
+            m_UIHidden = false;
+        }
+
+        private void OnHideUI()
+        {
+            m_UIHidden = true;
         }
 
     }
