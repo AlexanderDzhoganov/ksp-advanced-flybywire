@@ -78,15 +78,15 @@ namespace KSPAdvancedFlyByWire
         public static Configuration Deserialize(string filename)
         {
             var serializer = new XmlSerializer(typeof(Configuration));
-
-            using (var reader = new StreamReader(filename))
+            var reader = new StreamReader(filename);
+            if(reader == null)
             {
-                Configuration config = (Configuration)serializer.Deserialize(reader);
-                config.OnDeserialize();
-                return config;
+                return null;
             }
 
-            return null;
+            Configuration config = (Configuration)serializer.Deserialize(reader);
+            config.OnDeserialize();
+            return config;
         }
 
 

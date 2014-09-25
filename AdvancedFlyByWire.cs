@@ -85,7 +85,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void LoadState(object data)
+        private void LoadState(ConfigNode data)
         {
             m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
             if (m_Configuration == null)
@@ -95,7 +95,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        public void SaveState(object data)
+        public void SaveState(ConfigNode data)
         {
             Configuration.Serialize(m_ConfigurationPath, m_Configuration);
         }
