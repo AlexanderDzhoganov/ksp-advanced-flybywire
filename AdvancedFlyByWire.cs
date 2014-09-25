@@ -18,20 +18,13 @@ namespace KSPAdvancedFlyByWire
     [KSPAddon(KSPAddon.Startup.Flight, true)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
+        private Configuration m_Configuration = null;
+        private string m_ConfigurationPath = "advanced_flybywire_config.xml";
+
         private IController m_Controller = null;
-
-        private List<ControllerPreset> m_Presets = new List<ControllerPreset>();
-        private int m_CurrentPreset = 0;
-
-        private float m_DiscreteActionStep = 0.15f;
-        private CurveType m_AnalogInputCurveType = CurveType.XSquared;
-        private float m_IncrementalThrottleSensitivity = 0.05f;
 
         private float m_Throttle = 0.0f;
         private bool m_CallbackSet = false;
-
-        private InputWrapper m_InputWrapper = InputWrapper.XInput;
-        private int m_ControllerIndex = 0;
 
         private FlightInputCallback m_Callback;
 
@@ -46,24 +39,29 @@ namespace KSPAdvancedFlyByWire
 
         public void SwapController(InputWrapper wrapper, int controllerIndex)
         {
-            m_InputWrapper = wrapper;
-            m_ControllerIndex = controllerIndex;
+            m_Configuration.wrapper = wrapper;
+            m_Configuration.controllerIndex = controllerIndex;
 
             if (wrapper == InputWrapper.XInput)
             {
-                m_Controller = new XInputController(m_ControllerIndex);
+                m_Controller = new XInputController(m_Configuration.controllerIndex);
             }
             else
             {
-                m_Controller = new SDLController(m_ControllerIndex);
+                m_Controller = new SDLController(m_Configuration.controllerIndex);
             }
 
-            m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(m_AnalogInputCurveType);
+            m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(m_Configuration.analogInputCurve);
             m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
             m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
 
-            m_Presets = DefaultControllerPresets.GetDefaultPresets(m_Controller);
-            m_CurrentPreset = 0;
+            m_Configuration.presets = DefaultControllerPresets.GetDefaultPresets(m_Controller);
+            m_Configuration.currentPreset = 0;
+        }
+
+        public void SaveConfigurationToDisk()
+        {
+            Configuration.Serialize(m_ConfigurationPath, m_Configuration);
         }
 
         public static List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> EnumerateAllControllers()
@@ -86,12 +84,20 @@ namespace KSPAdvancedFlyByWire
         public void Awake()
         {
             print("KSPAdvancedFlyByWire: initialized");
-            SwapController(m_InputWrapper, m_ControllerIndex);
+
+            m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
+            if (m_Configuration == null)
+            {
+                m_Configuration = new Configuration();
+                Configuration.Serialize(m_ConfigurationPath, m_Configuration);
+            }
+
+            SwapController(m_Configuration.wrapper, m_Configuration.controllerIndex);
         }
 
         private ControllerPreset GetCurrentPreset()
         {
-            var preset = m_Presets[m_CurrentPreset];
+            var preset = m_Configuration.presets[m_Configuration.currentPreset];
             if(preset == null)
             {
                 print("invalid preset");
@@ -102,7 +108,7 @@ namespace KSPAdvancedFlyByWire
 
         public void SetAnalogInputCurveType(CurveType type)
         {
-            m_AnalogInputCurveType = type;
+            m_Configuration.analogInputCurve = type;
             m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(type);
         }
 
@@ -220,59 +226,59 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.None:
                 return;
             case DiscreteAction.YawPlus:
-                state.yaw += m_DiscreteActionStep;
+                state.yaw += m_Configuration.discreteActionStep;
                 state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YawMinus:
-                state.yaw -= m_DiscreteActionStep;
+                state.yaw -= m_Configuration.discreteActionStep;
                 state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
                 return;
             case DiscreteAction.PitchPlus:
-                state.pitch += m_DiscreteActionStep;
+                state.pitch += m_Configuration.discreteActionStep;
                 state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
                 return;
             case DiscreteAction.PitchMinus:
-                state.pitch -= m_DiscreteActionStep;
+                state.pitch -= m_Configuration.discreteActionStep;
                 state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
                 return;
             case DiscreteAction.RollPlus:
-                state.roll += m_DiscreteActionStep;
+                state.roll += m_Configuration.discreteActionStep;
                 state.roll = Clamp(state.roll, -1.0f, 1.0f);
                 return;
             case DiscreteAction.RollMinus:
-                state.roll -= m_DiscreteActionStep;
+                state.roll -= m_Configuration.discreteActionStep;
                 state.roll = Clamp(state.roll, -1.0f, 1.0f);
                 return;
             case DiscreteAction.XPlus:
-                state.X += m_DiscreteActionStep;
+                state.X += m_Configuration.discreteActionStep;
                 state.X = Clamp(state.X, -1.0f, 1.0f);
                 return;
             case DiscreteAction.XMinus:
-                state.X -= m_DiscreteActionStep;
+                state.X -= m_Configuration.discreteActionStep;
                 state.X = Clamp(state.X, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YPlus:
-                state.Y += m_DiscreteActionStep;
+                state.Y += m_Configuration.discreteActionStep;
                 state.Y = Clamp(state.Y, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YMinus:
-                state.Y -= m_DiscreteActionStep;
+                state.Y -= m_Configuration.discreteActionStep;
                 state.Y = Clamp(state.Y, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ZPlus:
-                state.Z += m_DiscreteActionStep;
+                state.Z += m_Configuration.discreteActionStep;
                 state.Z = Clamp(state.Z, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ZMinus:
-                state.Z -= m_DiscreteActionStep;
+                state.Z -= m_Configuration.discreteActionStep;
                 state.Z = Clamp(state.Z, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ThrottlePlus:
-                m_Throttle += m_DiscreteActionStep;
+                m_Throttle += m_Configuration.discreteActionStep;
                 m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ThrottleMinus:
-                m_Throttle -= m_DiscreteActionStep;
+                m_Throttle -= m_Configuration.discreteActionStep;
                 m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                 return;
             case DiscreteAction.Stage:
@@ -363,38 +369,38 @@ namespace KSPAdvancedFlyByWire
                 m_Throttle = 1.0f;
                 return;
             case DiscreteAction.NextPreset:
-                if (m_CurrentPreset >= m_Presets.Count - 1)
+                if (m_Configuration.currentPreset >= m_Configuration.presets.Count - 1)
                 {
                     return;
                 }
 
-                m_CurrentPreset++;
+                m_Configuration.currentPreset++;
                 return;
             case DiscreteAction.PreviousPreset:
-                if (m_CurrentPreset <= 0)   
+                if (m_Configuration.currentPreset <= 0)   
                 {
                     return;
                 }
 
-                m_CurrentPreset--;
+                m_Configuration.currentPreset--;
                 return;
             case DiscreteAction.CameraZoomPlus:
-                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_DiscreteActionStep);
+                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_Configuration.discreteActionStep);
                 return; 
             case DiscreteAction.CameraZoomMinus:
-                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance - m_DiscreteActionStep);
+                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance - m_Configuration.discreteActionStep);
                 return;
             case DiscreteAction.CameraXPlus:
-                FlightCamera.CamHdg += m_DiscreteActionStep;
+                FlightCamera.CamHdg += m_Configuration.discreteActionStep;
                 return;
             case DiscreteAction.CameraXMinus:
-                FlightCamera.CamHdg -= m_DiscreteActionStep;
+                FlightCamera.CamHdg -= m_Configuration.discreteActionStep;
                 return;
             case DiscreteAction.CameraYPlus:
-                FlightCamera.CamPitch += m_DiscreteActionStep;
+                FlightCamera.CamPitch += m_Configuration.discreteActionStep;
                 return;
             case DiscreteAction.CameraYMinus:
-                FlightCamera.CamPitch -= m_DiscreteActionStep;
+                FlightCamera.CamPitch -= m_Configuration.discreteActionStep;
                 return;
             case DiscreteAction.OrbitMapToggle:
                 if(!MapView.MapIsEnabled)
@@ -508,11 +514,11 @@ namespace KSPAdvancedFlyByWire
                     m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.ThrottleIncrement:
-                    m_Throttle += value * m_IncrementalThrottleSensitivity;
+                    m_Throttle += value * m_Configuration.incrementalThrottleSensitivity;
                     m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.ThrottleDecrement:
-                    m_Throttle -= value * m_IncrementalThrottleSensitivity;
+                    m_Throttle -= value * m_Configuration.incrementalThrottleSensitivity;
                     m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.CameraX:

@@ -110,6 +110,7 @@ namespace KSPAdvancedFlyByWire
         CameraZoom
     }
 
+    [Serializable]
     public class ControllerPreset
     {
 
