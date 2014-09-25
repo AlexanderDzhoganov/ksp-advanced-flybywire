@@ -31,6 +31,25 @@ namespace KSPAdvancedFlyByWire
     public class Configuration
     {
 
+        public Configuration() {}
+
+        public void OnDeserialize()
+        {
+            foreach (ControllerConfiguration config in controllers)
+            {
+                if (config.wrapper == InputWrapper.XInput)
+                {
+                    config.iface = new XInputController(config.controllerIndex);
+                }
+                else if (config.wrapper == InputWrapper.SDL)
+                {
+                    config.iface = new SDLController(config.controllerIndex);
+                }
+
+                config.evaluatedDiscreteActionMasks = new HashSet<Bitset>();
+            }
+        }
+
         public List<ControllerConfiguration> controllers = new List<ControllerConfiguration>();
 
         public ControllerConfiguration GetConfigurationByIController(IController controller)
@@ -62,7 +81,9 @@ namespace KSPAdvancedFlyByWire
 
             using (var reader = new StreamReader(filename))
             {
-                return (Configuration)serializer.Deserialize(reader);
+                Configuration config = (Configuration)serializer.Deserialize(reader);
+                config.OnDeserialize();
+                return config;
             }
 
             return null;
