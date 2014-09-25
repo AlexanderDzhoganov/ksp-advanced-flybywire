@@ -19,7 +19,12 @@ namespace KSPAdvancedFlyByWire
 
         SDLController(int controllerIndex)
         {
-            SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
+            if (!SDLInitialized)
+            {
+                SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
+                SDLInitialized = true;
+            }
+            
             m_Joystick = SDL.SDL_JoystickOpen(controllerIndex);
 
             if (m_Joystick == IntPtr.Zero || SDL.SDL_JoystickOpened(controllerIndex) == 0)
@@ -32,14 +37,52 @@ namespace KSPAdvancedFlyByWire
             m_ButtonsCount = SDL.SDL_JoystickNumButtons(m_Joystick);
         }
 
-        void Deinitialize()
+        static bool SDLInitialized = false;
+
+        static int EnumerateControllers()
         {
-            if (m_Joystick != IntPtr.Zero)
+            if (!SDLInitialized)
             {
-                SDL.SDL_JoystickClose(m_Joystick);
+                SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
+                SDLInitialized = true;
+            }
+            
+            int numControllers = SDL.SDL_NumJoysticks();
+            SDLInitialized = true;
+            return numControllers;
+        }
+
+        static bool IsControllerConnected(int id)
+        {
+            if (!SDLInitialized)
+            {
+                SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
+                SDLInitialized = true;
             }
 
-            SDL.SDL_Quit();
+            var joystick = SDL.SDL_JoystickOpen(id);
+
+            if (joystick == IntPtr.Zero || SDL.SDL_JoystickOpened(id) == 0)
+            {
+                return false;
+            }
+
+            SDL.SDL_JoystickClose(joystick);
+
+            return true;
+        }
+
+        void Deinitialize()
+        {
+            if (SDLInitialized)
+            {
+                if (m_Joystick != IntPtr.Zero)
+                {
+                    SDL.SDL_JoystickClose(m_Joystick);
+                }
+
+                SDL.SDL_Quit();
+            }
         }
 
         public override void Update(FlightCtrlState state)

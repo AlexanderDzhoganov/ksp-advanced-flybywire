@@ -70,6 +70,32 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
+        static int EnumerateControllers()
+        {
+            int count = GamePad.GetState(PlayerIndex.One).IsConnected ? 1 : 0;
+            count = GamePad.GetState(PlayerIndex.Two).IsConnected ? 1 : 0;
+            count = GamePad.GetState(PlayerIndex.Three).IsConnected ? 1 : 0;
+            count = GamePad.GetState(PlayerIndex.Four).IsConnected ? 1 : 0;
+            return count;
+        }
+
+        static bool IsControllerConnected(int id)
+        {
+            switch (id)
+            {
+                case 0:
+                    return GamePad.GetState(PlayerIndex.One).IsConnected;
+                case 1:
+                    return GamePad.GetState(PlayerIndex.Two).IsConnected;
+                case 2:
+                    return GamePad.GetState(PlayerIndex.Three).IsConnected;
+                case 3:
+                    return GamePad.GetState(PlayerIndex.Four).IsConnected;
+            }
+
+            return false;
+        }
+
         public override void Update(FlightCtrlState state)
         {
             m_State = GamePad.GetState(m_ControllerIndex);
