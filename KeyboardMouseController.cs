@@ -87,9 +87,10 @@ namespace KSPAdvancedFlyByWire
 
         public override void Update(FlightCtrlState state)
         {
+            m_MouseDeltaX = Input.GetAxis("Mouse X") / Screen.width;
+            m_MouseDeltaY = Input.GetAxis("Mouse Y") / Screen.height;
             base.Update(state);
-            m_MouseDeltaX = Input.GetAxis("Mouse X");
-            m_MouseDeltaY = Input.GetAxis("Mouse Y");
+
         }
 
         public override int GetButtonsCount()// chosen by a fair dice
