@@ -138,13 +138,17 @@ namespace KSPAdvancedFlyByWire
         private ControllerPreset GetCurrentPreset(IController controller)
         {
             var config = m_Configuration.GetConfigurationByIController(controller);
-            var preset = config.presets[config.currentPreset];
-            if(preset == null)
+
+            if(config.currentPreset >= config.presets.Count)
             {
-                print("invalid preset");
+                config.currentPreset = 0;
+                if(config.presets.Count == 0)
+                {
+                    config.presets.Add(new ControllerPreset());
+                }
             }
-            
-            return preset;
+
+            return config.presets[config.currentPreset];
         }
 
         public void SetAnalogInputCurveType(IController controller, CurveType type)
@@ -153,6 +157,8 @@ namespace KSPAdvancedFlyByWire
             config.analogInputCurve = type;
             config.iface.analogEvaluationCurve = CurveFactory.Instantiate(type);
         }
+
+        private List<PresetEditor> presetEditors = new List<PresetEditor>();
 
         void DoMainWindow(int index)
         {
@@ -164,11 +170,13 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.Label(controller.Key.ToString() + "-" + controller.Value.ToString());
 
                 bool isEnabled = false;
+                ControllerConfiguration config = null;
                 foreach (var ctrl in m_Configuration.controllers)
                 {
                     if(ctrl.wrapper == controller.Key && ctrl.controllerIndex == controller.Value.Key)
                     {
                         isEnabled = true;
+                        config = ctrl;
                         break;
                     }
                 }
@@ -182,6 +190,14 @@ namespace KSPAdvancedFlyByWire
                     if(GUILayout.Button("disable"))
                     {
                         DeactivateController(controller.Key, controller.Value.Key);
+                    }
+                }
+
+                if(isEnabled)
+                {
+                    if(GUILayout.Button("edit"))
+                    {
+                        presetEditors.Add(new PresetEditor(config));
                     }
                 }
 
@@ -624,7 +640,11 @@ namespace KSPAdvancedFlyByWire
             }
            
             GUI.Window(0, new Rect(32, 32, 400, 600), DoMainWindow, "Advanced FlyByWire");
-            //PresetEditor.OnGUI();
+
+            foreach (var presetEditor in presetEditors)
+            {
+                presetEditor.OnGUI();
+            }
         }
 
         private void OnShowUI()

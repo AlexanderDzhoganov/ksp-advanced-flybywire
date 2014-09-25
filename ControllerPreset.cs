@@ -165,7 +165,7 @@ namespace KSPAdvancedFlyByWire
                 Bitset expectedState = maskActionPair.Key;
                 bool match = true;
 
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < state.m_NumBits; i++)
                 {
                     if (expectedState.Get(i))
                     {
@@ -184,6 +184,19 @@ namespace KSPAdvancedFlyByWire
             }
 
             return DiscreteAction.None;
+        }
+
+        public Bitset GetBitsetForDiscreteBinding(DiscreteAction action)
+        {
+            foreach (var maskActionPair in discreteActionsMap)
+            {
+                if (maskActionPair.Value == action)
+                {
+                    return maskActionPair.Key;
+                }
+            }
+
+            return null;
         }
 
         public void SetContinuousBinding(int axis, Bitset state, ContinuousAction action)

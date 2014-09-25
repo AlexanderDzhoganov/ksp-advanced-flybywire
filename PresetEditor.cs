@@ -12,37 +12,70 @@ namespace KSPAdvancedFlyByWire
     public class PresetEditor
     {
 
-        public static Vector2 position = new Vector2(128, 128);
-        public static Vector2 size = new Vector2(512, 512);
+        public PresetEditor(ControllerConfiguration controller)
+        {
+            m_Controller = controller;
+        }
 
-        private static DropDownList m_PresetsDropDown = new DropDownList();
+        private ControllerConfiguration m_Controller;
 
-        private static void SelectionChanged(int index, int oldIndex)
+        public Vector2 position = new Vector2(128, 128);
+        public Vector2 size = new Vector2(512, 512);
+
+        private DropDownList m_PresetsDropDown = new DropDownList();
+
+        private void SelectionChanged(int index, int oldIndex)
         {
 
         }
 
-        public static void DoWindow(int window)
+        private DiscreteAction m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+
+        private Vector2 m_ScrollPosition = new Vector2(0, 0);
+
+        public void DoWindow(int window)
         {
-            m_PresetsDropDown.SelectionChanged += SelectionChanged;
-            m_PresetsDropDown.Items = new List<string>();
-            m_PresetsDropDown.Items.Add("hello");
-            m_PresetsDropDown.Items.Add("world");
-            m_PresetsDropDown.Items.Add("!");
+            m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
-            m_PresetsDropDown.DrawBlockingSelector();
-            GUILayout.BeginVertical();
-            m_PresetsDropDown.DrawButton();
-            GUILayout.Label("hello world");
+            GUILayout.Label("Discrete actions:");
 
-            GUILayout.EndVertical();
-            m_PresetsDropDown.DrawDropDown();
-            m_PresetsDropDown.CloseOnOutsideClick();
+            var currentPreset = m_Controller.presets[m_Controller.currentPreset];
+            foreach(var discreteAction in (DiscreteAction[])Enum.GetValues(typeof(DiscreteAction)))
+            {
+                GUILayout.BeginHorizontal();
 
-            GUI.DragWindow();
+                GUILayout.Label(discreteAction.ToString());
+
+                GUILayout.FlexibleSpace();
+
+                string label = "FIXME!!!!!";
+
+                var bitset = currentPreset.GetBitsetForDiscreteBinding(discreteAction);
+                if (bitset == null)
+                {
+                    if(m_CurrentlyEditingDiscreteAction == discreteAction)
+                    {
+                        label = "Press desired combination";
+                    }
+                    else
+                    {
+                        label = "Click to assign";
+                    }
+                }
+                else
+                {
+                    label = m_Controller.iface.ConvertMaskToName(bitset);
+                }
+
+                GUILayout.Button(label);
+
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.EndScrollView();
         }
 
-        public static void OnGUI()
+        public void OnGUI()
         {
             GUI.Window(1337, new Rect(position.x, position.y, size.x, size.y), DoWindow, "Fly-By-Wire Preset Editor");
         }

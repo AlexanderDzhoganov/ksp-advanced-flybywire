@@ -18,6 +18,10 @@ namespace KSPAdvancedFlyByWire
 
         public KeyboardMouseController()
         {
+             buttonStates = new bool[GetButtonsCount()];
+             axisPositiveDeadZones = new float[GetAxesCount()];
+             axisNegativeDeadZones = new float[GetAxesCount()];
+
             for (int i = 0; i < 10; i++)
             {
                 m_NameLookupTable.Add(i, i.ToString());
@@ -129,7 +133,10 @@ namespace KSPAdvancedFlyByWire
 
         public override bool GetButtonState(int button)
         {
-            return Input.GetKey(GetButtonName(button));
+            var name = GetButtonName(button);
+            if (name == "unknown") return false;
+
+            return Input.GetKey(name);
         }
 
         public override float GetAnalogInputState(int analogInput) // 0 is X, 1 is Y 

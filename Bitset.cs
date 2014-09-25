@@ -18,13 +18,16 @@ namespace KSPAdvancedFlyByWire
 
         public Bitset(int numBits)
         {
+            m_NumBits = numBits;
+
             if (numBits < 32)
             {
                 numBits = 32;
             }
 
-            m_Data = new int[numBits / 32];
-            for (var i = 0; i < numBits / 32; i++)
+            int numInts = numBits / 32 + ((numBits % 32 == 0) ? 0 : 1);
+            m_Data = new int[numInts];
+            for (var i = 0; i < numInts; i++)
             {
                 m_Data[i] = 0;
             }
@@ -32,13 +35,17 @@ namespace KSPAdvancedFlyByWire
 
         public Bitset(int numBits, int initialValue)
         {
+            m_NumBits = numBits;
+
             if (numBits < 32)
             {
                 numBits = 32;
             }
 
-            m_Data = new int[numBits / 32];
-            for (var i = 0; i < numBits / 32; i++)
+            int numInts = numBits / 32 + ((numBits % 32 == 0) ? 0 : 1);
+
+            m_Data = new int[numInts];
+            for (var i = 0; i < numInts; i++)
             {
                 m_Data[i] = 0;
             }
@@ -46,16 +53,14 @@ namespace KSPAdvancedFlyByWire
             m_Data[0] = initialValue;
         }
 
-        public void Set(int bit, bool state = true)
+        public void Set(int bit)
         {
             if (bit >= m_NumBits)
             {
                 return;
             }
 
-            int pos = bit / 32;
-            int posLocal = bit - 32 * pos;
-            m_Data[pos] |= 1 << posLocal;
+            m_Data[bit / 32] |= 1 << (bit % 32);
         }
 
         public bool Get(int bit)
@@ -65,9 +70,7 @@ namespace KSPAdvancedFlyByWire
                 return false;
             }
 
-            int pos = bit / 32;
-            int posLocal = bit - 32 * pos;
-            return (m_Data[pos] & (1 << posLocal)) != 0;
+            return (m_Data[bit / 32] & (1 << (bit % 32))) != 0;
         }
     
     }

@@ -115,7 +115,7 @@ namespace KSPAdvancedFlyByWire
 
         public override string GetButtonName(int id)
         {
-            switch ((Button)id)
+            switch ((Button)(1 << id))
             {
             case Button.DPadLeft:
                 return "Dpad left";
@@ -147,9 +147,9 @@ namespace KSPAdvancedFlyByWire
                 return "Right stick";
             case Button.Guide:
                 return "Guide";
+            default:
+                return "bad index - " + id.ToString();
             }
-
-            return "";
         }
 
         public override int GetAxesCount()
