@@ -21,15 +21,10 @@ namespace KSPAdvancedFlyByWire
         private Configuration m_Configuration = null;
         private string m_ConfigurationPath = "advanced_flybywire_config.xml";
 
-        private IController m_Controller = null;
-
         private float m_Throttle = 0.0f;
         private bool m_CallbackSet = false;
 
         private FlightInputCallback m_Callback;
-
-        private HashSet<Bitset> m_EvaluatedDiscreteActionMasks = new HashSet<Bitset>();
-
         private List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>> m_CustomActions = new List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>>();
 
         public void RegisterCustomAction(string name, ControllerPreset.OnCustomActionCallback callback)
@@ -37,26 +32,30 @@ namespace KSPAdvancedFlyByWire
             m_CustomActions.Add(new KeyValuePair<string, ControllerPreset.OnCustomActionCallback>(name, callback));
         }
 
-        public void SwapController(InputWrapper wrapper, int controllerIndex)
+        public void AddController(InputWrapper wrapper, int controllerIndex)
         {
-            m_Configuration.wrapper = wrapper;
-            m_Configuration.controllerIndex = controllerIndex;
+            ControllerConfiguration controller = new ControllerConfiguration();
+
+            controller.wrapper = wrapper;
+            controller.controllerIndex = controllerIndex;
 
             if (wrapper == InputWrapper.XInput)
             {
-                m_Controller = new XInputController(m_Configuration.controllerIndex);
+                controller.iface = new XInputController(controller.controllerIndex);
             }
             else
             {
-                m_Controller = new SDLController(m_Configuration.controllerIndex);
+                controller.iface = new SDLController(controller.controllerIndex);
             }
 
-            m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(m_Configuration.analogInputCurve);
-            m_Controller.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
-            m_Controller.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
+            controller.iface.analogEvaluationCurve = CurveFactory.Instantiate(controller.analogInputCurve);
+            controller.iface.buttonPressedCallback = new XInputController.ButtonPressedCallback(ButtonPressedCallback);
+            controller.iface.buttonReleasedCallback = new XInputController.ButtonReleasedCallback(ButtonReleasedCallback);
 
-            m_Configuration.presets = DefaultControllerPresets.GetDefaultPresets(m_Controller);
-            m_Configuration.currentPreset = 0;
+            controller.presets = DefaultControllerPresets.GetDefaultPresets(controller.iface);
+            controller.currentPreset = 0;
+
+            m_Configuration.controllers.Add(controller);
         }
 
         public void SaveConfigurationToDisk()
@@ -92,12 +91,16 @@ namespace KSPAdvancedFlyByWire
                 Configuration.Serialize(m_ConfigurationPath, m_Configuration);
             }
 
-            SwapController(m_Configuration.wrapper, m_Configuration.controllerIndex);
+            if (m_Configuration.controllers.Count == 0)
+            {
+                AddController(InputWrapper.XInput, 0);
+            }
         }
 
-        private ControllerPreset GetCurrentPreset()
+        private ControllerPreset GetCurrentPreset(IController controller)
         {
-            var preset = m_Configuration.presets[m_Configuration.currentPreset];
+            var config = m_Configuration.GetConfigurationByIController(controller);
+            var preset = config.presets[config.currentPreset];
             if(preset == null)
             {
                 print("invalid preset");
@@ -106,15 +109,16 @@ namespace KSPAdvancedFlyByWire
             return preset;
         }
 
-        public void SetAnalogInputCurveType(CurveType type)
+        public void SetAnalogInputCurveType(IController controller, CurveType type)
         {
-            m_Configuration.analogInputCurve = type;
-            m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(type);
+            var config = m_Configuration.GetConfigurationByIController(controller);
+            config.analogInputCurve = type;
+            config.iface.analogEvaluationCurve = CurveFactory.Instantiate(type);
         }
 
         void DoMainWindow(int index)
         {
-            string buttonsMask = "";
+          /*  string buttonsMask = "";
 
             for (int i = 0; i < m_Controller.GetButtonsCount(); i++)
             {
@@ -130,42 +134,46 @@ namespace KSPAdvancedFlyByWire
                 label += m_Controller.GetAxisName(i) + " ";
                 label += m_Controller.GetAnalogInputState(i);
                 GUILayout.Label(label);
-            }
+            }*/
         }
 
         void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
         {
-            Bitset mask = m_Controller.GetButtonsMask();
+            var config = m_Configuration.GetConfigurationByIController(controller);
 
-            if(m_EvaluatedDiscreteActionMasks.Contains(mask))
+            Bitset mask = controller.GetButtonsMask();
+
+            if (config.evaluatedDiscreteActionMasks.Contains(mask))
             {
                 return;
             }
 
-            DiscreteAction action = GetCurrentPreset().GetDiscreteBinding(mask);
+            DiscreteAction action = GetCurrentPreset(controller).GetDiscreteBinding(mask);
             if(action != DiscreteAction.None)
             {
-                EvaluateDiscreteAction(action, state);
-                m_EvaluatedDiscreteActionMasks.Add(mask);
+                EvaluateDiscreteAction(config, action, state);
+                config.evaluatedDiscreteActionMasks.Add(mask);
             }
 
-            ControllerPreset.OnCustomActionCallback customAction = GetCurrentPreset().GetCustomBinding(mask);
+            ControllerPreset.OnCustomActionCallback customAction = GetCurrentPreset(controller).GetCustomBinding(mask);
             if (customAction != null)
             {
                 customAction();
-                m_EvaluatedDiscreteActionMasks.Add(mask);
+                config.evaluatedDiscreteActionMasks.Add(mask);
             }
         }
 
         void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state)
         {
+            var config = m_Configuration.GetConfigurationByIController(controller);
+
             List<Bitset> masksToRemove = new List<Bitset>();
 
-            foreach (Bitset evaluatedMask in m_EvaluatedDiscreteActionMasks)
+            foreach (Bitset evaluatedMask in config.evaluatedDiscreteActionMasks)
             {
-                for(int i = 0; i < m_Controller.GetButtonsCount(); i++)
+                for (int i = 0; i < controller.GetButtonsCount(); i++)
                 {
-                   if (!m_Controller.GetButtonState(i) && evaluatedMask.Get(i))
+                    if (!controller.GetButtonState(i) && evaluatedMask.Get(i))
                    {
                        masksToRemove.Add(evaluatedMask);
                        break;
@@ -175,33 +183,36 @@ namespace KSPAdvancedFlyByWire
 
             foreach (Bitset maskRemove in masksToRemove)
             {
-                m_EvaluatedDiscreteActionMasks.Remove(maskRemove);
+                config.evaluatedDiscreteActionMasks.Remove(maskRemove);
             }
 
-            EvaluateDiscreteActionRelease(GetCurrentPreset().GetDiscreteBinding(m_Controller.GetButtonsMask()), state);
+            EvaluateDiscreteActionRelease(config, GetCurrentPreset(controller).GetDiscreteBinding(controller.GetButtonsMask()), state);
         }
 
         private void OnFlyByWire(FlightCtrlState state)
         {
             FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(true);
 
-            m_Controller.Update(state);
-            state.mainThrottle = m_Throttle;
-
-            for (int i = 0; i < m_Controller.GetAxesCount(); i++)
+            foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
-                List<ContinuousAction> actions = GetCurrentPreset().GetContinuousBinding(i, m_Controller.GetButtonsMask());
-                if(actions == null)
-                {
-                    continue;
-                }
+                config.iface.Update(state);
+                state.mainThrottle = m_Throttle;
 
-                foreach (var action in actions)
+                for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
-                    float input = m_Controller.GetAnalogInputState(i);
-                    if(input != 0.0f)
+                    List<ContinuousAction> actions = GetCurrentPreset(config.iface).GetContinuousBinding(i, config.iface.GetButtonsMask());
+                    if (actions == null)
                     {
-                        EvaluateContinuousAction(action, m_Controller.GetAnalogInputState(i), state);
+                        continue;
+                    }
+
+                    foreach (var action in actions)
+                    {
+                        float input = config.iface.GetAnalogInputState(i);
+                        if (input != 0.0f)
+                        {
+                            EvaluateContinuousAction(config, action, config.iface.GetAnalogInputState(i), state);
+                        }
                     }
                 }
             }
@@ -213,8 +224,9 @@ namespace KSPAdvancedFlyByWire
             return x < min ? min : x > max ? max : x;
         }
         
-        private void EvaluateDiscreteAction(DiscreteAction action, FlightCtrlState state)
+        private void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
         {
+
             KerbalEVA eva = null;
             if (FlightGlobals.ActiveVessel.isEVA)
             {
@@ -226,59 +238,59 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.None:
                 return;
             case DiscreteAction.YawPlus:
-                state.yaw += m_Configuration.discreteActionStep;
+                state.yaw += controller.discreteActionStep;
                 state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YawMinus:
-                state.yaw -= m_Configuration.discreteActionStep;
+                state.yaw -= controller.discreteActionStep;
                 state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
                 return;
             case DiscreteAction.PitchPlus:
-                state.pitch += m_Configuration.discreteActionStep;
+                state.pitch += controller.discreteActionStep;
                 state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
                 return;
             case DiscreteAction.PitchMinus:
-                state.pitch -= m_Configuration.discreteActionStep;
+                state.pitch -= controller.discreteActionStep;
                 state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
                 return;
             case DiscreteAction.RollPlus:
-                state.roll += m_Configuration.discreteActionStep;
+                state.roll += controller.discreteActionStep;
                 state.roll = Clamp(state.roll, -1.0f, 1.0f);
                 return;
             case DiscreteAction.RollMinus:
-                state.roll -= m_Configuration.discreteActionStep;
+                state.roll -= controller.discreteActionStep;
                 state.roll = Clamp(state.roll, -1.0f, 1.0f);
                 return;
             case DiscreteAction.XPlus:
-                state.X += m_Configuration.discreteActionStep;
+                state.X += controller.discreteActionStep;
                 state.X = Clamp(state.X, -1.0f, 1.0f);
                 return;
             case DiscreteAction.XMinus:
-                state.X -= m_Configuration.discreteActionStep;
+                state.X -= controller.discreteActionStep;
                 state.X = Clamp(state.X, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YPlus:
-                state.Y += m_Configuration.discreteActionStep;
+                state.Y += controller.discreteActionStep;
                 state.Y = Clamp(state.Y, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YMinus:
-                state.Y -= m_Configuration.discreteActionStep;
+                state.Y -= controller.discreteActionStep;
                 state.Y = Clamp(state.Y, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ZPlus:
-                state.Z += m_Configuration.discreteActionStep;
+                state.Z += controller.discreteActionStep;
                 state.Z = Clamp(state.Z, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ZMinus:
-                state.Z -= m_Configuration.discreteActionStep;
+                state.Z -= controller.discreteActionStep;
                 state.Z = Clamp(state.Z, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ThrottlePlus:
-                m_Throttle += m_Configuration.discreteActionStep;
+                m_Throttle += controller.discreteActionStep;
                 m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ThrottleMinus:
-                m_Throttle -= m_Configuration.discreteActionStep;
+                m_Throttle -= controller.discreteActionStep;
                 m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                 return;
             case DiscreteAction.Stage:
@@ -369,38 +381,38 @@ namespace KSPAdvancedFlyByWire
                 m_Throttle = 1.0f;
                 return;
             case DiscreteAction.NextPreset:
-                if (m_Configuration.currentPreset >= m_Configuration.presets.Count - 1)
+                if (controller.currentPreset >= controller.presets.Count - 1)
                 {
                     return;
                 }
 
-                m_Configuration.currentPreset++;
+                controller.currentPreset++;
                 return;
             case DiscreteAction.PreviousPreset:
-                if (m_Configuration.currentPreset <= 0)   
+                if (controller.currentPreset <= 0)   
                 {
                     return;
                 }
 
-                m_Configuration.currentPreset--;
+                controller.currentPreset--;
                 return;
             case DiscreteAction.CameraZoomPlus:
-                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_Configuration.discreteActionStep);
+                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + controller.discreteActionStep);
                 return; 
             case DiscreteAction.CameraZoomMinus:
-                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance - m_Configuration.discreteActionStep);
+                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance - controller.discreteActionStep);
                 return;
             case DiscreteAction.CameraXPlus:
-                FlightCamera.CamHdg += m_Configuration.discreteActionStep;
+                FlightCamera.CamHdg += controller.discreteActionStep;
                 return;
             case DiscreteAction.CameraXMinus:
-                FlightCamera.CamHdg -= m_Configuration.discreteActionStep;
+                FlightCamera.CamHdg -= controller.discreteActionStep;
                 return;
             case DiscreteAction.CameraYPlus:
-                FlightCamera.CamPitch += m_Configuration.discreteActionStep;
+                FlightCamera.CamPitch += controller.discreteActionStep;
                 return;
             case DiscreteAction.CameraYMinus:
-                FlightCamera.CamPitch -= m_Configuration.discreteActionStep;
+                FlightCamera.CamPitch -= controller.discreteActionStep;
                 return;
             case DiscreteAction.OrbitMapToggle:
                 if(!MapView.MapIsEnabled)
@@ -455,7 +467,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void EvaluateDiscreteActionRelease(DiscreteAction action, FlightCtrlState state)
+        private void EvaluateDiscreteActionRelease(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
         {
             switch (action)
             {
@@ -467,7 +479,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void EvaluateContinuousAction(ContinuousAction action, float value, FlightCtrlState state)
+        private void EvaluateContinuousAction(ControllerConfiguration controller, ContinuousAction action, float value, FlightCtrlState state)
         {
             switch (action)
             {
@@ -514,11 +526,11 @@ namespace KSPAdvancedFlyByWire
                     m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.ThrottleIncrement:
-                    m_Throttle += value * m_Configuration.incrementalThrottleSensitivity;
+                    m_Throttle += value * controller.incrementalThrottleSensitivity;
                     m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.ThrottleDecrement:
-                    m_Throttle -= value * m_Configuration.incrementalThrottleSensitivity;
+                    m_Throttle -= value * controller.incrementalThrottleSensitivity;
                     m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.CameraX:

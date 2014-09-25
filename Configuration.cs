@@ -10,17 +10,41 @@ namespace KSPAdvancedFlyByWire
 {
 
     [Serializable]
-    public class Configuration
+    public class ControllerConfiguration
     {
-
         public InputWrapper wrapper = InputWrapper.XInput;
         public int controllerIndex = 0;
         public List<ControllerPreset> presets = new List<ControllerPreset>();
         public int currentPreset = 0;
-
-        public float discreteActionStep = 0.15f;
         public CurveType analogInputCurve = CurveType.XSquared;
+        public float discreteActionStep = 0.15f;
         public float incrementalThrottleSensitivity = 0.05f;
+
+        [NonSerialized]
+        public IController iface;
+
+        [NonSerialized]
+        public HashSet<Bitset> evaluatedDiscreteActionMasks = new HashSet<Bitset>();
+    }
+
+    [Serializable]
+    public class Configuration
+    {
+
+        public List<ControllerConfiguration> controllers = new List<ControllerConfiguration>();
+
+        public ControllerConfiguration GetConfigurationByIController(IController controller)
+        {
+            foreach (ControllerConfiguration ctrlr in controllers)
+            {
+                if(ctrlr.iface == controller)
+                {
+                    return ctrlr;
+                }
+            }
+
+            return null;
+        }
 
         public static void Serialize(string filename, Configuration config)
         {

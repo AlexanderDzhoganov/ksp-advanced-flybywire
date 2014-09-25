@@ -30,3 +30,4 @@ C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ks
 C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.pdb
 D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\SDL2-CS.dll
 D:\Projects\ksp-advanced-flybywire\bin\x64\Debug\SDL2-CS.pdb
+C:\Users\Alex Dzhoganov\Documents\GitHub\ksp-advanced-flybywire\obj\x64\Debug\ksp-advanced-flybywire.csprojResolveAssemblyReference.cache
