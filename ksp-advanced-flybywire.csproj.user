@@ -7,8 +7,8 @@
     <StartWorkingDirectory>C:\Users\nlight\Desktop\ksp_test\</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <StartProgram>C:\Program Files %28x86%29\Steam\SteamApps\common\Kerbal Space Program\KSP_x64.exe</StartProgram>
-    <StartWorkingDirectory>C:\Program Files %28x86%29\Steam\SteamApps\common\Kerbal Space Program</StartWorkingDirectory>
+    <StartProgram>D:\Program Files\Steam\steamapps\common\Kerbal Space Program\KSP_x64.exe</StartProgram>
+    <StartWorkingDirectory>D:\Program Files\Steam\steamapps\common\Kerbal Space Program\</StartWorkingDirectory>
     <StartArguments>-popupwindow</StartArguments>
     <StartAction>Program</StartAction>
   </PropertyGroup>
