@@ -75,6 +75,7 @@
     <Compile Include="ConfigWindow.cs" />
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
+    <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="PresetEditor.cs" />
     <Compile Include="SDLController.cs" />
     <Compile Include="XInputController.cs" />
