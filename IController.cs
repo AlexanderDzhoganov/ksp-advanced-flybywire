@@ -75,6 +75,41 @@ namespace KSPAdvancedFlyByWire
             return mask;
         }
 
+        public virtual string ConvertMaskToName(Bitset mask, bool hasAxis = false, int axisIndex = 0)
+        {
+            string result = "";
+            bool isFirst = true;
+
+            for (int i = 0; i < GetButtonsCount(); i++)
+            {
+                if (mask.Get(i))
+                {
+                    if (!isFirst)
+                    {
+                        result += " + ";
+                    }
+                    else
+                    {
+                        isFirst = false;
+                    }
+
+                    result += GetButtonName(i);
+                }
+            }
+
+            if (hasAxis)
+            {
+                if (!isFirst)
+                {
+                    result += " + ";
+                }
+
+                result += GetAxisName(axisIndex);
+            }
+
+            return result;
+        }
+
     }
 
 }

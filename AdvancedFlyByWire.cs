@@ -13,6 +13,7 @@ namespace KSPAdvancedFlyByWire
     {
         XInput = 0,
         SDL = 1,
+        KeyboardMouse = 2,
     }
 
     [KSPAddon(KSPAddon.Startup.Flight, true)]
