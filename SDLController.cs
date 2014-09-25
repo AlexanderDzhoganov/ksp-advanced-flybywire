@@ -110,11 +110,16 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetAxesCount()
         {
-            return m_AxesCount;
+            return m_AxesCount * 2;
         }
 
         public override string GetAxisName(int id)
         {
+            if (id >= m_AxesCount)
+            {
+                return String.Format("Axis {0} Inverted", id - m_AxesCount);
+            }
+
             return String.Format("Axis {0}", id);
         }
 
@@ -125,7 +130,14 @@ namespace KSPAdvancedFlyByWire
 
         public override float GetAnalogInputState(int analogInput)
         {
-            return SDL.SDL_JoystickGetAxis(m_Joystick, analogInput);
+            float sign = 1.0f;
+            if (analogInput >= m_AxesCount)
+            {
+                analogInput -= m_AxesCount;
+                sign = -1.0f;
+            }
+
+            return SDL.SDL_JoystickGetAxis(m_Joystick, analogInput) * sign;
         }
 
     }
