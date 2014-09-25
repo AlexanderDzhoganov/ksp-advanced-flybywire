@@ -18,7 +18,6 @@ namespace KSPAdvancedFlyByWire
     [KSPAddon(KSPAddon.Startup.Flight, true)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
-        private KSP.IO.PluginConfiguration m_Config;
         private IController m_Controller = null;
 
         private List<ControllerPreset> m_Presets = new List<ControllerPreset>();
@@ -31,10 +30,19 @@ namespace KSPAdvancedFlyByWire
         private float m_Throttle = 0.0f;
         private bool m_CallbackSet = false;
 
-        private CameraManager.CameraMode m_OriginalCameraMode;
-
         private InputWrapper m_InputWrapper = InputWrapper.XInput;
         private int m_ControllerIndex = 0;
+
+        private FlightInputCallback m_Callback;
+
+        private HashSet<int> m_EvaluatedDiscreteActionMasks = new HashSet<int>();
+
+        private List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>> m_CustomActions = new List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>>();
+
+        public void RegisterCustomAction(string name, ControllerPreset.OnCustomActionCallback callback)
+        {
+            m_CustomActions.Add(new KeyValuePair<string, ControllerPreset.OnCustomActionCallback>(name, callback));
+        }
 
         public void SwapController(InputWrapper wrapper, int controllerIndex)
         {
@@ -78,12 +86,6 @@ namespace KSPAdvancedFlyByWire
         public void Awake()
         {
             print("KSPAdvancedFlyByWire: initialized");
-
-            m_Config = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
-            m_Config.load();
-
-            m_AnalogInputCurveType = m_Config.GetValue<CurveType>("AnalogInputCurveType", CurveType.XSquared);
-
             SwapController(m_InputWrapper, m_ControllerIndex);
         }
 
@@ -98,29 +100,10 @@ namespace KSPAdvancedFlyByWire
             return preset;
         }
 
-        void SetAnalogInputCurveType(CurveType type)
+        public void SetAnalogInputCurveType(CurveType type)
         {
             m_AnalogInputCurveType = type;
             m_Controller.analogEvaluationCurve = CurveFactory.Instantiate(type);
-        }
-
-        private void SavePresetsToDisk()
-        {
-            m_Config.SetValue("AnalogInputCurveType", m_AnalogInputCurveType);
-
-            m_Config.SetValue("PresetsCount", m_Presets.Count);
-            m_Config.SetValue("SelectedPreset", m_CurrentPreset);
-
-          /*  for (int i = 0; i < m_Presets.Count; i++)
-            {
-                m_Config.SetValue("Preset" + i, m_Presets[i]);
-            }*/
-
-            m_Config.save();
-        }
-
-        public void OnDestroy()
-        {
         }
 
         void DoMainWindow(int index)
@@ -144,9 +127,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private HashSet<int> m_EvaluatedDiscreteActionMasks = new HashSet<int>();
-
-        void ButtonPressedCallback(int button, FlightCtrlState state)
+        void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
         {
             int mask = m_Controller.GetButtonsMask();
 
@@ -161,9 +142,16 @@ namespace KSPAdvancedFlyByWire
                 EvaluateDiscreteAction(action, state);
                 m_EvaluatedDiscreteActionMasks.Add(mask);
             }
+
+            ControllerPreset.OnCustomActionCallback customAction = GetCurrentPreset().GetCustomBinding(mask);
+            if (customAction != null)
+            {
+                customAction();
+                m_EvaluatedDiscreteActionMasks.Add(mask);
+            }
         }
 
-        void ButtonReleasedCallback(int button, FlightCtrlState state)
+        void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state)
         {
             List<int> masksToRemove = new List<int>();
 
@@ -419,6 +407,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     MapView.ExitMapView();
                 }
+
                 return;
             case DiscreteAction.TimeWarpPlus:
                 TimeWarp.SetRate(TimeWarp.CurrentRateIndex + 1, false);
@@ -436,7 +425,6 @@ namespace KSPAdvancedFlyByWire
                 {
                     MapView.fetch.maneuverModeToggle.OnPress.Invoke();
                 }
-
                 return;
             case DiscreteAction.Screenshot:
                 return;
@@ -444,15 +432,6 @@ namespace KSPAdvancedFlyByWire
                 GamePersistence.SaveGame("persistent", HighLogic.SaveFolder, SaveMode.OVERWRITE);
                 return;
             case DiscreteAction.IVAViewToggle:
-                if (CameraManager.Instance.currentCameraMode != CameraManager.CameraMode.IVA)
-                {
-                    m_OriginalCameraMode = CameraManager.Instance.currentCameraMode;
-                    CameraManager.Instance.SetCameraMode(CameraManager.CameraMode.IVA);
-                }
-                else
-                {
-                    CameraManager.Instance.SetCameraMode(CameraManager.CameraMode.IVA);
-                }
                 return;
             case DiscreteAction.CameraViewToggle:
                 FlightCamera.fetch.SetNextMode();
@@ -567,8 +546,6 @@ namespace KSPAdvancedFlyByWire
                 m_CallbackSet = true;
             }
         }
-
-        private FlightInputCallback m_Callback;
 
         void OnGUI()
         {

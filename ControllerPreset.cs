@@ -110,7 +110,7 @@ namespace KSPAdvancedFlyByWire
         CameraZoom
     }
 
-    class ControllerPreset
+    public class ControllerPreset
     {
 
         public ControllerPreset(IController controller)
@@ -121,8 +121,11 @@ namespace KSPAdvancedFlyByWire
 
         public string name = "Default preset";
 
+        public delegate void OnCustomActionCallback();
+
         public List<KeyValuePair<int, DiscreteAction>> discreteActionsMap = new List<KeyValuePair<int, DiscreteAction>>();
         public Dictionary<int, List<KeyValuePair<int, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<int, ContinuousAction>>>();
+        public List<KeyValuePair<int, OnCustomActionCallback>> customActionsMap = new List<KeyValuePair<int, OnCustomActionCallback>>();
 
         public void SetDiscreteBinding(int state, DiscreteAction action)
         {
@@ -233,6 +236,39 @@ namespace KSPAdvancedFlyByWire
             }
             
             return actions;
+        }
+
+        public void SetCustomBinding(int state, OnCustomActionCallback action)
+        {
+            customActionsMap.Add(new KeyValuePair<int, OnCustomActionCallback>(state, action));
+        }
+
+        public OnCustomActionCallback GetCustomBinding(int state)
+        {
+            foreach (var maskActionPair in customActionsMap)
+            {
+                int expectedState = maskActionPair.Key;
+                bool match = true;
+
+                for (int i = 0; i < 32; i++)
+                {
+                    if (((1 << i) & expectedState) != 0)
+                    {
+                        if (((1 << i) & state) == 0)
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (match)
+                {
+                    return maskActionPair.Value;
+                }
+            }
+
+            return null;
         }
 
         private static int CompareKeys(KeyValuePair<int, ContinuousAction> a, KeyValuePair<int, ContinuousAction> b)

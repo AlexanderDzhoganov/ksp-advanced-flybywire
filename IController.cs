@@ -10,8 +10,8 @@ namespace KSPAdvancedFlyByWire
     public abstract class IController
     {
 
-        public delegate void ButtonPressedCallback(int button, FlightCtrlState state);
-        public delegate void ButtonReleasedCallback(int button, FlightCtrlState state);
+        public delegate void ButtonPressedCallback(IController controller, int button, FlightCtrlState state);
+        public delegate void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state);
 
         public ButtonPressedCallback buttonPressedCallback = null;
         public ButtonReleasedCallback buttonReleasedCallback = null;
@@ -32,7 +32,7 @@ namespace KSPAdvancedFlyByWire
 
                     if (buttonPressedCallback != null)
                     {
-                        buttonPressedCallback(i, state);
+                        buttonPressedCallback(this, i, state);
                     }
                 }
                 else if (!GetButtonState(i) && buttonStates[i])
@@ -41,7 +41,7 @@ namespace KSPAdvancedFlyByWire
 
                     if (buttonReleasedCallback != null)
                     {
-                        buttonReleasedCallback(i, state);
+                        buttonReleasedCallback(this, i, state);
                     }
                 }
             }
@@ -59,7 +59,7 @@ namespace KSPAdvancedFlyByWire
 
         public abstract float GetAnalogInputState(int analogInput);
 
-        public int GetButtonsMask()
+        public virtual int GetButtonsMask()
         {
             int mask = 0;
 
