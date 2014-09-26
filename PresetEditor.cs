@@ -24,11 +24,6 @@ namespace KSPAdvancedFlyByWire
 
         private DropDownList m_PresetsDropDown = new DropDownList();
 
-        private void SelectionChanged(int index, int oldIndex)
-        {
-
-        }
-
         private Bitset m_CurrentMask = null;
 
         public void SetCurrentBitmask(Bitset mask)
@@ -56,9 +51,7 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.BeginHorizontal();
-
                 GUILayout.Label(action.ToString());
-
                 GUILayout.FlexibleSpace();
 
                 string label = "";
@@ -94,6 +87,7 @@ namespace KSPAdvancedFlyByWire
                     if (m_CurrentlyEditingDiscreteAction != action)
                     {
                         m_CurrentlyEditingDiscreteAction = action;
+                        m_CurrentlyEditingContinuousAction = ContinuousAction.None;
                     }
 
                     m_CurrentMask = null;
@@ -106,37 +100,53 @@ namespace KSPAdvancedFlyByWire
 
             foreach (var action in (ContinuousAction[])Enum.GetValues(typeof(ContinuousAction)))
             {
-                if(action == ContinuousAction.None)
+                if (action == ContinuousAction.None)
                 {
                     continue;
                 }
 
                 GUILayout.BeginHorizontal();
-
                 GUILayout.Label(action.ToString());
-
                 GUILayout.FlexibleSpace();
 
-                string label = "FIXME!!!!!";
+                string label = "";
 
-                var bitset = currentPreset.GetBitsetForContinuousBinding(action);
-                if (bitset.Value == null)
+                var axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
+                if (m_CurrentlyEditingContinuousAction == action)
                 {
-                    if (m_CurrentlyEditingContinuousAction == action)
+                    label = "Press desired combination";
+
+                    if (m_CurrentMask != null)
                     {
-                        label = "Press desired combination";
+                        currentPreset.SetContinuousBinding(axisBitsetPair.Key, m_CurrentMask, action);
+                        m_CurrentMask = null;
+                        m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
                     }
-                    else
+                }
+
+                axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
+                if (m_CurrentlyEditingContinuousAction != action)
+                {
+                    if (axisBitsetPair.Value == null)
                     {
                         label = "Click to assign";
                     }
-                }
-                else
-                {
-                    label = m_Controller.iface.ConvertMaskToName(bitset.Value, true, bitset.Key);
+                    else
+                    {
+                        label = m_Controller.iface.ConvertMaskToName(axisBitsetPair.Value, true, axisBitsetPair.Key);
+                    }
                 }
 
-                GUILayout.Button(label);
+                if (GUILayout.Button(label, GUILayout.Width(256)))
+                {
+                    if (m_CurrentlyEditingContinuousAction != action)
+                    {
+                        m_CurrentlyEditingContinuousAction = action;
+                        m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+                    }
+
+                    m_CurrentMask = null;
+                }
 
                 GUILayout.EndHorizontal();
             }
