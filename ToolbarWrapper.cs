@@ -31,9 +31,8 @@ using UnityEngine;
 
 
 // TODO: Change to your plugin's namespace here.
-namespace ToolbarWrapper {
-
-
+namespace KSPAdvancedFlyByWire
+{
 
 	/**********************************************************\
 	*          --- DO NOT EDIT BELOW THIS COMMENT ---          *

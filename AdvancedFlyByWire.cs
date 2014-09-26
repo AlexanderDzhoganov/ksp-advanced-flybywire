@@ -20,10 +20,13 @@ namespace KSPAdvancedFlyByWire
 
         private FlightInputCallback m_Callback;
 
+        private bool m_UIActive = true;
         private bool m_UIHidden = false;
 
         private List<PresetEditor> m_PresetEditors = new List<PresetEditor>();
         private List<ControllerTest> m_ControllerTests = new List<ControllerTest>();
+
+        private IButton m_ToolbarButton = null;
 
         private void LoadState(ConfigNode configNode)
         {
@@ -50,6 +53,27 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onHideUI.Add(OnHideUI);
             GameEvents.onGameStateSave.Add(new EventData<ConfigNode>.OnEvent(SaveState));
             GameEvents.onGameStateLoad.Add(new EventData<ConfigNode>.OnEvent(LoadState));
+
+            if (ToolbarManager.ToolbarAvailable)
+            {
+                m_ToolbarButton = ToolbarManager.Instance.add("advancedflybywire", "mainButton");
+                m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire";
+                m_ToolbarButton.ToolTip = "Advanced Fly-By-Wire";
+                m_ToolbarButton.OnClick += new ClickHandler(OnToolbarButtonClick);
+            }
+        }
+
+        public void OnDestroy()
+        {
+            if (m_ToolbarButton != null)
+            {
+                m_ToolbarButton.Destroy();
+            }
+        }
+
+        void OnToolbarButtonClick(ClickEvent ev)
+        {
+            m_UIActive = true;
         }
 
         void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
@@ -500,6 +524,11 @@ namespace KSPAdvancedFlyByWire
 
         void DoMainWindow(int index)
         {
+            if (GUILayout.Button("Close window"))
+            {
+                m_UIActive = false;
+            }
+
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
             GUILayout.Label("Controllers:");
@@ -592,7 +621,7 @@ namespace KSPAdvancedFlyByWire
 
         void OnGUI()
         {
-            if (m_UIHidden)
+            if (m_UIHidden || !m_UIActive)
             {
                 return;
             }

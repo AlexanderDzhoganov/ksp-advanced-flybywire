@@ -9,39 +9,44 @@ using XInputDotNetPure;
 namespace KSPAdvancedFlyByWire
 {
 
-    public enum Button
+    namespace XInput
     {
-        DPadLeft = 1 << 0,
-        DPadRight = 1 << 1,
-        DPadUp = 1 << 2,
-        DPadDown = 1 << 3,
-        Back = 1 << 4,
-        Start = 1 << 5,
-        LB = 1 << 6,
-        RB = 1 << 7,
-        X = 1 << 8,
-        Y = 1 << 9,
-        A = 1 << 10,
-        B = 1 << 11,
-        LeftStick = 1 << 12,
-        RightStick = 1 << 13,
-        Guide = 1 << 14
-    }
 
-    public enum AnalogInput
-    {
-        LeftStickX = 0,
-        LeftStickY = 1,
-        RightStickX = 2,
-        RightStickY = 3,
-        LeftTrigger = 4,
-        RightTrigger = 5,
-        LeftStickXInverted = 6,
-        LeftStickYInverted = 7,
-        RightStickXInverted = 8,
-        RightStickYInverted = 9,
-        LeftTriggerInverted = 10,
-        RightTriggerInverted = 11
+        public enum Button
+        {
+            DPadLeft = 1 << 0,
+            DPadRight = 1 << 1,
+            DPadUp = 1 << 2,
+            DPadDown = 1 << 3,
+            Back = 1 << 4,
+            Start = 1 << 5,
+            LB = 1 << 6,
+            RB = 1 << 7,
+            X = 1 << 8,
+            Y = 1 << 9,
+            A = 1 << 10,
+            B = 1 << 11,
+            LeftStick = 1 << 12,
+            RightStick = 1 << 13,
+            Guide = 1 << 14
+        }
+
+        public enum AnalogInput
+        {
+            LeftStickX = 0,
+            LeftStickY = 1,
+            RightStickX = 2,
+            RightStickY = 3,
+            LeftTrigger = 4,
+            RightTrigger = 5,
+            LeftStickXInverted = 6,
+            LeftStickYInverted = 7,
+            RightStickXInverted = 8,
+            RightStickYInverted = 9,
+            LeftTriggerInverted = 10,
+            RightTriggerInverted = 11
+        }
+
     }
 
     public class XInputController : IController
@@ -120,37 +125,37 @@ namespace KSPAdvancedFlyByWire
 
         public override string GetButtonName(int id)
         {
-            switch ((Button)(1 << id))
+            switch ((XInput.Button)(1 << id))
             {
-            case Button.DPadLeft:
+            case XInput.Button.DPadLeft:
                 return "D-Pad Left";
-            case Button.DPadRight:
+            case XInput.Button.DPadRight:
                 return "D-Pad Right";
-            case Button.DPadUp:
+            case XInput.Button.DPadUp:
                 return "D-Pad Up";
-            case Button.DPadDown:
+            case XInput.Button.DPadDown:
                 return "D-Pad Down";
-            case Button.Back:
+            case XInput.Button.Back:
                 return "Back";
-            case Button.Start:
+            case XInput.Button.Start:
                 return "Start";
-            case Button.LB:
+            case XInput.Button.LB:
                 return "LB";
-            case Button.RB:
+            case XInput.Button.RB:
                 return "RB";
-            case Button.X:
+            case XInput.Button.X:
                 return "X";
-            case Button.Y:
+            case XInput.Button.Y:
                 return "Y";
-            case Button.A:
+            case XInput.Button.A:
                 return "A";
-            case Button.B:
+            case XInput.Button.B:
                 return "B";
-            case Button.LeftStick:
+            case XInput.Button.LeftStick:
                 return "Left Stick (press)";
-            case Button.RightStick:
+            case XInput.Button.RightStick:
                 return "Right Stick (press)";
-            case Button.Guide:
+            case XInput.Button.Guide:
                 return "Guide";
             default:
                 return "bad index - " + id.ToString();
@@ -164,31 +169,31 @@ namespace KSPAdvancedFlyByWire
 
         public override string GetAxisName(int id)
         {
-            switch ((AnalogInput)id)
+            switch ((XInput.AnalogInput)id)
             {
-                case AnalogInput.LeftStickX:
+                case XInput.AnalogInput.LeftStickX:
                     return "Left Stick X";
-                case AnalogInput.LeftStickY:
+                case XInput.AnalogInput.LeftStickY:
                     return "Left Stick Y";
-                case AnalogInput.RightStickX:
+                case XInput.AnalogInput.RightStickX:
                     return "Right Stick X";
-                case AnalogInput.RightStickY:
+                case XInput.AnalogInput.RightStickY:
                     return "Right Stick Y";
-                case AnalogInput.LeftTrigger:
+                case XInput.AnalogInput.LeftTrigger:
                     return "Left Trigger";
-                case AnalogInput.RightTrigger:
+                case XInput.AnalogInput.RightTrigger:
                     return "Right Trigger";
-                case AnalogInput.LeftStickXInverted:
+                case XInput.AnalogInput.LeftStickXInverted:
                     return "Left Stick X (Inverted)";
-                case AnalogInput.LeftStickYInverted:
+                case XInput.AnalogInput.LeftStickYInverted:
                     return "Left Stick Y (Inverted)";
-                case AnalogInput.RightStickXInverted:
+                case XInput.AnalogInput.RightStickXInverted:
                     return "Right Stick X (Inverted)";
-                case AnalogInput.RightStickYInverted:
+                case XInput.AnalogInput.RightStickYInverted:
                     return "Right Stick Y (Inverted)";
-                case AnalogInput.LeftTriggerInverted:
+                case XInput.AnalogInput.LeftTriggerInverted:
                     return "Left Trigger (Inverted)";
-                case AnalogInput.RightTriggerInverted:
+                case XInput.AnalogInput.RightTriggerInverted:
                     return "Right Trigger (Inverted)";
             }
 
@@ -197,37 +202,37 @@ namespace KSPAdvancedFlyByWire
 
         public override bool GetButtonState(int button)
         {
-            switch ((Button)(1 << button))
+            switch ((XInput.Button)(1 << button))
             {
-                case Button.DPadLeft:
+                case XInput.Button.DPadLeft:
                     return m_State.DPad.Left == ButtonState.Pressed;
-                case Button.DPadRight:
+                case XInput.Button.DPadRight:
                     return m_State.DPad.Right == ButtonState.Pressed;
-                case Button.DPadUp:
+                case XInput.Button.DPadUp:
                     return m_State.DPad.Up == ButtonState.Pressed;
-                case Button.DPadDown:
+                case XInput.Button.DPadDown:
                     return m_State.DPad.Down == ButtonState.Pressed;
-                case Button.Back:
+                case XInput.Button.Back:
                     return m_State.Buttons.Back == ButtonState.Pressed;
-                case Button.Start:
+                case XInput.Button.Start:
                     return m_State.Buttons.Start == ButtonState.Pressed;
-                case Button.LB:
+                case XInput.Button.LB:
                     return m_State.Buttons.LeftShoulder == ButtonState.Pressed;
-                case Button.RB:
+                case XInput.Button.RB:
                     return m_State.Buttons.RightShoulder == ButtonState.Pressed;
-                case Button.X:
+                case XInput.Button.X:
                     return m_State.Buttons.X == ButtonState.Pressed;
-                case Button.Y:
+                case XInput.Button.Y:
                     return m_State.Buttons.Y == ButtonState.Pressed;
-                case Button.A:
+                case XInput.Button.A:
                     return m_State.Buttons.A == ButtonState.Pressed;
-                case Button.B:
+                case XInput.Button.B:
                     return m_State.Buttons.B == ButtonState.Pressed;
-                case Button.LeftStick:
+                case XInput.Button.LeftStick:
                     return m_State.Buttons.LeftStick == ButtonState.Pressed;
-                case Button.RightStick:
+                case XInput.Button.RightStick:
                     return m_State.Buttons.RightStick == ButtonState.Pressed;
-                case Button.Guide:
+                case XInput.Button.Guide:
                     return m_State.Buttons.Guide == ButtonState.Pressed;
             }
 
@@ -238,42 +243,42 @@ namespace KSPAdvancedFlyByWire
         {
             float value = 0.0f;
 
-            switch ((AnalogInput)input)
+            switch ((XInput.AnalogInput)input)
             {
-                case AnalogInput.LeftStickX:
+                case XInput.AnalogInput.LeftStickX:
                     value = m_State.ThumbSticks.Left.X;
                     break;
-                case AnalogInput.LeftStickY:
+                case XInput.AnalogInput.LeftStickY:
                     value = m_State.ThumbSticks.Left.Y;
                     break;
-                case AnalogInput.RightStickX:
+                case XInput.AnalogInput.RightStickX:
                     value = m_State.ThumbSticks.Right.X;
                     break;
-                case AnalogInput.RightStickY:
+                case XInput.AnalogInput.RightStickY:
                     value = m_State.ThumbSticks.Right.Y;
                     break;
-                case AnalogInput.LeftTrigger:
+                case XInput.AnalogInput.LeftTrigger:
                     value = m_State.Triggers.Left;
                     break;
-                case AnalogInput.RightTrigger:
+                case XInput.AnalogInput.RightTrigger:
                     value = m_State.Triggers.Right;
                     break;
-                case AnalogInput.LeftStickXInverted:
+                case XInput.AnalogInput.LeftStickXInverted:
                     value = -m_State.ThumbSticks.Left.X;
                     break;
-                case AnalogInput.LeftStickYInverted:
+                case XInput.AnalogInput.LeftStickYInverted:
                     value = -m_State.ThumbSticks.Left.Y;
                     break;
-                case AnalogInput.RightStickXInverted:
+                case XInput.AnalogInput.RightStickXInverted:
                     value = -m_State.ThumbSticks.Right.X;
                     break;
-                case AnalogInput.RightStickYInverted:
+                case XInput.AnalogInput.RightStickYInverted:
                     value = -m_State.ThumbSticks.Right.Y;
                     break;
-                case AnalogInput.LeftTriggerInverted:
+                case XInput.AnalogInput.LeftTriggerInverted:
                     value = -m_State.Triggers.Left;
                     break;
-                case AnalogInput.RightTriggerInverted:
+                case XInput.AnalogInput.RightTriggerInverted:
                     value = -m_State.Triggers.Right;
                     break;
             }
