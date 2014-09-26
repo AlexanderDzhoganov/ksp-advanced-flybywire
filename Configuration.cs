@@ -93,7 +93,7 @@ namespace KSPAdvancedFlyByWire
 
             controllers.Add(controller);
 
-            ScreenMessages.PostScreenMessage("CONTROLLER: " + controller.iface.GetControllerName(), 1.0f);
+            ScreenMessages.PostScreenMessage("CONTROLLER: " + controller.iface.GetControllerName(), 1.0f, ScreenMessageStyle.UPPER_CENTER);
         }
 
         public void DeactivateController(InputWrapper wrapper, int controllerIndex)

@@ -300,7 +300,7 @@ namespace KSPAdvancedFlyByWire
                     return;
                 }
                 controller.currentPreset++;
-                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f);
+                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.UPPER_CENTER);
                 return;
             case DiscreteAction.PreviousPreset:
                 if (controller.currentPreset <= 0)   
@@ -308,7 +308,7 @@ namespace KSPAdvancedFlyByWire
                     return;
                 }
                 controller.currentPreset--;
-                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f);
+                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.UPPER_CENTER);
                 return;
             case DiscreteAction.CameraZoomPlus:
                 FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + controller.discreteActionStep);
