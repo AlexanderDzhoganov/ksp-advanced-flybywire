@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
@@ -15,7 +14,7 @@ namespace KSPAdvancedFlyByWire
         private ControllerConfiguration m_Controller;
         private int m_EditorId;
 
-        private Rect windowRect = new Rect(128, 128, 512, 512);
+        private Rect windowRect = new Rect(976, 128, 385, 512);
 
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
@@ -58,6 +57,7 @@ namespace KSPAdvancedFlyByWire
             if (GUILayout.Button("Close window") || m_Controller == null || m_Controller.iface == null)
             {
                 shouldBeDestroyed = true;
+                m_Controller.controllerConfigurationOpen = false;
             }
 
             GUILayout.EndHorizontal();
@@ -147,6 +147,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             windowRect = GUI.Window(2672 + m_EditorId, windowRect, DoWindow, inputLockHash);
+            windowRect = Utility.ClampRect(windowRect, new Rect(0, 0, Screen.width, Screen.height));
         }
 
     }

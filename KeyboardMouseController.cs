@@ -119,7 +119,7 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetAxesCount()
         {
-            return 2;
+            return 0;
         }
 
         public override string GetAxisName(int id) // 0 is X, 1 is Y 

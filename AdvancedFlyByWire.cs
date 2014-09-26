@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
@@ -60,7 +59,7 @@ namespace KSPAdvancedFlyByWire
             if (ToolbarManager.ToolbarAvailable)
             {
                 m_ToolbarButton = ToolbarManager.Instance.add("advancedflybywire", "mainButton");
-                m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire";
+                m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire.png";
                 m_ToolbarButton.ToolTip = "Advanced Fly-By-Wire";
                 m_ToolbarButton.Visibility = new GameScenesVisibility(GameScenes.FLIGHT);
                 m_ToolbarButton.OnClick += new ClickHandler(OnToolbarButtonClick);
@@ -580,11 +579,12 @@ namespace KSPAdvancedFlyByWire
             if (GUILayout.Button("Close window"))
             {
                 m_UIActive = false;
+                InputLockManager.RemoveControlLock("AdvancedFlyByWireMainWindow");
             }
 
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
-            GUILayout.Label("Controllers:");
+            GUILayout.Label("Controllers");
 
             var controllers = IController.EnumerateAllControllers();
             foreach (var controller in controllers)
@@ -617,15 +617,27 @@ namespace KSPAdvancedFlyByWire
 
                 if (isEnabled)
                 {
+                    if (config.presetEditorOpen)
+                        GUI.enabled = false;
+
                     if (GUILayout.Button("Presets"))
                     {
                         m_PresetEditors.Add(new PresetEditorWindow(config, m_PresetEditors.Count));
+                        config.presetEditorOpen = true;
                     }
+
+                    GUI.enabled = true;
+
+                    if (config.controllerConfigurationOpen)
+                        GUI.enabled = false;
 
                     if (GUILayout.Button("Configuration"))
                     {
                         m_ControllerTests.Add(new ControllerConfigurationWindow(config, m_ControllerTests.Count));
+                        config.controllerConfigurationOpen = true;
                     }
+
+                    GUI.enabled = true;
 
                     GUILayout.EndHorizontal();
 
@@ -660,7 +672,6 @@ namespace KSPAdvancedFlyByWire
                         GUILayout.Button(">");
                         GUI.enabled = true;
                     }
-
                 }
 
                 GUILayout.EndHorizontal();
@@ -669,7 +680,7 @@ namespace KSPAdvancedFlyByWire
             GUILayout.EndScrollView();
         }
 
-        private Rect windowRect = new Rect(32, 32, 400, 256);
+        private Rect windowRect = new Rect(32, 64, 400, 576);
 
         void OnGUI()
         {
@@ -688,6 +699,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             windowRect = GUI.Window(0, windowRect, DoMainWindow, "Advanced Fly-By-Wire");
+            windowRect = Utility.ClampRect(windowRect, new Rect(0, 0, Screen.width, Screen.height));
 
             for (int i = 0; i < m_PresetEditors.Count; i++)
             {

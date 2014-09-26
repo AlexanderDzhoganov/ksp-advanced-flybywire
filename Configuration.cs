@@ -13,13 +13,20 @@ namespace KSPAdvancedFlyByWire
 
     public class ControllerConfiguration
     {
-        public InputWrapper wrapper = InputWrapper.XInput;
+        public InputWrapper wrapper = InputWrapper.SDL;
+     
         public int controllerIndex = 0;
         public List<ControllerPreset> presets = new List<ControllerPreset>();
         public int currentPreset = 0;
         public CurveType analogInputCurve = CurveType.XSquared;
         public float discreteActionStep = 0.15f;
         public float incrementalThrottleSensitivity = 0.05f;
+
+        [XmlIgnore()]
+        public bool presetEditorOpen = false;
+
+        [XmlIgnore()]
+        public bool controllerConfigurationOpen = false;
 
         public List<float> axisPositiveDeadZones = null;
         public List<float> axisNegativeDeadZones = null;
@@ -87,15 +94,19 @@ namespace KSPAdvancedFlyByWire
             controller.wrapper = wrapper;
             controller.controllerIndex = controllerIndex;
 
+#if _WIN32
             if (wrapper == InputWrapper.XInput)
             {
                 controller.iface = new XInputController(controller.controllerIndex);
             }
-            else if (wrapper == InputWrapper.SDL)
+#endif
+
+            if (wrapper == InputWrapper.SDL)
             {
                 controller.iface = new SDLController(controller.controllerIndex);
             }
-            else if (wrapper == InputWrapper.KeyboardMouse)
+
+            if (wrapper == InputWrapper.KeyboardMouse)
             {
                 controller.iface = new KeyboardMouseController();
             }
@@ -158,15 +169,19 @@ namespace KSPAdvancedFlyByWire
         {
             foreach (ControllerConfiguration config in controllers)
             {
+#if _WIN32
                 if (config.wrapper == InputWrapper.XInput)
                 {
                     config.iface = new XInputController(config.controllerIndex);
                 }
-                else if (config.wrapper == InputWrapper.SDL)
+#endif
+
+                if (config.wrapper == InputWrapper.SDL)
                 {
                     config.iface = new SDLController(config.controllerIndex);
                 }
-                else if (config.wrapper == InputWrapper.KeyboardMouse)
+
+                if (config.wrapper == InputWrapper.KeyboardMouse)
                 {
                     config.iface = new KeyboardMouseController();
                 }

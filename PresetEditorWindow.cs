@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
@@ -15,7 +14,7 @@ namespace KSPAdvancedFlyByWire
         private ControllerConfiguration m_Controller;
         private int m_EditorId;
 
-        private Rect windowRect = new Rect(128, 128, 512, 512);
+        private Rect windowRect = new Rect(448, 128, 512, 512);
 
         private Bitset m_CurrentMask = null;
 
@@ -50,6 +49,7 @@ namespace KSPAdvancedFlyByWire
             if (GUILayout.Button("Close window"))
             {
                 shouldBeDestroyed = true;
+                m_Controller.presetEditorOpen = false;
             }
 
             GUILayout.EndHorizontal();
@@ -99,6 +99,70 @@ namespace KSPAdvancedFlyByWire
             GUILayout.EndHorizontal();
 
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
+
+            GUILayout.Label("Continuous actions");
+
+            foreach (var action in (ContinuousAction[])Enum.GetValues(typeof(ContinuousAction)))
+            {
+                if (action == ContinuousAction.None)
+                {
+                    continue;
+                }
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(Stringify.ContinuousActionToString(action));
+                GUILayout.FlexibleSpace();
+
+                string label = "";
+
+                var axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
+                if (m_CurrentlyEditingContinuousAction == action)
+                {
+                    label = "Press desired combination";
+
+                    for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
+                    {
+                        if (m_Controller.iface.GetAxisState(i) != 0.0f)
+                        {
+                            currentPreset.SetContinuousBinding(i, m_Controller.iface.GetButtonsMask(), action);
+                            m_CurrentlyEditingContinuousAction = ContinuousAction.None;
+                        }
+                    }
+                }
+
+                axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
+                if (m_CurrentlyEditingContinuousAction != action)
+                {
+                    if (axisBitsetPair.Value == null)
+                    {
+                        label = "Click to assign";
+                    }
+                    else
+                    {
+                        label = m_Controller.iface.ConvertMaskToName(axisBitsetPair.Value, true, axisBitsetPair.Key);
+                    }
+                }
+
+                if (GUILayout.Button(label, GUILayout.Width(256)))
+                {
+                    if (m_CurrentlyEditingContinuousAction != action)
+                    {
+                        m_CurrentlyEditingContinuousAction = action;
+                        m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+                    }
+
+                    m_CurrentMask = null;
+                }
+
+                if (GUILayout.Button("X"))
+                {
+                    currentPreset.UnsetContinuousBinding(action);
+                    m_CurrentlyEditingContinuousAction = ContinuousAction.None;
+                    m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+                }
+
+                GUILayout.EndHorizontal();
+            }
 
             GUILayout.Label("Discrete actions");
 
@@ -162,75 +226,17 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.EndHorizontal();
             }
 
-            GUILayout.Label("Continuous actions");
-
-            foreach (var action in (ContinuousAction[])Enum.GetValues(typeof(ContinuousAction)))
-            {
-                if (action == ContinuousAction.None)
-                {
-                    continue;
-                }
-
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(Stringify.ContinuousActionToString(action));
-                GUILayout.FlexibleSpace();
-
-                string label = "";
-
-                var axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
-                if (m_CurrentlyEditingContinuousAction == action)
-                {
-                    label = "Press desired combination";
-
-                    for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++ )
-                    {
-                        if(m_Controller.iface.GetAxisState(i) != 0.0f)
-                        {
-                            currentPreset.SetContinuousBinding(i, m_Controller.iface.GetButtonsMask(), action);
-                            m_CurrentlyEditingContinuousAction = ContinuousAction.None;
-                        }
-                    }
-                }
-
-                axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
-                if (m_CurrentlyEditingContinuousAction != action)
-                {
-                    if (axisBitsetPair.Value == null)
-                    {
-                        label = "Click to assign";
-                    }
-                    else
-                    {
-                        label = m_Controller.iface.ConvertMaskToName(axisBitsetPair.Value, true, axisBitsetPair.Key);
-                    }
-                }
-
-                if (GUILayout.Button(label, GUILayout.Width(256)))
-                {
-                    if (m_CurrentlyEditingContinuousAction != action)
-                    {
-                        m_CurrentlyEditingContinuousAction = action;
-                        m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
-                    }
-
-                    m_CurrentMask = null;
-                }
-
-                if (GUILayout.Button("X"))
-                {
-                    currentPreset.UnsetContinuousBinding(action);
-                    m_CurrentlyEditingContinuousAction = ContinuousAction.None;
-                    m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
-                }
-
-                GUILayout.EndHorizontal();
-            }
-
             GUILayout.EndScrollView();
         }
 
         public void OnGUI()
         {
+            if (m_Controller.iface == null)
+            {
+                shouldBeDestroyed = true;
+                return;
+            }
+            
             if (windowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
             {
                 InputLockManager.SetControlLock(inputLockHash);
@@ -241,6 +247,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             windowRect = GUI.Window(1337 + m_EditorId, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
+            windowRect = Utility.ClampRect(windowRect, new Rect(0, 0, Screen.width, Screen.height));
         }
 
     }
