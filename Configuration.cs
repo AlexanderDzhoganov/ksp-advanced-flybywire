@@ -24,6 +24,29 @@ namespace KSPAdvancedFlyByWire
 
         [XmlIgnore()]
         public HashSet<Bitset> evaluatedDiscreteActionMasks = new HashSet<Bitset>();
+
+        public ControllerPreset GetCurrentPreset()
+        {
+            if (currentPreset >= presets.Count)
+            {
+                currentPreset = 0;
+                if (presets.Count == 0)
+                {
+                    presets.Add(new ControllerPreset());
+                }
+            }
+
+            return presets[currentPreset];
+        }
+
+        public void SetAnalogInputCurveType(CurveType type)
+        {
+            analogInputCurve = type;
+            if (iface != null)
+            {
+                iface.analogEvaluationCurve = CurveFactory.Instantiate(type);
+            }
+        }
     }
 
     public class Configuration
@@ -84,29 +107,6 @@ namespace KSPAdvancedFlyByWire
                     return;
                 }
             }
-        }
-
-        public void SetAnalogInputCurveType(IController controller, CurveType type)
-        {
-            var config = GetConfigurationByIController(controller);
-            config.analogInputCurve = type;
-            config.iface.analogEvaluationCurve = CurveFactory.Instantiate(type);
-        }
-
-        public ControllerPreset GetCurrentPreset(IController controller)
-        {
-            var config = GetConfigurationByIController(controller);
-
-            if (config.currentPreset >= config.presets.Count)
-            {
-                config.currentPreset = 0;
-                if (config.presets.Count == 0)
-                {
-                    config.presets.Add(new ControllerPreset());
-                }
-            }
-
-            return config.presets[config.currentPreset];
         }
 
         public void OnPreSerialize()

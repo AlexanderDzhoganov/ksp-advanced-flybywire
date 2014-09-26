@@ -22,7 +22,7 @@ namespace KSPAdvancedFlyByWire
 
         private bool m_UIHidden = false;
 
-        private List<PresetEditor> presetEditors = new List<PresetEditor>();
+        private List<PresetEditor> m_PresetEditors = new List<PresetEditor>();
 
         private void LoadState(ConfigNode configNode)
         {
@@ -51,48 +51,6 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGameStateLoad.Add(new EventData<ConfigNode>.OnEvent(LoadState));
         }
 
-        void DoMainWindow(int index)
-        {
-            var controllers = IController.EnumerateAllControllers();
-            foreach(var controller in controllers)
-            {
-                GUILayout.BeginHorizontal();
-
-                GUILayout.Label(controller.Key.ToString() + "-" + controller.Value.ToString());
-
-                bool isEnabled = false;
-                ControllerConfiguration config = m_Configuration.GetConfigurationByControllerType(controller.Key, controller.Value.Key);
-
-                if(!isEnabled && GUILayout.Button("enable"))
-                {
-                    m_Configuration.ActivateController
-                    (
-                        controller.Key,
-                        controller.Value.Key,
-                        new IController.ButtonPressedCallback(ButtonPressedCallback),
-                        new IController.ButtonReleasedCallback(ButtonReleasedCallback)
-                    ); 
-                }
-                else if(isEnabled)
-                {
-                    if(GUILayout.Button("disable"))
-                    {
-                        m_Configuration.DeactivateController(controller.Key, controller.Value.Key);
-                    }
-                }
-
-                if(isEnabled)
-                {
-                    if(GUILayout.Button("edit"))
-                    {
-                        presetEditors.Add(new PresetEditor(config));
-                    }
-                }
-
-                GUILayout.EndHorizontal();
-            }
-        }
-
         void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
         {
             var config = m_Configuration.GetConfigurationByIController(controller);
@@ -104,7 +62,7 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
-            List<DiscreteAction> actions = m_Configuration.GetCurrentPreset(controller).GetDiscreteBinding(mask);
+            List<DiscreteAction> actions = config.GetCurrentPreset().GetDiscreteBinding(mask);
             foreach(DiscreteAction action in actions)
             {
                 EvaluateDiscreteAction(config, action, state);
@@ -136,14 +94,14 @@ namespace KSPAdvancedFlyByWire
                 config.evaluatedDiscreteActionMasks.Remove(maskRemove);
             }
 
-            foreach (var presetEditor in presetEditors)
+            foreach (var presetEditor in m_PresetEditors)
             {
                 Bitset bitset = controller.lastUpdateMask.Copy();
                 bitset.Set(button);
                 presetEditor.SetCurrentBitmask(bitset);
             }
 
-            var actions = m_Configuration.GetCurrentPreset(controller).GetDiscreteBinding(controller.GetButtonsMask());
+            var actions = config.GetCurrentPreset().GetDiscreteBinding(controller.GetButtonsMask());
             foreach (DiscreteAction action in actions)
             {
                 EvaluateDiscreteActionRelease(config, action, state);
@@ -161,7 +119,7 @@ namespace KSPAdvancedFlyByWire
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
-                    List<ContinuousAction> actions = m_Configuration.GetCurrentPreset(config.iface).GetContinuousBinding(i, config.iface.GetButtonsMask());
+                    List<ContinuousAction> actions = config.GetCurrentPreset().GetContinuousBinding(i, config.iface.GetButtonsMask());
                     if (actions == null)
                     {
                         continue;
@@ -518,6 +476,57 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
+        private void OnShowUI()
+        {
+            m_UIHidden = false;
+        }
+
+        private void OnHideUI()
+        {
+            m_UIHidden = true;
+        }
+
+        void DoMainWindow(int index)
+        {
+            var controllers = IController.EnumerateAllControllers();
+            foreach (var controller in controllers)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(controller.Key.ToString() + "-" + controller.Value.ToString());
+
+                bool isEnabled = false;
+                ControllerConfiguration config = m_Configuration.GetConfigurationByControllerType(controller.Key, controller.Value.Key);
+
+                if (!isEnabled && GUILayout.Button("enable"))
+                {
+                    m_Configuration.ActivateController
+                    (
+                        controller.Key,
+                        controller.Value.Key,
+                        new IController.ButtonPressedCallback(ButtonPressedCallback),
+                        new IController.ButtonReleasedCallback(ButtonReleasedCallback)
+                    );
+                }
+                else if (isEnabled)
+                {
+                    if (GUILayout.Button("disable"))
+                    {
+                        m_Configuration.DeactivateController(controller.Key, controller.Value.Key);
+                    }
+                }
+
+                if (isEnabled)
+                {
+                    if (GUILayout.Button("edit"))
+                    {
+                        m_PresetEditors.Add(new PresetEditor(config));
+                    }
+                }
+
+                GUILayout.EndHorizontal();
+            }
+        }
+
         void OnGUI()
         {
             if (m_UIHidden)
@@ -538,20 +547,10 @@ namespace KSPAdvancedFlyByWire
 
             GUI.Window(0, rect, DoMainWindow, "Advanced FlyByWire");
 
-            foreach (var presetEditor in presetEditors)
+            foreach (var presetEditor in m_PresetEditors)
             {
                 presetEditor.OnGUI();
             }
-        }
-
-        private void OnShowUI()
-        {
-            m_UIHidden = false;
-        }
-
-        private void OnHideUI()
-        {
-            m_UIHidden = true;
         }
 
     }
