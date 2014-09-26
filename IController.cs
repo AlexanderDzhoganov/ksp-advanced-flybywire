@@ -20,17 +20,6 @@ namespace KSPAdvancedFlyByWire
         public delegate void ButtonPressedCallback(IController controller, int button, FlightCtrlState state);
         public delegate void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state);
 
-        public ButtonPressedCallback buttonPressedCallback = null;
-        public ButtonReleasedCallback buttonReleasedCallback = null;
-
-        public Curve analogEvaluationCurve = new Curve();
-
-        public bool[] buttonStates;
-        public float[] axisPositiveDeadZones;
-        public float[] axisNegativeDeadZones;
-
-        public Bitset lastUpdateMask;
-
         public static List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> EnumerateAllControllers()
         {
             List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> controllers = new List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>>();
@@ -48,6 +37,17 @@ namespace KSPAdvancedFlyByWire
             controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Mouse&Keyboard")));
             return controllers;
         }
+
+        public ButtonPressedCallback buttonPressedCallback = null;
+        public ButtonReleasedCallback buttonReleasedCallback = null;
+
+        public Curve analogEvaluationCurve = new Curve();
+
+        public bool[] buttonStates;
+        public float[] axisPositiveDeadZones;
+        public float[] axisNegativeDeadZones;
+
+        public Bitset lastUpdateMask;
 
         public virtual void Update(FlightCtrlState state)
         {

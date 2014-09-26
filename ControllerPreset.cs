@@ -10,6 +10,12 @@ using UnityEngine;
 namespace KSPAdvancedFlyByWire
 {
 
+    using DiscreteActionsMap = Dictionary<DiscreteAction, Bitset>;
+    using ContinuousActionsMap = Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>;
+
+    using SerializableDiscreteActionsMap = List<KeyValuePair<DiscreteAction, Bitset>>;
+    using SerializableContinuousActionsMap = List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>>;
+
     public enum DiscreteAction
     {
         None,
@@ -123,25 +129,23 @@ namespace KSPAdvancedFlyByWire
         public delegate void OnCustomActionCallback();
 
         [XmlIgnore()]
-        public Dictionary<DiscreteAction, Bitset> discreteActionsMap = new Dictionary<DiscreteAction, Bitset>();
+        public DiscreteActionsMap discreteActionsMap = new DiscreteActionsMap();
 
         [XmlIgnore()]
-        public Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>();
+        public ContinuousActionsMap continuousActionsMap = new ContinuousActionsMap();
 
-        public List<KeyValuePair<DiscreteAction, Bitset>> serializableDiscreteActionMap = new List<KeyValuePair<DiscreteAction, Bitset>>();
-        public List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>> serialiazableContinuousActionMap = new List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>>();
+        public SerializableDiscreteActionsMap serializableDiscreteActionMap = new SerializableDiscreteActionsMap();
+        public SerializableContinuousActionsMap serialiazableContinuousActionMap = new SerializableContinuousActionsMap();
 
         public void OnPreSerialize()
         {
             serialiazableContinuousActionMap.Clear();
-
             foreach(var keyValue in continuousActionsMap)
             {
                 serialiazableContinuousActionMap.Add(keyValue);
             }
 
             serializableDiscreteActionMap.Clear();
-
             foreach(var keyValue in discreteActionsMap)
             {
                 serializableDiscreteActionMap.Add(keyValue);
@@ -151,14 +155,12 @@ namespace KSPAdvancedFlyByWire
         public void OnPostDeserialize()
         {
             continuousActionsMap.Clear();
-
             foreach(var keyValue in serialiazableContinuousActionMap)
             {
                 continuousActionsMap.Add(keyValue.Key, keyValue.Value);
             }
 
             discreteActionsMap.Clear();
-
             foreach(var keyValue in serializableDiscreteActionMap)
             {
                 discreteActionsMap.Add(keyValue.Key, keyValue.Value);
