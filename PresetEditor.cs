@@ -105,7 +105,7 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(action.ToString());
+                GUILayout.Label(Stringify.DiscreteActionToString(action));
                 GUILayout.FlexibleSpace();
 
                 string label = "";
@@ -167,7 +167,7 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(action.ToString());
+                GUILayout.Label(Stringify.ContinuousActionToString(action));
                 GUILayout.FlexibleSpace();
 
                 string label = "";

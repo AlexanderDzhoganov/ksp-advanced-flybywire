@@ -259,19 +259,11 @@ namespace KSPAdvancedFlyByWire
             case DiscreteAction.Custom10:
                 FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom10);
                 return;
-            case DiscreteAction.EVAJetpackActivate:
+            case DiscreteAction.EVAToggleJetpack:
                 if (eva != null)
                 {
                     eva.JetpackDeployed = !eva.JetpackDeployed;
                 }
-                return;
-            case DiscreteAction.EVAJetCounterClockwise:
-                return;
-            case DiscreteAction.EVAJetpackClockwise:
-                return;
-            case DiscreteAction.EVAJetPitchPlus:
-                return;
-            case DiscreteAction.EVAJetPitchMinus:
                 return;
             case DiscreteAction.EVAJump:
                 return;
@@ -283,7 +275,7 @@ namespace KSPAdvancedFlyByWire
                 return;
             case DiscreteAction.EVASprint:
                 return;
-            case DiscreteAction.EVAHeadlamps:
+            case DiscreteAction.EVAToggleHeadlamps:
                 if (eva != null)
                 {
                     eva.lampOn = !eva.lampOn;
@@ -375,6 +367,7 @@ namespace KSPAdvancedFlyByWire
                 GamePersistence.SaveGame("persistent", HighLogic.SaveFolder, SaveMode.OVERWRITE);
                 return;
             case DiscreteAction.IVAViewToggle:
+                CameraManager.Instance.SetCameraIVA();
                 return;
             case DiscreteAction.CameraViewToggle:
                 FlightCamera.fetch.SetNextMode();
@@ -462,13 +455,13 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case ContinuousAction.CameraX:
                     FlightCamera.CamHdg += value;
-                    break;
+                    return;
                 case ContinuousAction.CameraY:
                     FlightCamera.CamPitch += value;
-                    break;
+                    return;
                 case ContinuousAction.CameraZoom:
                     FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + value);
-                    break;
+                    return;
             }
         }
 

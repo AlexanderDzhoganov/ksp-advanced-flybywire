@@ -79,6 +79,7 @@
     <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="PresetEditor.cs" />
     <Compile Include="SDLController.cs" />
+    <Compile Include="Stringify.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="XInputController.cs" />
     <Compile Include="EvaluationCurves.cs" />

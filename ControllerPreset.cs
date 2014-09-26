@@ -56,17 +56,13 @@ namespace KSPAdvancedFlyByWire
         Custom10,
 
         // EVA
-        EVAJetpackActivate,
-        EVAJetCounterClockwise,
-        EVAJetpackClockwise,
-        EVAJetPitchPlus,
-        EVAJetPitchMinus,
+        EVAToggleJetpack,
         EVAJump,
         EVAReorientAttitude,
         EVAUseBoard,
         EVADirectionJump,
         EVASprint,
-        EVAHeadlamps,
+        EVAToggleHeadlamps,
 
         // Various
         CutThrottle,
