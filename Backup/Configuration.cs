@@ -94,7 +94,7 @@ namespace KSPAdvancedFlyByWire
             controller.wrapper = wrapper;
             controller.controllerIndex = controllerIndex;
 
-#if _WINDOWS
+#if _WIN32
             if (wrapper == InputWrapper.XInput)
             {
                 controller.iface = new XInputController(controller.controllerIndex);
@@ -169,14 +169,11 @@ namespace KSPAdvancedFlyByWire
         {
             foreach (ControllerConfiguration config in controllers)
             {
-
-#if _WINDOWS
-
+#if _WIN32
                 if (config.wrapper == InputWrapper.XInput)
                 {
                     config.iface = new XInputController(config.controllerIndex);
                 }
-
 #endif
 
                 if (config.wrapper == InputWrapper.SDL)

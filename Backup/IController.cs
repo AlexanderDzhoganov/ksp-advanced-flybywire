@@ -9,7 +9,7 @@ namespace KSPAdvancedFlyByWire
 
     public enum InputWrapper
     {
-#if _WINDOWS
+#if _WIN32
         XInput = 0,
 #endif
         SDL = 1,
@@ -26,7 +26,7 @@ namespace KSPAdvancedFlyByWire
         {
             List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> controllers = new List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>>();
 
-#if _WINDOWS
+#if _WIN32
             foreach (var controllerName in XInputController.EnumerateControllers())
             {
                 controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.XInput, controllerName));
