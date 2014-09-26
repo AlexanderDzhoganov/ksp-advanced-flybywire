@@ -87,7 +87,6 @@ namespace KSPAdvancedFlyByWire
         TimeWarpPlus,
         TimeWarpMinus,
         NavballToggle,
-        Screenshot,
         QuickSave,
         IVAViewToggle,
         CameraViewToggle,

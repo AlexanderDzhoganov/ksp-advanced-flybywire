@@ -340,6 +340,21 @@ namespace KSPAdvancedFlyByWire
                 }
                 return;
             case DiscreteAction.TimeWarpPlus:
+                if (TimeWarp.WarpMode == TimeWarp.Modes.HIGH)
+                {
+                    if (TimeWarp.CurrentRateIndex >= TimeWarp.fetch.warpRates.Length - 1)
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    if (TimeWarp.CurrentRateIndex >= TimeWarp.fetch.physicsWarpRates.Length - 1)
+                    {
+                        return;
+                    }
+                }
+
                 TimeWarp.SetRate(TimeWarp.CurrentRateIndex + 1, false);
                 return;
             case DiscreteAction.TimeWarpMinus:
@@ -347,6 +362,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     break;
                 }
+
                 TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, false);
                 return;
             case DiscreteAction.NavballToggle:
@@ -354,8 +370,6 @@ namespace KSPAdvancedFlyByWire
                 {
                     MapView.fetch.maneuverModeToggle.OnPress.Invoke();
                 }
-                return;
-            case DiscreteAction.Screenshot:
                 return;
             case DiscreteAction.QuickSave:
                 GamePersistence.SaveGame("persistent", HighLogic.SaveFolder, SaveMode.OVERWRITE);
@@ -541,7 +555,39 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.EndHorizontal();
 
+                GUILayout.BeginHorizontal();
+
                 GUILayout.Label("Preset: " + config.GetCurrentPreset().name);
+
+                if (config.currentPreset > 0)
+                {
+                    if (GUILayout.Button("<"))
+                    {
+                        config.currentPreset--;
+                    }
+                }
+                else
+                {
+                    GUI.enabled = false;
+                    GUILayout.Button("<");
+                    GUI.enabled = true;
+                }
+
+                if (config.currentPreset < config.presets.Count)
+                {
+                    if (GUILayout.Button(">"))
+                    {
+                        config.currentPreset++;
+                    }
+                }
+                else
+                {
+                    GUI.enabled = false;
+                    GUILayout.Button(">");
+                    GUI.enabled = true;
+                }
+
+                GUILayout.EndHorizontal();
             }
 
             GUILayout.EndScrollView();
@@ -569,9 +615,27 @@ namespace KSPAdvancedFlyByWire
 
             GUI.Window(0, windowRect, DoMainWindow, "Advanced Fly-By-Wire");
 
+            for (int i = 0; i < m_PresetEditors.Count; i++)
+            {
+                if(m_PresetEditors[i].shouldBeDestroyed)
+                {
+                    m_PresetEditors.RemoveAt(i);
+                    break;
+                }
+            }
+
             foreach (var presetEditor in m_PresetEditors)
             {
                 presetEditor.OnGUI();
+            }
+
+            for (int i = 0; i < m_ControllerTests.Count; i++)
+            {
+                if (m_ControllerTests[i].shouldBeDestroyed)
+                {
+                    m_ControllerTests.RemoveAt(i);
+                    break;
+                }
             }
 
             foreach (var controllerTest in m_ControllerTests)

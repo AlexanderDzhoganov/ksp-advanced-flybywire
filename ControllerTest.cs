@@ -19,6 +19,8 @@ namespace KSPAdvancedFlyByWire
 
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
+        public bool shouldBeDestroyed = false;
+
         public ControllerTest(ControllerConfiguration controller, int editorId)
         {
             m_Controller = controller;
@@ -27,6 +29,16 @@ namespace KSPAdvancedFlyByWire
 
         public void DoWindow(int window)
         {
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Close window"))
+            {
+                shouldBeDestroyed = true;
+            }
+
+            GUILayout.EndHorizontal();
+
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
             GUILayout.Label("Axes:");
