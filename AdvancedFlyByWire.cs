@@ -23,6 +23,7 @@ namespace KSPAdvancedFlyByWire
         private bool m_UIHidden = false;
 
         private List<PresetEditor> m_PresetEditors = new List<PresetEditor>();
+        private List<ControllerTest> m_ControllerTests = new List<ControllerTest>();
 
         private void LoadState(ConfigNode configNode)
         {
@@ -127,10 +128,10 @@ namespace KSPAdvancedFlyByWire
 
                     foreach (var action in actions)
                     {
-                        float input = config.iface.GetAnalogInputState(i);
+                        float input = config.iface.GetAxisState(i);
                         if (input != 0.0f)
                         {
-                            EvaluateContinuousAction(config, action, config.iface.GetAnalogInputState(i), state);
+                            EvaluateContinuousAction(config, action, config.iface.GetAxisState(i), state);
                         }
                     }
                 }
@@ -529,7 +530,12 @@ namespace KSPAdvancedFlyByWire
                 {
                     if (GUILayout.Button("Edit"))
                     {
-                        m_PresetEditors.Add(new PresetEditor(config));
+                        m_PresetEditors.Add(new PresetEditor(config, m_PresetEditors.Count));
+                    }
+
+                    if (GUILayout.Button("Test"))
+                    {
+                        m_ControllerTests.Add(new ControllerTest(config, m_ControllerTests.Count));
                     }
                 }
 
@@ -566,6 +572,11 @@ namespace KSPAdvancedFlyByWire
             foreach (var presetEditor in m_PresetEditors)
             {
                 presetEditor.OnGUI();
+            }
+
+            foreach (var controllerTest in m_ControllerTests)
+            {
+                controllerTest.OnGUI();
             }
         }
 

@@ -74,6 +74,7 @@
     <Compile Include="Bitset.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ControllerPreset.cs" />
+    <Compile Include="ControllerTest.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
     <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="PresetEditor.cs" />
@@ -81,7 +82,6 @@
     <Compile Include="Utility.cs" />
     <Compile Include="XInputController.cs" />
     <Compile Include="EvaluationCurves.cs" />
-    <Compile Include="DropDownList.cs" />
     <Compile Include="AdvancedFlyByWire.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

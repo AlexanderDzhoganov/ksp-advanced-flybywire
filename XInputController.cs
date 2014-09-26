@@ -234,7 +234,7 @@ namespace KSPAdvancedFlyByWire
             return false;
         }
 
-        public override float GetAnalogInputState(int input)
+        public override float GetAxisState(int input)
         {
             float value = 0.0f;
 

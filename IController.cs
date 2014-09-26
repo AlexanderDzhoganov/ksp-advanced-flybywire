@@ -88,7 +88,7 @@ namespace KSPAdvancedFlyByWire
 
         public abstract bool GetButtonState(int button);
 
-        public abstract float GetAnalogInputState(int analogInput);
+        public abstract float GetAxisState(int analogInput);
 
         public virtual Bitset GetButtonsMask()
         {

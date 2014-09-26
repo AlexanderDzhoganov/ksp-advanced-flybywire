@@ -160,7 +160,7 @@ namespace KSPAdvancedFlyByWire
             return SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
         }
 
-        public override float GetAnalogInputState(int analogInput)
+        public override float GetAxisState(int analogInput)
         {
             float sign = 1.0f;
             if (analogInput >= m_AxesCount)

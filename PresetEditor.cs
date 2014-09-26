@@ -13,10 +13,9 @@ namespace KSPAdvancedFlyByWire
     {
 
         private ControllerConfiguration m_Controller;
+        private int m_EditorId;
 
         private Rect windowRect = new Rect(128, 128, 512, 512);
-
-        private DropDownList m_PresetsDropDown = new DropDownList();
 
         private Bitset m_CurrentMask = null;
 
@@ -25,9 +24,10 @@ namespace KSPAdvancedFlyByWire
 
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
-        public PresetEditor(ControllerConfiguration controller)
+        public PresetEditor(ControllerConfiguration controller, int editorId)
         {
             m_Controller = controller;
+            m_EditorId = editorId;
         }
 
         public void SetCurrentBitmask(Bitset mask)
@@ -225,7 +225,7 @@ namespace KSPAdvancedFlyByWire
                 InputLockManager.RemoveControlLock(hash);
             }
 
-            GUI.Window(1337, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
+            GUI.Window(1337 + m_EditorId, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
         }
 
     }
