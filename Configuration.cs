@@ -29,6 +29,8 @@ namespace KSPAdvancedFlyByWire
     public class Configuration
     {
 
+        public List<ControllerConfiguration> controllers = new List<ControllerConfiguration>();
+
         public Configuration() {}
 
         public void ActivateController(InputWrapper wrapper, int controllerIndex, IController.ButtonPressedCallback pressedCallback, IController.ButtonReleasedCallback releasedCallback)
@@ -130,6 +132,10 @@ namespace KSPAdvancedFlyByWire
                 {
                     config.iface = new SDLController(config.controllerIndex);
                 }
+                else if (config.wrapper == InputWrapper.KeyboardMouse)
+                {
+                    config.iface = new KeyboardMouseController();
+                }
 
                 config.evaluatedDiscreteActionMasks = new HashSet<Bitset>();
 
@@ -140,15 +146,13 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        public List<ControllerConfiguration> controllers = new List<ControllerConfiguration>();
-
         public ControllerConfiguration GetConfigurationByIController(IController controller)
         {
-            foreach (ControllerConfiguration ctrlr in controllers)
+            foreach (ControllerConfiguration config in controllers)
             {
-                if(ctrlr.iface == controller)
+                if(config.iface == controller)
                 {
-                    return ctrlr;
+                    return config;
                 }
             }
 
@@ -191,11 +195,7 @@ namespace KSPAdvancedFlyByWire
                     config.OnPostDeserialize();
                     return config;
                 }
-            }
-            catch
-            {
-                
-            }
+            } catch {}
 
             return null;
         }
