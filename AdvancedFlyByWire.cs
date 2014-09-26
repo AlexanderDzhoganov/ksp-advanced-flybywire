@@ -44,9 +44,12 @@ namespace KSPAdvancedFlyByWire
 
         public void Awake()
         {
-            print("KSPAdvancedFlyByWire: Initialized");
+            GameEvents.onFlightReady.Add(new EventVoid.OnEvent(OnFlightReady));
+        }
 
-            LoadState(null);
+        public void OnFlightReady()
+        {
+            print("KSPAdvancedFlyByWire: Initialized");
 
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onHideUI.Add(OnHideUI);
@@ -56,14 +59,19 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGamePause.Add(new EventVoid.OnEvent(OnGamePause));
             GameEvents.onGameUnpause.Add(new EventVoid.OnEvent(OnGameUnpause));
 
+            LoadState(null);
+
             if (ToolbarManager.ToolbarAvailable)
             {
                 m_ToolbarButton = ToolbarManager.Instance.add("advancedflybywire", "mainButton");
-                m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire.png";
+                m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire";
                 m_ToolbarButton.ToolTip = "Advanced Fly-By-Wire";
                 m_ToolbarButton.Visibility = new GameScenesVisibility(GameScenes.FLIGHT);
                 m_ToolbarButton.OnClick += new ClickHandler(OnToolbarButtonClick);
             }
+
+            m_UIHidden = false;
+            m_UIActive = true;
         }
 
         void OnGUIRecoveryDialogSpawn(MissionRecoveryDialog dialog)
@@ -87,11 +95,24 @@ namespace KSPAdvancedFlyByWire
             {
                 m_ToolbarButton.Destroy();
             }
+
+            SaveState(null);
+
+            GameEvents.onShowUI.Remove(OnShowUI);
+            GameEvents.onHideUI.Remove(OnHideUI);
+            GameEvents.onGameStateSave.Remove(new EventData<ConfigNode>.OnEvent(SaveState));
+            GameEvents.onGameStateLoad.Remove(new EventData<ConfigNode>.OnEvent(LoadState));
+            GameEvents.onGUIRecoveryDialogSpawn.Remove(new EventData<MissionRecoveryDialog>.OnEvent(OnGUIRecoveryDialogSpawn));
+            GameEvents.onGamePause.Remove(new EventVoid.OnEvent(OnGamePause));
+            GameEvents.onGameUnpause.Remove(new EventVoid.OnEvent(OnGameUnpause));
+
+            print("KSPAdvancedFlyByWire: Deinitialized");
         }
 
         void OnToolbarButtonClick(ClickEvent ev)
         {
             m_UIActive = true;
+            m_UIHidden = false;
         }
 
         void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
