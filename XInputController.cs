@@ -54,18 +54,37 @@ namespace KSPAdvancedFlyByWire
             m_ControllerIndex = (PlayerIndex)controllerIndex;
 
             buttonStates = new bool[15];
-            axisPositiveDeadZones = new float[6];
-            axisNegativeDeadZones = new float[6];
-
+           
             for(int i = 0; i < 15; i++)
             {
                 buttonStates[i] = false;
             }
 
+            axisPositiveDeadZones = new float[6];
+            axisNegativeDeadZones = new float[6];
+
             for (int i = 0; i < 6; i++)
             {
-                axisNegativeDeadZones[i] = 0.0f;
-                axisPositiveDeadZones[i] = 0.0f;
+                axisNegativeDeadZones[i] = float.MaxValue;
+                axisPositiveDeadZones[i] = float.MaxValue;
+            }
+
+            axisLeft = new float[6];
+            axisIdentity = new float[6];
+            axisRight = new float[6];
+
+            for (int i = 0; i < 4; i++)
+            {
+                axisLeft[i] = -1.0f;
+                axisIdentity[i] = 0.0f;
+                axisRight[i] = 1.0f;
+            }
+
+            for (int i = 2; i < 6; i++)
+            {
+                axisLeft[i] = 0.0f;
+                axisIdentity[i] = 0.0f;
+                axisRight[i] = 1.0f;
             }
         }
 
@@ -221,11 +240,11 @@ namespace KSPAdvancedFlyByWire
             return false;
         }
 
-        public override float GetAxisState(int input)
+        public override float GetRawAxisState(int analogInput)
         {
             float value = 0.0f;
 
-            switch ((XInput.AnalogInput)input)
+            switch ((XInput.AnalogInput)analogInput)
             {
                 case XInput.AnalogInput.LeftStickX:
                     value = m_State.ThumbSticks.Left.X;
@@ -247,29 +266,7 @@ namespace KSPAdvancedFlyByWire
                     break;
             }
 
-            if (value > 0.0f)
-            {
-                if(value < axisPositiveDeadZones[input])
-                {
-                    axisPositiveDeadZones[input] = value;
-                }
-
-                float deadZone = axisPositiveDeadZones[input];
-                value = (value - axisPositiveDeadZones[input]) * (1.0f + deadZone);
-            }
-            else
-            {
-                if(Math.Abs(value) < axisNegativeDeadZones[input])
-                {
-                    axisNegativeDeadZones[input] = Math.Abs(value);
-                }
-
-                float deadZone = axisPositiveDeadZones[input];
-                value = (Math.Abs(value) - axisPositiveDeadZones[input]) * (1.0f + deadZone);
-                value *= -1.0f;
-            }
-
-            return Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
+            return value;
         }
 
     }

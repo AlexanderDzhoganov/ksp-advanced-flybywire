@@ -21,6 +21,13 @@ namespace KSPAdvancedFlyByWire
         public float discreteActionStep = 0.15f;
         public float incrementalThrottleSensitivity = 0.05f;
 
+        public List<float> axisPositiveDeadZones = null;
+        public List<float> axisNegativeDeadZones = null;
+
+        public List<float> axisLeft = null;
+        public List<float> axisIdentity = null;
+        public List<float> axisRight = null;
+
         [XmlIgnore()]
         public IController iface;
 
@@ -128,6 +135,22 @@ namespace KSPAdvancedFlyByWire
                 {
                     preset.OnPreSerialize();
                 }
+
+                config.axisPositiveDeadZones = new List<float>();
+                config.axisNegativeDeadZones = new List<float>();
+
+                config.axisLeft = new List<float>();
+                config.axisIdentity = new List<float>();
+                config.axisRight = new List<float>();
+
+                for (int i = 0; i < config.iface.GetAxesCount(); i++)
+                {
+                    config.axisPositiveDeadZones.Add(config.iface.axisPositiveDeadZones[i]);
+                    config.axisNegativeDeadZones.Add(config.iface.axisNegativeDeadZones[i]);
+                    config.axisLeft.Add(config.iface.axisLeft[i]);
+                    config.axisIdentity.Add(config.iface.axisIdentity[i]);
+                    config.axisRight.Add(config.iface.axisRight[i]);
+                }
             }
         }
 
@@ -154,6 +177,22 @@ namespace KSPAdvancedFlyByWire
                 {
                     preset.OnPostDeserialize();
                 }
+
+                for (int i = 0; i < config.iface.GetAxesCount(); i++)
+                {
+                    config.iface.axisPositiveDeadZones[i] = config.iface.axisPositiveDeadZones[i];
+                    config.iface.axisNegativeDeadZones[i] = config.iface.axisNegativeDeadZones[i];
+                    config.iface.axisLeft[i] = config.iface.axisLeft[i];
+                    config.iface.axisIdentity[i] = config.iface.axisIdentity[i];
+                    config.iface.axisRight[i] = config.iface.axisRight[i];
+                }
+
+                config.axisPositiveDeadZones = null;
+                config.axisNegativeDeadZones = null;
+
+                config.axisLeft = null;
+                config.axisIdentity = null;
+                config.axisRight = null;
             }
         }
 

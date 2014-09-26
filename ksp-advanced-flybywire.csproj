@@ -71,10 +71,10 @@
     <Compile Include="Bitset.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ControllerPreset.cs" />
-    <Compile Include="ControllerTest.cs" />
+    <Compile Include="ControllerConfigurationWindow.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
     <Compile Include="KeyboardMouseController.cs" />
-    <Compile Include="PresetEditor.cs" />
+    <Compile Include="PresetEditorWindow.cs" />
     <Compile Include="SDL2.cs" />
     <Compile Include="SDLController.cs" />
     <Compile Include="Stringify.cs" />

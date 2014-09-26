@@ -9,7 +9,7 @@ using UnityEngine;
 namespace KSPAdvancedFlyByWire
 {
 
-    public class PresetEditor
+    public class PresetEditorWindow
     {
 
         private ControllerConfiguration m_Controller;
@@ -18,7 +18,6 @@ namespace KSPAdvancedFlyByWire
         private Rect windowRect = new Rect(128, 128, 512, 512);
 
         private Bitset m_CurrentMask = null;
-        private int m_CurrentAxis = -1;
 
         private DiscreteAction m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
         private ContinuousAction m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -27,10 +26,13 @@ namespace KSPAdvancedFlyByWire
 
         public bool shouldBeDestroyed = false;
 
-        public PresetEditor(ControllerConfiguration controller, int editorId)
+        public string inputLockHash;
+
+        public PresetEditorWindow(ControllerConfiguration controller, int editorId)
         {
             m_Controller = controller;
             m_EditorId = editorId;
+            inputLockHash = "PresetEditor " + m_Controller.wrapper.ToString() + " - " + m_Controller.controllerIndex.ToString();
         }
 
         public void SetCurrentBitmask(Bitset mask)
@@ -98,7 +100,7 @@ namespace KSPAdvancedFlyByWire
 
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
-            GUILayout.Label("Discrete actions:");
+            GUILayout.Label("Discrete actions");
 
             foreach (var action in (DiscreteAction[])Enum.GetValues(typeof(DiscreteAction)))
             {
@@ -160,7 +162,7 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.EndHorizontal();
             }
 
-            GUILayout.Label("Continuous actions:");
+            GUILayout.Label("Continuous actions");
 
             foreach (var action in (ContinuousAction[])Enum.GetValues(typeof(ContinuousAction)))
             {
@@ -229,18 +231,16 @@ namespace KSPAdvancedFlyByWire
 
         public void OnGUI()
         {
-            string hash = "PresetEditor " + m_Controller.wrapper.ToString() + " - " + m_Controller.controllerIndex.ToString();
-
             if (windowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
             {
-             //   InputLockManager.SetControlLock(hash);
+                InputLockManager.SetControlLock(inputLockHash);
             }
             else
             {
-             //   InputLockManager.RemoveControlLock(hash);
+                InputLockManager.RemoveControlLock(inputLockHash);
             }
 
-            GUI.Window(1337 + m_EditorId, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
+            windowRect = GUI.Window(1337 + m_EditorId, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
         }
 
     }

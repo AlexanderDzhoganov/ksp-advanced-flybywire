@@ -23,8 +23,8 @@ namespace KSPAdvancedFlyByWire
         private bool m_UIActive = true;
         private bool m_UIHidden = false;
 
-        private List<PresetEditor> m_PresetEditors = new List<PresetEditor>();
-        private List<ControllerTest> m_ControllerTests = new List<ControllerTest>();
+        private List<PresetEditorWindow> m_PresetEditors = new List<PresetEditorWindow>();
+        private List<ControllerConfigurationWindow> m_ControllerTests = new List<ControllerConfigurationWindow>();
 
         private IButton m_ToolbarButton = null;
 
@@ -554,6 +554,11 @@ namespace KSPAdvancedFlyByWire
                 FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
                 m_CallbackSet = true;
             }
+
+            if(Input.GetKey("left shift") && Input.GetKey("k"))
+            {
+                m_UIActive = true;
+            }
         }
 
         private void OnShowUI()
@@ -612,14 +617,14 @@ namespace KSPAdvancedFlyByWire
 
                 if (isEnabled)
                 {
-                    if (GUILayout.Button("Edit"))
+                    if (GUILayout.Button("Presets"))
                     {
-                        m_PresetEditors.Add(new PresetEditor(config, m_PresetEditors.Count));
+                        m_PresetEditors.Add(new PresetEditorWindow(config, m_PresetEditors.Count));
                     }
 
-                    if (GUILayout.Button("Test"))
+                    if (GUILayout.Button("Configuration"))
                     {
-                        m_ControllerTests.Add(new ControllerTest(config, m_ControllerTests.Count));
+                        m_ControllerTests.Add(new ControllerConfigurationWindow(config, m_ControllerTests.Count));
                     }
 
                     GUILayout.EndHorizontal();
@@ -682,12 +687,13 @@ namespace KSPAdvancedFlyByWire
                 InputLockManager.RemoveControlLock("AdvancedFlyByWireMainWindow");
             }
 
-            GUI.Window(0, windowRect, DoMainWindow, "Advanced Fly-By-Wire");
+            windowRect = GUI.Window(0, windowRect, DoMainWindow, "Advanced Fly-By-Wire");
 
             for (int i = 0; i < m_PresetEditors.Count; i++)
             {
                 if(m_PresetEditors[i].shouldBeDestroyed)
                 {
+                    InputLockManager.RemoveControlLock(m_PresetEditors[i].inputLockHash);
                     m_PresetEditors.RemoveAt(i);
                     break;
                 }
@@ -702,6 +708,7 @@ namespace KSPAdvancedFlyByWire
             {
                 if (m_ControllerTests[i].shouldBeDestroyed)
                 {
+                    InputLockManager.RemoveControlLock(m_ControllerTests[i].inputLockHash);
                     m_ControllerTests.RemoveAt(i);
                     break;
                 }

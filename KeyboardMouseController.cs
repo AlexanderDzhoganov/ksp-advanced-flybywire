@@ -144,7 +144,7 @@ namespace KSPAdvancedFlyByWire
             return Input.GetKey(name);
         }
 
-        public override float GetAxisState(int analogInput) // 0 is X, 1 is Y 
+        public override float GetRawAxisState(int analogInput) // 0 is X, 1 is Y 
         {
             switch (analogInput)
             {

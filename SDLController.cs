@@ -52,8 +52,19 @@ namespace KSPAdvancedFlyByWire
 
             for (int i = 0; i < m_AxesCount; i++)
             {
-                axisNegativeDeadZones[i] = 0.0f;
-                axisPositiveDeadZones[i] = 0.0f;
+                axisNegativeDeadZones[i] = float.MaxValue;
+                axisPositiveDeadZones[i] = float.MaxValue;
+            }
+
+            axisLeft = new float[m_AxesCount];
+            axisIdentity = new float[m_AxesCount];
+            axisRight = new float[m_AxesCount];
+
+            for (int i = 0; i < m_AxesCount; i++)
+            {
+                axisLeft[i] = -1.0f;
+                axisIdentity[i] = 0.0f;
+                axisRight[i] = 1.0f;
             }
 
             m_Initialized = true;
@@ -157,40 +168,9 @@ namespace KSPAdvancedFlyByWire
             return SDL2.SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
         }
 
-        public override float GetAxisState(int analogInput)
+        public override float GetRawAxisState(int analogInput)
         {
-            float sign = 1.0f;
-            if (analogInput >= m_AxesCount)
-            {
-                analogInput -= m_AxesCount;
-                sign = -1.0f;
-            }
-
-            float value = SDL2.SDL.SDL_JoystickGetAxis(m_Joystick, analogInput) * sign;
-
-            if (value > 0.0f)
-            {
-                if (value < axisPositiveDeadZones[analogInput])
-                {
-                    axisPositiveDeadZones[analogInput] = value;
-                }
-
-                float deadZone = axisPositiveDeadZones[analogInput];
-                value = (value - axisPositiveDeadZones[analogInput]) * (1.0f + deadZone);
-            }
-            else
-            {
-                if (Math.Abs(value) < axisNegativeDeadZones[analogInput])
-                {
-                    axisNegativeDeadZones[analogInput] = Math.Abs(value);
-                }
-
-                float deadZone = axisPositiveDeadZones[analogInput];
-                value = (Math.Abs(value) - axisPositiveDeadZones[analogInput]) * (1.0f + deadZone);
-                value *= -1.0f;
-            }
-
-            return Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
+            return SDL2.SDL.SDL_JoystickGetAxis(m_Joystick, analogInput);
         }
 
     }
