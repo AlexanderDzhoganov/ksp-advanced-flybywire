@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 using UnityEngine;
-using SDL2;
+using Tao.Sdl;
 
 namespace KSPAdvancedFlyByWire
 {
@@ -18,6 +18,7 @@ namespace KSPAdvancedFlyByWire
         private int m_ButtonsCount = 0;
 
         private IntPtr m_Joystick = IntPtr.Zero;
+        int m_ControllerIndex = 0;
 
         static bool SDLInitialized = false;
 
@@ -25,19 +26,21 @@ namespace KSPAdvancedFlyByWire
         {
             if (!SDLInitialized)
             {
-                SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
+                Tao.Sdl.Sdl.SDL_Init(Tao.Sdl.Sdl.SDL_INIT_JOYSTICK);
                 SDLInitialized = true;
             }
+
+            m_ControllerIndex = controllerIndex;
             
-            m_Joystick = SDL.SDL_JoystickOpen(controllerIndex);
+            m_Joystick = Tao.Sdl.Sdl.SDL_JoystickOpen(controllerIndex);
 
             if (m_Joystick == IntPtr.Zero)
             {
                 return;
             }
 
-            m_AxesCount = SDL.SDL_JoystickNumAxes(m_Joystick);
-            m_ButtonsCount = SDL.SDL_JoystickNumButtons(m_Joystick);
+            m_AxesCount = Tao.Sdl.Sdl.SDL_JoystickNumAxes(m_Joystick);
+            m_ButtonsCount = Tao.Sdl.Sdl.SDL_JoystickNumButtons(m_Joystick);
 
             buttonStates = new bool[m_ButtonsCount];
             axisPositiveDeadZones = new float[m_AxesCount * 2];
@@ -64,7 +67,7 @@ namespace KSPAdvancedFlyByWire
                 return "Uninitialized";
             }
 
-            return SDL.SDL_JoystickName(m_Joystick);
+            return Tao.Sdl.Sdl.SDL_JoystickName(m_ControllerIndex);
         }
 
         bool IsConnected()
@@ -76,16 +79,16 @@ namespace KSPAdvancedFlyByWire
         {
             if (!SDLInitialized)
             {
-                SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
+                Tao.Sdl.Sdl.SDL_Init(Tao.Sdl.Sdl.SDL_INIT_JOYSTICK);
                 SDLInitialized = true;
             }
 
             List<KeyValuePair<int, string>> controllers = new List<KeyValuePair<int, string>>();
 
-            int numControllers = SDL.SDL_NumJoysticks();
+            int numControllers = Tao.Sdl.Sdl.SDL_NumJoysticks();
             for (int i = 0; i < numControllers; i++)
             {
-                controllers.Add(new KeyValuePair<int, string>(i, SDL.SDL_JoystickNameForIndex(i)));
+                controllers.Add(new KeyValuePair<int, string>(i, Tao.Sdl.Sdl.SDL_JoystickName(i)));
             }
 
             return controllers;
@@ -95,18 +98,18 @@ namespace KSPAdvancedFlyByWire
         {
             if (!SDLInitialized)
             {
-                SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
+                Tao.Sdl.Sdl.SDL_Init(Tao.Sdl.Sdl.SDL_INIT_JOYSTICK);
                 SDLInitialized = true;
             }
 
-            var joystick = SDL.SDL_JoystickOpen(id);
+            var joystick = Tao.Sdl.Sdl.SDL_JoystickOpen(id);
 
             if (joystick == IntPtr.Zero)
             {
                 return false;
             }
 
-            SDL.SDL_JoystickClose(joystick);
+            Tao.Sdl.Sdl.SDL_JoystickClose(joystick);
 
             return true;
         }
@@ -117,16 +120,16 @@ namespace KSPAdvancedFlyByWire
             {
                 if (m_Joystick != IntPtr.Zero)
                 {
-                    SDL.SDL_JoystickClose(m_Joystick);
+                    Tao.Sdl.Sdl.SDL_JoystickClose(m_Joystick);
                 }
 
-                SDL.SDL_Quit();
+                Tao.Sdl.Sdl.SDL_Quit();
             }
         }
 
         public override void Update(FlightCtrlState state)
         {
-            SDL.SDL_JoystickUpdate();
+            Tao.Sdl.Sdl.SDL_JoystickUpdate();
             base.Update(state);
         }
 
@@ -157,7 +160,7 @@ namespace KSPAdvancedFlyByWire
 
         public override bool GetButtonState(int button)
         {
-            return SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
+            return Tao.Sdl.Sdl.SDL_JoystickGetButton(m_Joystick, button) != 0;
         }
 
         public override float GetAxisState(int analogInput)
@@ -169,7 +172,7 @@ namespace KSPAdvancedFlyByWire
                 sign = -1.0f;
             }
 
-            float value = SDL.SDL_JoystickGetAxis(m_Joystick, analogInput) * sign;
+            float value = Tao.Sdl.Sdl.SDL_JoystickGetAxis(m_Joystick, analogInput) * sign;
 
             if (value > 0.0f)
             {

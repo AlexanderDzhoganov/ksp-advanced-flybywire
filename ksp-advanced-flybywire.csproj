@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KSPAdvancedFlyByWire</RootNamespace>
     <AssemblyName>ksp-advanced-flybywire</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,16 +53,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="SDL2-CS">
-      <HintPath>.\SDL2-CS.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tao.Sdl">
+      <HintPath>.\Tao.Sdl.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\UnityEngine.dll</HintPath>
@@ -80,6 +80,7 @@
     <Compile Include="PresetEditor.cs" />
     <Compile Include="SDLController.cs" />
     <Compile Include="Stringify.cs" />
+    <Compile Include="ToolbarWrapper.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="XInputController.cs" />
     <Compile Include="EvaluationCurves.cs" />

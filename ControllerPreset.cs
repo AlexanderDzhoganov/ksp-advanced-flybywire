@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using System.Xml.Serialization;
 
 using UnityEngine;
@@ -20,7 +20,10 @@ namespace KSPAdvancedFlyByWire
     {
         None,
 
+        NextPreset,
+        PreviousPreset,
         // yaw, pitch, roll, x, y, z, throttle
+
         YawPlus,
         YawMinus,
         PitchPlus,
@@ -42,6 +45,7 @@ namespace KSPAdvancedFlyByWire
         Light,
         RCS,
         SAS,
+        SASHold,
         Brakes,
         Abort,
         Custom01,
@@ -54,6 +58,7 @@ namespace KSPAdvancedFlyByWire
         Custom08,
         Custom09,
         Custom10,
+        LockStage,
 
         // EVA
         EVAToggleJetpack,
@@ -67,10 +72,7 @@ namespace KSPAdvancedFlyByWire
         // Various
         CutThrottle,
         FullThrottle,
-        
-        NextPreset,
-        PreviousPreset,
-        
+
         // Camera
         CameraXPlus,
         CameraXMinus,
@@ -79,15 +81,16 @@ namespace KSPAdvancedFlyByWire
         CameraZoomPlus,
         CameraZoomMinus,
 
-        OrbitMapToggle,
         TimeWarpPlus,
         TimeWarpMinus,
-        NavballToggle,
-        QuickSave,
+
+        OrbitMapToggle,
         IVAViewToggle,
         CameraViewToggle,
-        SASHold,
-        LockStage,
+        NavballToggle,
+
+        QuickSave,
+
         TogglePrecisionControls,
         ResetTrim,
     }
