@@ -59,6 +59,7 @@ namespace KSPAdvancedFlyByWire
                 m_ToolbarButton = ToolbarManager.Instance.add("advancedflybywire", "mainButton");
                 m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire";
                 m_ToolbarButton.ToolTip = "Advanced Fly-By-Wire";
+                m_ToolbarButton.Visibility = new GameScenesVisibility(GameScenes.FLIGHT);
                 m_ToolbarButton.OnClick += new ClickHandler(OnToolbarButtonClick);
             }
         }
