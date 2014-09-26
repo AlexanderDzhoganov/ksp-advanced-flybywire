@@ -181,6 +181,16 @@ namespace KSPAdvancedFlyByWire
             discreteActionsMap[action] = state;
         }
 
+        public void UnsetDiscreteBinding(DiscreteAction action)
+        {
+            if (!discreteActionsMap.ContainsKey(action))
+            {
+                return;
+            }
+
+            discreteActionsMap.Remove(action);
+        }
+
         public List<DiscreteAction> GetDiscreteBinding(Bitset state)
         {
             List<KeyValuePair<Bitset, DiscreteAction>> matches = new List<KeyValuePair<Bitset, DiscreteAction>>();
@@ -259,6 +269,24 @@ namespace KSPAdvancedFlyByWire
             }
 
             continuousActionsMap[axis].Add(new KeyValuePair<Bitset, ContinuousAction>(state, action));
+        }
+
+        public void UnsetContinuousBinding(int axis, ContinuousAction action)
+        {
+            if (!continuousActionsMap.ContainsKey(axis))
+            {
+                return;
+            }
+
+            for (int i = 0; i < continuousActionsMap[axis].Count; i++)
+            {
+                var pair = continuousActionsMap[axis][i];
+                if (pair.Value == action)
+                {
+                    continuousActionsMap[axis].RemoveAt(i);
+                    return;
+                }
+            }
         }
 
         public List<ContinuousAction> GetContinuousBinding(int axis, Bitset state)

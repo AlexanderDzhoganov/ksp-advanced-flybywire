@@ -37,14 +37,57 @@ namespace KSPAdvancedFlyByWire
 
         public void DoWindow(int window)
         {
+            var currentPreset = m_Controller.GetCurrentPreset();
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label("Preset: ");
+
+            currentPreset.name = GUILayout.TextField(currentPreset.name, GUILayout.Width(256));
+
+            if (m_Controller.currentPreset > 0)
+            {
+                if (GUILayout.Button("<"))
+                {
+                    m_Controller.currentPreset--;
+                }
+            }
+            else
+            {
+                GUI.enabled = false;
+                GUILayout.Button("<");
+                GUI.enabled = true;
+            }
+
+            if (m_Controller.currentPreset < m_Controller.presets.Count)
+            {
+                if (GUILayout.Button(">"))
+                {
+                    m_Controller.currentPreset++;
+                }
+            }
+            else
+            {
+                GUI.enabled = false;
+                GUILayout.Button(">");
+                GUI.enabled = true;
+            }
+
+            if (GUILayout.Button("+"))
+            {
+                m_Controller.presets.Add(new ControllerPreset());
+                m_Controller.currentPreset = m_Controller.presets.Count - 1;
+            }
+
+            GUILayout.EndHorizontal();
+
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
             GUILayout.Label("Discrete actions:");
 
-            var currentPreset = m_Controller.presets[m_Controller.currentPreset];
-            foreach(var action in (DiscreteAction[])Enum.GetValues(typeof(DiscreteAction)))
+            foreach (var action in (DiscreteAction[])Enum.GetValues(typeof(DiscreteAction)))
             {
-                if(action == DiscreteAction.None)
+                if (action == DiscreteAction.None)
                 {
                     continue;
                 }
@@ -56,11 +99,11 @@ namespace KSPAdvancedFlyByWire
                 string label = "";
 
                 var bitset = currentPreset.GetBitsetForDiscreteBinding(action);
-                if(m_CurrentlyEditingDiscreteAction == action)
+                if (m_CurrentlyEditingDiscreteAction == action)
                 {
                     label = "Press desired combination";
 
-                    if(m_CurrentMask != null)
+                    if (m_CurrentMask != null)
                     {
                         currentPreset.SetDiscreteBinding(m_CurrentMask, action);
                         m_CurrentMask = null;
@@ -81,7 +124,7 @@ namespace KSPAdvancedFlyByWire
                     }
                 }
 
-                if(GUILayout.Button(label, GUILayout.Width(256)))
+                if (GUILayout.Button(label, GUILayout.Width(256)))
                 {
                     if (m_CurrentlyEditingDiscreteAction != action)
                     {
@@ -90,6 +133,13 @@ namespace KSPAdvancedFlyByWire
                     }
 
                     m_CurrentMask = null;
+                }
+
+                if (GUILayout.Button("X"))
+                {
+                    currentPreset.UnsetDiscreteBinding(action);
+                    m_CurrentlyEditingContinuousAction = ContinuousAction.None;
+                    m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
                 }
 
                 GUILayout.EndHorizontal();
@@ -145,6 +195,13 @@ namespace KSPAdvancedFlyByWire
                     }
 
                     m_CurrentMask = null;
+                }
+
+                if (GUILayout.Button("X"))
+                {
+                    currentPreset.UnsetContinuousBinding(axisBitsetPair.Key, action);
+                    m_CurrentlyEditingContinuousAction = ContinuousAction.None;
+                    m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
                 }
 
                 GUILayout.EndHorizontal();
