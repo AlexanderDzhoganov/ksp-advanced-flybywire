@@ -49,6 +49,8 @@ namespace KSPAdvancedFlyByWire
 
         public Bitset lastUpdateMask;
 
+        public abstract string GetControllerName();
+
         public virtual void Update(FlightCtrlState state)
         {
             for (int i = 0; i < 15; i++)

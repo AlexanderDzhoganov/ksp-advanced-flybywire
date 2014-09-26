@@ -70,6 +70,11 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
+        public override string GetControllerName()
+        {
+            return "XInput #" + m_ControllerIndex.ToString();
+        }
+
         public static List<KeyValuePair<int, string>> EnumerateControllers()
         {
             List<KeyValuePair<int, string>> controllers = new List<KeyValuePair<int, string>>();

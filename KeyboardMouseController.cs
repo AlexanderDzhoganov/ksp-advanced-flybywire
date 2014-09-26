@@ -89,6 +89,11 @@ namespace KSPAdvancedFlyByWire
             m_NameLookupTable.Add(71, "left alt");
         }
 
+        public override string GetControllerName()
+        {
+            return "Keyboard/ Mouse";
+        }
+
         public override void Update(FlightCtrlState state)
         {
             m_MouseDeltaX = Input.GetAxis("Mouse X") / Screen.width;

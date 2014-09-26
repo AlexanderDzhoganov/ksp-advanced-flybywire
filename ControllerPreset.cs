@@ -124,7 +124,7 @@ namespace KSPAdvancedFlyByWire
         {
         }
 
-        public string name = "Default preset";
+        public string name = "New preset";
 
         public delegate void OnCustomActionCallback();
 

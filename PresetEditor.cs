@@ -12,28 +12,28 @@ namespace KSPAdvancedFlyByWire
     public class PresetEditor
     {
 
-        public PresetEditor(ControllerConfiguration controller)
-        {
-            m_Controller = controller;
-        }
-
         private ControllerConfiguration m_Controller;
 
-        Rect windowRect = new Rect(128, 128, 512, 512);
+        private Rect windowRect = new Rect(128, 128, 512, 512);
 
         private DropDownList m_PresetsDropDown = new DropDownList();
 
         private Bitset m_CurrentMask = null;
 
-        public void SetCurrentBitmask(Bitset mask)
-        {
-            m_CurrentMask = mask;
-        }
-
         private DiscreteAction m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
         private ContinuousAction m_CurrentlyEditingContinuousAction = ContinuousAction.None;
 
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
+
+        public PresetEditor(ControllerConfiguration controller)
+        {
+            m_Controller = controller;
+        }
+
+        public void SetCurrentBitmask(Bitset mask)
+        {
+            m_CurrentMask = mask;
+        }
 
         public void DoWindow(int window)
         {

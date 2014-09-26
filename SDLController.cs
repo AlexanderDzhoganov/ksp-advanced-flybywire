@@ -57,6 +57,16 @@ namespace KSPAdvancedFlyByWire
             m_Initialized = true;
         }
 
+        public override string GetControllerName()
+        {
+            if (m_Joystick == IntPtr.Zero)
+            {
+                return "Uninitialized";
+            }
+
+            return SDL.SDL_JoystickName(m_Joystick);
+        }
+
         bool IsConnected()
         {
             return m_Initialized;
