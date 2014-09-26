@@ -12,12 +12,12 @@ namespace KSPAdvancedFlyByWire
         public static List<ControllerPreset> GetDefaultPresets(IController controller)
         {
             List<ControllerPreset> presets = new List<ControllerPreset>();
-
+            #if _WIN32
             if (controller is XInputController)
             {
                 presets.Add(GetXInputDefaultRocketPreset(controller));
             }
-
+#endif
             return presets;
         }
 
@@ -27,6 +27,8 @@ namespace KSPAdvancedFlyByWire
             preset.name = "XInput Default";
 
             int buttonsCount = controller.GetButtonsCount();
+            
+#if _WIN32
             preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.DPadLeft), DiscreteAction.SAS);
             preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.DPadRight), DiscreteAction.Light);
             preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.DPadUp), DiscreteAction.RCS);
@@ -59,7 +61,7 @@ namespace KSPAdvancedFlyByWire
 
             preset.SetContinuousBinding((int)XInput.AnalogInput.LeftTrigger, new Bitset(buttonsCount), ContinuousAction.ThrottleDecrement);
             preset.SetContinuousBinding((int)XInput.AnalogInput.RightTrigger, new Bitset(buttonsCount), ContinuousAction.ThrottleIncrement);
-
+#endif
             return preset;
         }
 
