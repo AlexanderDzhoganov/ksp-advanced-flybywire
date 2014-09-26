@@ -19,8 +19,7 @@ namespace KSPAdvancedFlyByWire
 
         private ControllerConfiguration m_Controller;
 
-        public Vector2 position = new Vector2(128, 128);
-        public Vector2 size = new Vector2(512, 512);
+        Rect windowRect = new Rect(128, 128, 512, 512);
 
         private DropDownList m_PresetsDropDown = new DropDownList();
 
@@ -152,14 +151,15 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndScrollView();
+
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
         public void OnGUI()
         {
-            var rect = new Rect(position.x, position.y, size.x, size.y);
             string hash = "PresetEditor " + m_Controller.wrapper.ToString() + " - " + m_Controller.controllerIndex.ToString();
 
-            if (rect.Contains(Input.mousePosition))
+            if (windowRect.Contains(Input.mousePosition))
             {
                 InputLockManager.SetControlLock(hash);
             }
@@ -168,7 +168,7 @@ namespace KSPAdvancedFlyByWire
                 InputLockManager.RemoveControlLock(hash);
             }
 
-            GUI.Window(1337, rect, DoWindow, "Fly-By-Wire Preset Editor");
+            GUI.Window(1337, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
         }
 
     }

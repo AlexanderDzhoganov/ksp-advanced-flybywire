@@ -525,7 +525,11 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.EndHorizontal();
             }
+
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
+
+        private Rect windowRect = new Rect(32, 32, 400, 600);
 
         void OnGUI()
         {
@@ -534,9 +538,8 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
-            Rect rect = new Rect(32, 32, 400, 600);
 
-            if (rect.Contains(Input.mousePosition))
+            if (windowRect.Contains(Input.mousePosition))
             {
                 InputLockManager.SetControlLock("AdvancedFlyByWire");
             }
@@ -545,7 +548,7 @@ namespace KSPAdvancedFlyByWire
                 InputLockManager.RemoveControlLock("AdvancedFlyByWire");
             }
 
-            GUI.Window(0, rect, DoMainWindow, "Advanced FlyByWire");
+            GUI.Window(0, windowRect, DoMainWindow, "Advanced FlyByWire");
 
             foreach (var presetEditor in m_PresetEditors)
             {
