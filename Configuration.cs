@@ -6,6 +6,8 @@ using System.Text;
 using System.IO;
 using System.Xml.Serialization;
 
+using UnityEngine;
+
 namespace KSPAdvancedFlyByWire
 {
 
@@ -36,7 +38,14 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
-            return presets[currentPreset];
+            var preset = presets[currentPreset];
+
+            if(preset == null)
+            {
+                MonoBehaviour.print("KSPAdvancedFlyByWire: null preset error");
+            }
+
+            return preset;
         }
 
         public void SetAnalogInputCurveType(CurveType type)

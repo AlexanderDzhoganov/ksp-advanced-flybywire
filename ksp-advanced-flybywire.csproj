@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,9 +59,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tao.Sdl">
-      <HintPath>.\Tao.Sdl.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\UnityEngine.dll</HintPath>
@@ -77,8 +75,10 @@
     <Compile Include="DefaultControllerPresets.cs" />
     <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="PresetEditor.cs" />
+    <Compile Include="SDL2.cs" />
     <Compile Include="SDLController.cs" />
     <Compile Include="Stringify.cs" />
+    <Compile Include="StringMarshaller.cs" />
     <Compile Include="ToolbarWrapper.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="XInputController.cs" />

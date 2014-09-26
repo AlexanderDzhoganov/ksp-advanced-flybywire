@@ -29,10 +29,12 @@ namespace KSPAdvancedFlyByWire
 
         public void DoWindow(int window)
         {
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
+
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Close window"))
+            if (GUILayout.Button("Close window") || m_Controller == null || m_Controller.iface == null)
             {
                 shouldBeDestroyed = true;
             }
@@ -56,24 +58,22 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndScrollView();
-
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
         public void OnGUI()
         {
             string hash = "Controller Test (" + m_Controller.wrapper.ToString() + " - " + m_Controller.controllerIndex.ToString() + ")";
 
-            if (windowRect.Contains(Input.mousePosition))
+            if (windowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
             {
-                InputLockManager.SetControlLock(hash);
+               // InputLockManager.SetControlLock(hash);
             }
             else
             {
-                InputLockManager.RemoveControlLock(hash);
+               // InputLockManager.RemoveControlLock(hash);
             }
 
-            GUI.Window(2672 + m_EditorId, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
+            GUI.Window(2672 + m_EditorId, windowRect, DoWindow, hash);
         }
 
     }

@@ -100,6 +100,8 @@ namespace KSPAdvancedFlyByWire
                     return "Next preset";
                 case DiscreteAction.PreviousPreset:
                     return "Previous preset";
+                case DiscreteAction.CyclePresets:
+                    return "Cycle presets";
                 case DiscreteAction.CameraZoomPlus:
                     return "Camera zoom+";
                 case DiscreteAction.CameraZoomMinus:

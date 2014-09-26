@@ -18,6 +18,7 @@ namespace KSPAdvancedFlyByWire
         private Rect windowRect = new Rect(128, 128, 512, 512);
 
         private Bitset m_CurrentMask = null;
+        private int m_CurrentAxis = -1;
 
         private DiscreteAction m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
         private ContinuousAction m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -39,6 +40,8 @@ namespace KSPAdvancedFlyByWire
 
         public void DoWindow(int window)
         {
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
+
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
@@ -71,7 +74,7 @@ namespace KSPAdvancedFlyByWire
                 GUI.enabled = true;
             }
 
-            if (m_Controller.currentPreset < m_Controller.presets.Count)
+            if (m_Controller.currentPreset < m_Controller.presets.Count - 1)
             {
                 if (GUILayout.Button(">"))
                 {
@@ -177,11 +180,13 @@ namespace KSPAdvancedFlyByWire
                 {
                     label = "Press desired combination";
 
-                    if (m_CurrentMask != null)
+                    for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++ )
                     {
-                        currentPreset.SetContinuousBinding(axisBitsetPair.Key, m_CurrentMask, action);
-                        m_CurrentMask = null;
-                        m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+                        if(m_Controller.iface.GetAxisState(i) != 0.0f)
+                        {
+                            currentPreset.SetContinuousBinding(i, m_Controller.iface.GetButtonsMask(), action);
+                            m_CurrentlyEditingContinuousAction = ContinuousAction.None;
+                        }
                     }
                 }
 
@@ -211,7 +216,7 @@ namespace KSPAdvancedFlyByWire
 
                 if (GUILayout.Button("X"))
                 {
-                    currentPreset.UnsetContinuousBinding(axisBitsetPair.Key, action);
+                    currentPreset.UnsetContinuousBinding(action);
                     m_CurrentlyEditingContinuousAction = ContinuousAction.None;
                     m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
                 }
@@ -220,21 +225,19 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndScrollView();
-
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
         public void OnGUI()
         {
             string hash = "PresetEditor " + m_Controller.wrapper.ToString() + " - " + m_Controller.controllerIndex.ToString();
 
-            if (windowRect.Contains(Input.mousePosition))
+            if (windowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
             {
-                InputLockManager.SetControlLock(hash);
+             //   InputLockManager.SetControlLock(hash);
             }
             else
             {
-                InputLockManager.RemoveControlLock(hash);
+             //   InputLockManager.RemoveControlLock(hash);
             }
 
             GUI.Window(1337 + m_EditorId, windowRect, DoWindow, "Fly-By-Wire Preset Editor");

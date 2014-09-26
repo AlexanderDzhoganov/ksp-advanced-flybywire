@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 using UnityEngine;
-using Tao.Sdl;
+using SDL2;
 
 namespace KSPAdvancedFlyByWire
 {
@@ -26,32 +25,32 @@ namespace KSPAdvancedFlyByWire
         {
             if (!SDLInitialized)
             {
-                Tao.Sdl.Sdl.SDL_Init(Tao.Sdl.Sdl.SDL_INIT_JOYSTICK);
+                SDL2.SDL.SDL_Init(SDL2.SDL.SDL_INIT_JOYSTICK);
                 SDLInitialized = true;
             }
 
             m_ControllerIndex = controllerIndex;
             
-            m_Joystick = Tao.Sdl.Sdl.SDL_JoystickOpen(controllerIndex);
+            m_Joystick = SDL2.SDL.SDL_JoystickOpen(controllerIndex);
 
             if (m_Joystick == IntPtr.Zero)
             {
                 return;
             }
 
-            m_AxesCount = Tao.Sdl.Sdl.SDL_JoystickNumAxes(m_Joystick);
-            m_ButtonsCount = Tao.Sdl.Sdl.SDL_JoystickNumButtons(m_Joystick);
+            m_AxesCount = SDL2.SDL.SDL_JoystickNumAxes(m_Joystick);
+            m_ButtonsCount = SDL2.SDL.SDL_JoystickNumButtons(m_Joystick);
 
             buttonStates = new bool[m_ButtonsCount];
-            axisPositiveDeadZones = new float[m_AxesCount * 2];
-            axisNegativeDeadZones = new float[m_AxesCount * 2];
+            axisPositiveDeadZones = new float[m_AxesCount];
+            axisNegativeDeadZones = new float[m_AxesCount];
 
             for (int i = 0; i < m_ButtonsCount; i++)
             {
                 buttonStates[i] = false;
             }
 
-            for (int i = 0; i < m_AxesCount * 2; i++)
+            for (int i = 0; i < m_AxesCount; i++)
             {
                 axisNegativeDeadZones[i] = 0.0f;
                 axisPositiveDeadZones[i] = 0.0f;
@@ -67,7 +66,7 @@ namespace KSPAdvancedFlyByWire
                 return "Uninitialized";
             }
 
-            return Tao.Sdl.Sdl.SDL_JoystickName(m_ControllerIndex);
+            return SDL2.SDL.SDL_JoystickName(m_Joystick);
         }
 
         bool IsConnected()
@@ -79,16 +78,16 @@ namespace KSPAdvancedFlyByWire
         {
             if (!SDLInitialized)
             {
-                Tao.Sdl.Sdl.SDL_Init(Tao.Sdl.Sdl.SDL_INIT_JOYSTICK);
+                SDL2.SDL.SDL_Init(SDL2.SDL.SDL_INIT_JOYSTICK);
                 SDLInitialized = true;
             }
 
             List<KeyValuePair<int, string>> controllers = new List<KeyValuePair<int, string>>();
 
-            int numControllers = Tao.Sdl.Sdl.SDL_NumJoysticks();
+            int numControllers = SDL2.SDL.SDL_NumJoysticks();
             for (int i = 0; i < numControllers; i++)
             {
-                controllers.Add(new KeyValuePair<int, string>(i, Tao.Sdl.Sdl.SDL_JoystickName(i)));
+                controllers.Add(new KeyValuePair<int, string>(i, SDL2.SDL.SDL_JoystickNameForIndex(i)));
             }
 
             return controllers;
@@ -98,18 +97,18 @@ namespace KSPAdvancedFlyByWire
         {
             if (!SDLInitialized)
             {
-                Tao.Sdl.Sdl.SDL_Init(Tao.Sdl.Sdl.SDL_INIT_JOYSTICK);
+                SDL2.SDL.SDL_Init(SDL2.SDL.SDL_INIT_JOYSTICK);
                 SDLInitialized = true;
             }
 
-            var joystick = Tao.Sdl.Sdl.SDL_JoystickOpen(id);
+            var joystick = SDL2.SDL.SDL_JoystickOpen(id);
 
             if (joystick == IntPtr.Zero)
             {
                 return false;
             }
 
-            Tao.Sdl.Sdl.SDL_JoystickClose(joystick);
+            SDL2.SDL.SDL_JoystickClose(joystick);
 
             return true;
         }
@@ -120,16 +119,16 @@ namespace KSPAdvancedFlyByWire
             {
                 if (m_Joystick != IntPtr.Zero)
                 {
-                    Tao.Sdl.Sdl.SDL_JoystickClose(m_Joystick);
+                    SDL2.SDL.SDL_JoystickClose(m_Joystick);
                 }
 
-                Tao.Sdl.Sdl.SDL_Quit();
+                SDL2.SDL.SDL_Quit();
             }
         }
 
         public override void Update(FlightCtrlState state)
         {
-            Tao.Sdl.Sdl.SDL_JoystickUpdate();
+            SDL2.SDL.SDL_JoystickUpdate();
             base.Update(state);
         }
 
@@ -145,22 +144,17 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetAxesCount()
         {
-            return m_AxesCount * 2;
+            return m_AxesCount;
         }
 
         public override string GetAxisName(int id)
         {
-            if (id >= m_AxesCount)
-            {
-                return String.Format("Axis {0} Inverted", id - m_AxesCount);
-            }
-
             return String.Format("Axis {0}", id);
         }
 
         public override bool GetButtonState(int button)
         {
-            return Tao.Sdl.Sdl.SDL_JoystickGetButton(m_Joystick, button) != 0;
+            return SDL2.SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
         }
 
         public override float GetAxisState(int analogInput)
@@ -172,7 +166,7 @@ namespace KSPAdvancedFlyByWire
                 sign = -1.0f;
             }
 
-            float value = Tao.Sdl.Sdl.SDL_JoystickGetAxis(m_Joystick, analogInput) * sign;
+            float value = SDL2.SDL.SDL_JoystickGetAxis(m_Joystick, analogInput) * sign;
 
             if (value > 0.0f)
             {

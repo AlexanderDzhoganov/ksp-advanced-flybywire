@@ -11,10 +11,10 @@ namespace KSPAdvancedFlyByWire
 {
 
     using DiscreteActionsMap = Dictionary<DiscreteAction, Bitset>;
-    using ContinuousActionsMap = Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>;
+    using ContinuousActionsMap = Dictionary<ContinuousAction, KeyValuePair<Bitset, int>>;
 
     using SerializableDiscreteActionsMap = List<KeyValuePair<DiscreteAction, Bitset>>;
-    using SerializableContinuousActionsMap = List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>>;
+    using SerializableContinuousActionsMap = List<KeyValuePair<ContinuousAction, KeyValuePair<Bitset, int>>>;
 
     public enum DiscreteAction
     {
@@ -22,6 +22,7 @@ namespace KSPAdvancedFlyByWire
 
         NextPreset,
         PreviousPreset,
+        CyclePresets,
         // yaw, pitch, roll, x, y, z, throttle
 
         YawPlus,
@@ -246,7 +247,7 @@ namespace KSPAdvancedFlyByWire
             {
                 if (matchResults[i].Key >= minBits)
                 {
-                    actions.Add(matches[i].Value);
+                    actions.Add(matchResults[i].Value);
                 }
             }
 
@@ -261,46 +262,28 @@ namespace KSPAdvancedFlyByWire
 
         public void SetContinuousBinding(int axis, Bitset state, ContinuousAction action)
         {
-            if(!continuousActionsMap.ContainsKey(axis))
-            {
-                continuousActionsMap[axis] = new List<KeyValuePair<Bitset, ContinuousAction>>();
-            }
-
-            continuousActionsMap[axis].Add(new KeyValuePair<Bitset, ContinuousAction>(state, action));
+            continuousActionsMap[action] = new KeyValuePair<Bitset, int>(state, axis);
         }
 
-        public void UnsetContinuousBinding(int axis, ContinuousAction action)
+        public void UnsetContinuousBinding(ContinuousAction action)
         {
-            if (!continuousActionsMap.ContainsKey(axis))
-            {
-                return;
-            }
-
-            for (int i = 0; i < continuousActionsMap[axis].Count; i++)
-            {
-                var pair = continuousActionsMap[axis][i];
-                if (pair.Value == action)
-                {
-                    continuousActionsMap[axis].RemoveAt(i);
-                    return;
-                }
-            }
+            continuousActionsMap.Remove(action);
         }
 
         public List<ContinuousAction> GetContinuousBinding(int axis, Bitset state)
         {
-            if (!continuousActionsMap.ContainsKey(axis))
-            {
-                return null;
-            }
-
             List<KeyValuePair<Bitset, ContinuousAction>> matches = new List<KeyValuePair<Bitset, ContinuousAction>>();
 
-            foreach (var stateActionPair in continuousActionsMap[axis])
+            foreach (var continuousActionPair in continuousActionsMap)
             {
-                Bitset expectedState = stateActionPair.Key;
+                if(continuousActionPair.Value.Value != axis)
+                {
+                    continue;
+                }
+
+                Bitset expectedState = continuousActionPair.Value.Key;
                 bool match = true;
-                    
+
                 for (int i = 0; i < state.m_NumBits; i++)
                 {
                     if (expectedState.Get(i))
@@ -312,10 +295,10 @@ namespace KSPAdvancedFlyByWire
                         }
                     }
                 }
-                    
-                if(match)
+
+                if (match)
                 {
-                    matches.Add(stateActionPair);
+                    matches.Add(new KeyValuePair<Bitset, ContinuousAction>(expectedState, continuousActionPair.Key));
                 }
             }
 
@@ -358,18 +341,12 @@ namespace KSPAdvancedFlyByWire
         
         public KeyValuePair<int, Bitset> GetBitsetForContinuousBinding(ContinuousAction action)
         {
-            foreach(var axisMaskActionPair in continuousActionsMap)
+            if(!continuousActionsMap.ContainsKey(action))
             {
-                foreach (var maskActionPair in axisMaskActionPair.Value)
-                {
-                    if (maskActionPair.Value == action)
-                    {
-                        return new KeyValuePair<int, Bitset>(axisMaskActionPair.Key, maskActionPair.Key.Copy());
-                    }
-                }
+                return new KeyValuePair<int, Bitset>(0, null);
             }
 
-            return new KeyValuePair<int, Bitset>(0, null);
+            return new KeyValuePair<int,Bitset>(continuousActionsMap[action].Value, continuousActionsMap[action].Key);
         }
 
         private static int CompareKeys(KeyValuePair<int, ContinuousAction> a, KeyValuePair<int, ContinuousAction> b)

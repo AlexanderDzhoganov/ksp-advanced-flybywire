@@ -53,6 +53,9 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onHideUI.Add(OnHideUI);
             GameEvents.onGameStateSave.Add(new EventData<ConfigNode>.OnEvent(SaveState));
             GameEvents.onGameStateLoad.Add(new EventData<ConfigNode>.OnEvent(LoadState));
+            GameEvents.onGUIRecoveryDialogSpawn.Add(new EventData<MissionRecoveryDialog>.OnEvent(OnGUIRecoveryDialogSpawn));
+            GameEvents.onGamePause.Add(new EventVoid.OnEvent(OnGamePause));
+            GameEvents.onGameUnpause.Add(new EventVoid.OnEvent(OnGameUnpause));
 
             if (ToolbarManager.ToolbarAvailable)
             {
@@ -62,6 +65,21 @@ namespace KSPAdvancedFlyByWire
                 m_ToolbarButton.Visibility = new GameScenesVisibility(GameScenes.FLIGHT);
                 m_ToolbarButton.OnClick += new ClickHandler(OnToolbarButtonClick);
             }
+        }
+
+        void OnGUIRecoveryDialogSpawn(MissionRecoveryDialog dialog)
+        {
+            m_UIHidden = true;
+        }
+
+        void OnGamePause()
+        {
+            m_UIHidden = true;
+        }
+
+        void OnGameUnpause()
+        {
+            m_UIHidden = false;
         }
 
         public void OnDestroy()
@@ -89,16 +107,19 @@ namespace KSPAdvancedFlyByWire
             }
 
             List<DiscreteAction> actions = config.GetCurrentPreset().GetDiscreteBinding(mask);
-            foreach(DiscreteAction action in actions)
+
+            if(actions != null)
             {
-                EvaluateDiscreteAction(config, action, state);
-                config.evaluatedDiscreteActionMasks.Add(mask);
+                foreach (DiscreteAction action in actions)
+                {
+                    EvaluateDiscreteAction(config, action, state);
+                    config.evaluatedDiscreteActionMasks.Add(mask);
+                }
             }
         }
 
         void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state)
         {
-            print("button released " + button.ToString());
             var config = m_Configuration.GetConfigurationByIController(controller);
 
             List<Bitset> masksToRemove = new List<Bitset>();
@@ -120,17 +141,24 @@ namespace KSPAdvancedFlyByWire
                 config.evaluatedDiscreteActionMasks.Remove(maskRemove);
             }
 
-            foreach (var presetEditor in m_PresetEditors)
+            if(controller.lastUpdateMask != null)
             {
-                Bitset bitset = controller.lastUpdateMask.Copy();
-                bitset.Set(button);
-                presetEditor.SetCurrentBitmask(bitset);
+                foreach (var presetEditor in m_PresetEditors)
+                {
+                    Bitset bitset = controller.lastUpdateMask.Copy();
+                    bitset.Set(button);
+                    presetEditor.SetCurrentBitmask(bitset);
+                }
             }
-
+            
             var actions = config.GetCurrentPreset().GetDiscreteBinding(controller.GetButtonsMask());
-            foreach (DiscreteAction action in actions)
+
+            if(actions != null)
             {
-                EvaluateDiscreteActionRelease(config, action, state);
+                foreach (DiscreteAction action in actions)
+                {
+                    EvaluateDiscreteActionRelease(config, action, state);
+                }
             }
         }
 
@@ -163,6 +191,13 @@ namespace KSPAdvancedFlyByWire
             }
 
            FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
+        }
+
+        private float ApplyChangeAndClamp(float x, float change, float clampMin = -1.0f, float clampMax = 1.0f)
+        {
+            x += change;
+            x = Utility.Clamp(x, clampMin, clampMax);
+            return x;
         }
 
         private void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
@@ -317,16 +352,26 @@ namespace KSPAdvancedFlyByWire
                 {
                     return;
                 }
+
                 controller.currentPreset++;
-                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.UPPER_CENTER);
+                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.LOWER_CENTER);
                 return;
             case DiscreteAction.PreviousPreset:
                 if (controller.currentPreset <= 0)   
                 {
                     return;
                 }
+
                 controller.currentPreset--;
-                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.UPPER_CENTER);
+                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.LOWER_CENTER);
+                return;
+            case DiscreteAction.CyclePresets:
+                controller.currentPreset++;
+                if(controller.currentPreset >= controller.presets.Count)
+                {
+                    controller.currentPreset = 0;
+                }
+                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.LOWER_CENTER);
                 return;
             case DiscreteAction.CameraZoomPlus:
                 FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + controller.discreteActionStep);
@@ -525,6 +570,8 @@ namespace KSPAdvancedFlyByWire
 
         void DoMainWindow(int index)
         {
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
+
             if (GUILayout.Button("Close window"))
             {
                 m_UIActive = false;
@@ -542,8 +589,8 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.FlexibleSpace();
 
-                bool isEnabled = false;
                 ControllerConfiguration config = m_Configuration.GetConfigurationByControllerType(controller.Key, controller.Value.Key);
+                bool isEnabled = config != null && config.iface != null;
 
                 if (!isEnabled && GUILayout.Button("Enable"))
                 {
@@ -574,48 +621,47 @@ namespace KSPAdvancedFlyByWire
                     {
                         m_ControllerTests.Add(new ControllerTest(config, m_ControllerTests.Count));
                     }
-                }
 
-                GUILayout.EndHorizontal();
+                    GUILayout.EndHorizontal();
 
-                GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal();
 
-                GUILayout.Label("Preset: " + config.GetCurrentPreset().name);
+                    GUILayout.Label("Preset: " + config.GetCurrentPreset().name);
 
-                if (config.currentPreset > 0)
-                {
-                    if (GUILayout.Button("<"))
+                    if (config.currentPreset > 0)
                     {
-                        config.currentPreset--;
+                        if (GUILayout.Button("<"))
+                        {
+                            config.currentPreset--;
+                        }
                     }
-                }
-                else
-                {
-                    GUI.enabled = false;
-                    GUILayout.Button("<");
-                    GUI.enabled = true;
-                }
-
-                if (config.currentPreset < config.presets.Count)
-                {
-                    if (GUILayout.Button(">"))
+                    else
                     {
-                        config.currentPreset++;
+                        GUI.enabled = false;
+                        GUILayout.Button("<");
+                        GUI.enabled = true;
                     }
-                }
-                else
-                {
-                    GUI.enabled = false;
-                    GUILayout.Button(">");
-                    GUI.enabled = true;
+
+                    if (config.currentPreset < config.presets.Count - 1)
+                    {
+                        if (GUILayout.Button(">"))
+                        {
+                            config.currentPreset++;
+                        }
+                    }
+                    else
+                    {
+                        GUI.enabled = false;
+                        GUILayout.Button(">");
+                        GUI.enabled = true;
+                    }
+
                 }
 
                 GUILayout.EndHorizontal();
             }
 
             GUILayout.EndScrollView();
-
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
         private Rect windowRect = new Rect(32, 32, 400, 256);
@@ -627,13 +673,13 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
-            if (windowRect.Contains(Input.mousePosition))
+            if (windowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
             {
-                InputLockManager.SetControlLock("AdvancedFlyByWire");
+                InputLockManager.SetControlLock(ControlTypes.All, "AdvancedFlyByWireMainWindow");
             }
             else
             {
-                InputLockManager.RemoveControlLock("AdvancedFlyByWire");
+                InputLockManager.RemoveControlLock("AdvancedFlyByWireMainWindow");
             }
 
             GUI.Window(0, windowRect, DoMainWindow, "Advanced Fly-By-Wire");

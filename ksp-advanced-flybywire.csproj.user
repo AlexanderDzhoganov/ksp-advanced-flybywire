@@ -2,9 +2,9 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
-    <StartProgram>C:\Users\nlight\Desktop\ksp_test\KSP.exe</StartProgram>
+    <StartProgram>C:\Program Files %28x86%29\Steam\SteamApps\common\Kerbal Space Program\KSP_x64.exe</StartProgram>
     <StartArguments>-popupwindow</StartArguments>
-    <StartWorkingDirectory>C:\Users\nlight\Desktop\ksp_test\</StartWorkingDirectory>
+    <StartWorkingDirectory>C:\Program Files %28x86%29\Steam\SteamApps\common\Kerbal Space Program\</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <StartProgram>C:\Program Files %28x86%29\Steam\steamapps\common\Kerbal Space Program\KSP_x64.exe</StartProgram>

@@ -48,7 +48,7 @@ namespace KSPAdvancedFlyByWire
 
             preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickX, new Bitset(buttonsCount), ContinuousAction.CameraX);
             preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickY, new Bitset(buttonsCount), ContinuousAction.CameraY);
-            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickYInverted, new Bitset(buttonsCount, (int)XInput.Button.LB), ContinuousAction.CameraZoom);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickY, new Bitset(buttonsCount, (int)XInput.Button.LB), ContinuousAction.CameraZoom);
 
             preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount), ContinuousAction.Yaw);
             preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickY, new Bitset(buttonsCount), ContinuousAction.Pitch);
