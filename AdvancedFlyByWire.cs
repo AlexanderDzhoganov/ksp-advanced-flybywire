@@ -19,16 +19,10 @@ namespace KSPAdvancedFlyByWire
         private bool m_CallbackSet = false;
 
         private FlightInputCallback m_Callback;
-        private List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>> m_CustomActions = new List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>>();
 
         private bool m_UIHidden = false;
 
         private List<PresetEditor> presetEditors = new List<PresetEditor>();
-
-        public void RegisterCustomAction(string name, ControllerPreset.OnCustomActionCallback callback)
-        {
-            m_CustomActions.Add(new KeyValuePair<string, ControllerPreset.OnCustomActionCallback>(name, callback));
-        }
 
         private void LoadState(ConfigNode configNode)
         {
@@ -116,13 +110,6 @@ namespace KSPAdvancedFlyByWire
                 EvaluateDiscreteAction(config, action, state);
                 config.evaluatedDiscreteActionMasks.Add(mask);
             }
-
-            ControllerPreset.OnCustomActionCallback customAction = m_Configuration.GetCurrentPreset(controller).GetCustomBinding(mask);
-            if (customAction != null)
-            {
-                customAction();
-                config.evaluatedDiscreteActionMasks.Add(mask);
-            }
         }
 
         void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state)
@@ -196,7 +183,6 @@ namespace KSPAdvancedFlyByWire
 
         private void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
         {
-
             KerbalEVA eva = null;
             if (FlightGlobals.ActiveVessel.isEVA)
             {

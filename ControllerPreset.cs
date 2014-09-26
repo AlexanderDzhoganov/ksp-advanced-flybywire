@@ -128,9 +128,6 @@ namespace KSPAdvancedFlyByWire
         [XmlIgnore()]
         public Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>();
 
-        [XmlIgnore()]
-        public List<KeyValuePair<Bitset, OnCustomActionCallback>> customActionsMap = new List<KeyValuePair<Bitset, OnCustomActionCallback>>();
-
         public List<KeyValuePair<DiscreteAction, Bitset>> serializableDiscreteActionMap = new List<KeyValuePair<DiscreteAction, Bitset>>();
         public List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>> serialiazableContinuousActionMap = new List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>>();
 
@@ -345,39 +342,6 @@ namespace KSPAdvancedFlyByWire
             }
 
             return new KeyValuePair<int, Bitset>(0, null);
-        }
-
-        public void SetCustomBinding(Bitset state, OnCustomActionCallback action)
-        {
-            customActionsMap.Add(new KeyValuePair<Bitset, OnCustomActionCallback>(state, action));
-        }
-
-        public OnCustomActionCallback GetCustomBinding(Bitset state)
-        {
-            foreach (var maskActionPair in customActionsMap)
-            {
-                Bitset expectedState = maskActionPair.Key;
-                bool match = true;
-
-                for (int i = 0; i < state.m_NumBits; i++)
-                {
-                    if (expectedState.Get(i))
-                    {
-                        if (!state.Get(i))
-                        {
-                            match = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (match)
-                {
-                    return maskActionPair.Value;
-                }
-            }
-
-            return null;
         }
 
         private static int CompareKeys(KeyValuePair<int, ContinuousAction> a, KeyValuePair<int, ContinuousAction> b)
