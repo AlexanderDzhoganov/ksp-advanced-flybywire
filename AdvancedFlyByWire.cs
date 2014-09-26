@@ -488,18 +488,26 @@ namespace KSPAdvancedFlyByWire
             m_UIHidden = true;
         }
 
+        private Vector2 m_ScrollPosition = new Vector2(0, 0);
+
         void DoMainWindow(int index)
         {
+            m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
+
+            GUILayout.Label("Controllers:");
+
             var controllers = IController.EnumerateAllControllers();
             foreach (var controller in controllers)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(controller.Key.ToString() + "-" + controller.Value.ToString());
+                GUILayout.Label(controller.Key.ToString() + " #" + controller.Value.Key.ToString() + " - " + controller.Value.Value);
+
+                GUILayout.FlexibleSpace();
 
                 bool isEnabled = false;
                 ControllerConfiguration config = m_Configuration.GetConfigurationByControllerType(controller.Key, controller.Value.Key);
 
-                if (!isEnabled && GUILayout.Button("enable"))
+                if (!isEnabled && GUILayout.Button("Enable"))
                 {
                     m_Configuration.ActivateController
                     (
@@ -511,7 +519,7 @@ namespace KSPAdvancedFlyByWire
                 }
                 else if (isEnabled)
                 {
-                    if (GUILayout.Button("disable"))
+                    if (GUILayout.Button("Disable"))
                     {
                         m_Configuration.DeactivateController(controller.Key, controller.Value.Key);
                     }
@@ -519,7 +527,7 @@ namespace KSPAdvancedFlyByWire
 
                 if (isEnabled)
                 {
-                    if (GUILayout.Button("edit"))
+                    if (GUILayout.Button("Edit"))
                     {
                         m_PresetEditors.Add(new PresetEditor(config));
                     }
@@ -528,10 +536,12 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.EndHorizontal();
             }
 
+            GUILayout.EndScrollView();
+
             GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
-        private Rect windowRect = new Rect(32, 32, 400, 600);
+        private Rect windowRect = new Rect(32, 32, 400, 256);
 
         void OnGUI()
         {
