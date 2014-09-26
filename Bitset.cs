@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace KSPAdvancedFlyByWire
 {
 
-    [Serializable]
     public class Bitset
     {
 

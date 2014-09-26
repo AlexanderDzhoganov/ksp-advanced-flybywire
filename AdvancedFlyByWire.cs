@@ -9,18 +9,11 @@ using UnityEngine;
 namespace KSPAdvancedFlyByWire
 {
 
-    public enum InputWrapper
-    {
-        XInput = 0,
-        SDL = 1,
-        KeyboardMouse = 2,
-    }
-
     [KSPAddon(KSPAddon.Startup.Flight, true)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
         private Configuration m_Configuration = null;
-        private string m_ConfigurationPath = "advanced_flybywire_config.xml";
+        private string m_ConfigurationPath = "GameData/ksp-advanced-flybywire/advanced_flybywire_config.xml";
 
         private float m_Throttle = 0.0f;
         private bool m_CallbackSet = false;
@@ -28,65 +21,16 @@ namespace KSPAdvancedFlyByWire
         private FlightInputCallback m_Callback;
         private List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>> m_CustomActions = new List<KeyValuePair<string, ControllerPreset.OnCustomActionCallback>>();
 
+        private bool m_UIHidden = false;
+
+        private List<PresetEditor> presetEditors = new List<PresetEditor>();
+
         public void RegisterCustomAction(string name, ControllerPreset.OnCustomActionCallback callback)
         {
             m_CustomActions.Add(new KeyValuePair<string, ControllerPreset.OnCustomActionCallback>(name, callback));
         }
 
-        public void ActivateController(InputWrapper wrapper, int controllerIndex)
-        {
-            foreach (var contrlr in m_Configuration.controllers)
-            {
-                if (contrlr.wrapper == wrapper && contrlr.controllerIndex == controllerIndex)
-                {
-                    return;
-                }
-            }
-
-            ControllerConfiguration controller = new ControllerConfiguration();
-
-            controller.wrapper = wrapper;
-            controller.controllerIndex = controllerIndex;
-
-            if (wrapper == InputWrapper.XInput)
-            {
-                controller.iface = new XInputController(controller.controllerIndex);
-            }
-            else if (wrapper == InputWrapper.SDL)
-            {
-                controller.iface = new SDLController(controller.controllerIndex);
-            }
-            else if (wrapper == InputWrapper.KeyboardMouse)
-            {
-                controller.iface = new KeyboardMouseController();
-            }
-
-            controller.iface.analogEvaluationCurve = CurveFactory.Instantiate(controller.analogInputCurve);
-            controller.iface.buttonPressedCallback = new IController.ButtonPressedCallback(ButtonPressedCallback);
-            controller.iface.buttonReleasedCallback = new IController.ButtonReleasedCallback(ButtonReleasedCallback);
-
-            controller.presets = DefaultControllerPresets.GetDefaultPresets(controller.iface);
-            controller.currentPreset = 0;
-
-            m_Configuration.controllers.Add(controller);
-        }
-
-        public void DeactivateController(InputWrapper wrapper, int controllerIndex)
-        {
-            for (int i = 0; i < m_Configuration.controllers.Count; i++)
-            {
-                var contrlr = m_Configuration.controllers[i];
-
-                if (contrlr.wrapper == wrapper && contrlr.controllerIndex == controllerIndex)
-                {
-                    m_Configuration.controllers[i].iface = null;
-                    m_Configuration.controllers.RemoveAt(i);
-                    return;
-                }
-            }
-        }
-
-        private void LoadState(ConfigNode data)
+        private void LoadState(ConfigNode configNode)
         {
             m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
             if (m_Configuration == null)
@@ -96,39 +40,16 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        public void SaveState(ConfigNode data)
+        public void SaveState(ConfigNode configNode)
         {
             Configuration.Serialize(m_ConfigurationPath, m_Configuration);
         }
 
-        public static List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> EnumerateAllControllers()
-        {
-            List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> controllers = new List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>>();
-
-            foreach (var controllerName in XInputController.EnumerateControllers())
-            {
-                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.XInput, controllerName));
-            }
-
-            foreach (var controllerName in SDLController.EnumerateControllers())
-            {
-                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.SDL, controllerName));
-            }
-
-            controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Mouse&Keyboard")));
-            return controllers;
-        }
-
         public void Awake()
         {
-            print("KSPAdvancedFlyByWire: initialized");
+            print("KSPAdvancedFlyByWire: Initialized");
 
-            m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
-            if (m_Configuration == null)
-            {
-                m_Configuration = new Configuration();
-                Configuration.Serialize(m_ConfigurationPath, m_Configuration);
-            }
+            LoadState(null);
 
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onHideUI.Add(OnHideUI);
@@ -136,34 +57,9 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGameStateLoad.Add(new EventData<ConfigNode>.OnEvent(LoadState));
         }
 
-        private ControllerPreset GetCurrentPreset(IController controller)
-        {
-            var config = m_Configuration.GetConfigurationByIController(controller);
-
-            if(config.currentPreset >= config.presets.Count)
-            {
-                config.currentPreset = 0;
-                if(config.presets.Count == 0)
-                {
-                    config.presets.Add(new ControllerPreset());
-                }
-            }
-
-            return config.presets[config.currentPreset];
-        }
-
-        public void SetAnalogInputCurveType(IController controller, CurveType type)
-        {
-            var config = m_Configuration.GetConfigurationByIController(controller);
-            config.analogInputCurve = type;
-            config.iface.analogEvaluationCurve = CurveFactory.Instantiate(type);
-        }
-
-        private List<PresetEditor> presetEditors = new List<PresetEditor>();
-
         void DoMainWindow(int index)
         {
-            var controllers = EnumerateAllControllers();
+            var controllers = IController.EnumerateAllControllers();
             foreach(var controller in controllers)
             {
                 GUILayout.BeginHorizontal();
@@ -171,26 +67,23 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.Label(controller.Key.ToString() + "-" + controller.Value.ToString());
 
                 bool isEnabled = false;
-                ControllerConfiguration config = null;
-                foreach (var ctrl in m_Configuration.controllers)
-                {
-                    if(ctrl.wrapper == controller.Key && ctrl.controllerIndex == controller.Value.Key)
-                    {
-                        isEnabled = true;
-                        config = ctrl;
-                        break;
-                    }
-                }
+                ControllerConfiguration config = m_Configuration.GetConfigurationByControllerType(controller.Key, controller.Value.Key);
 
                 if(!isEnabled && GUILayout.Button("enable"))
                 {
-                    ActivateController(controller.Key, controller.Value.Key); 
+                    m_Configuration.ActivateController
+                    (
+                        controller.Key,
+                        controller.Value.Key,
+                        new IController.ButtonPressedCallback(ButtonPressedCallback),
+                        new IController.ButtonReleasedCallback(ButtonReleasedCallback)
+                    ); 
                 }
                 else if(isEnabled)
                 {
                     if(GUILayout.Button("disable"))
                     {
-                        DeactivateController(controller.Key, controller.Value.Key);
+                        m_Configuration.DeactivateController(controller.Key, controller.Value.Key);
                     }
                 }
 
@@ -217,14 +110,14 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
-            List<DiscreteAction> actions = GetCurrentPreset(controller).GetDiscreteBinding(mask);
+            List<DiscreteAction> actions = m_Configuration.GetCurrentPreset(controller).GetDiscreteBinding(mask);
             foreach(DiscreteAction action in actions)
             {
                 EvaluateDiscreteAction(config, action, state);
                 config.evaluatedDiscreteActionMasks.Add(mask);
             }
 
-            ControllerPreset.OnCustomActionCallback customAction = GetCurrentPreset(controller).GetCustomBinding(mask);
+            ControllerPreset.OnCustomActionCallback customAction = m_Configuration.GetCurrentPreset(controller).GetCustomBinding(mask);
             if (customAction != null)
             {
                 customAction();
@@ -263,7 +156,7 @@ namespace KSPAdvancedFlyByWire
                 presetEditor.SetCurrentBitmask(bitset);
             }
 
-            var actions = GetCurrentPreset(controller).GetDiscreteBinding(controller.GetButtonsMask());
+            var actions = m_Configuration.GetCurrentPreset(controller).GetDiscreteBinding(controller.GetButtonsMask());
             foreach (DiscreteAction action in actions)
             {
                 EvaluateDiscreteActionRelease(config, action, state);
@@ -281,7 +174,7 @@ namespace KSPAdvancedFlyByWire
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
-                    List<ContinuousAction> actions = GetCurrentPreset(config.iface).GetContinuousBinding(i, config.iface.GetButtonsMask());
+                    List<ContinuousAction> actions = m_Configuration.GetCurrentPreset(config.iface).GetContinuousBinding(i, config.iface.GetButtonsMask());
                     if (actions == null)
                     {
                         continue;
@@ -300,11 +193,7 @@ namespace KSPAdvancedFlyByWire
 
            FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
         }
-        private float Clamp(float x, float min, float max)
-        {
-            return x < min ? min : x > max ? max : x;
-        }
-        
+
         private void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
         {
 
@@ -320,59 +209,59 @@ namespace KSPAdvancedFlyByWire
                 return;
             case DiscreteAction.YawPlus:
                 state.yaw += controller.discreteActionStep;
-                state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
+                state.yaw = Utility.Clamp(state.yaw, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YawMinus:
                 state.yaw -= controller.discreteActionStep;
-                state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
+                state.yaw = Utility.Clamp(state.yaw, -1.0f, 1.0f);
                 return;
             case DiscreteAction.PitchPlus:
                 state.pitch += controller.discreteActionStep;
-                state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
+                state.pitch = Utility.Clamp(state.pitch, -1.0f, 1.0f);
                 return;
             case DiscreteAction.PitchMinus:
                 state.pitch -= controller.discreteActionStep;
-                state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
+                state.pitch = Utility.Clamp(state.pitch, -1.0f, 1.0f);
                 return;
             case DiscreteAction.RollPlus:
                 state.roll += controller.discreteActionStep;
-                state.roll = Clamp(state.roll, -1.0f, 1.0f);
+                state.roll = Utility.Clamp(state.roll, -1.0f, 1.0f);
                 return;
             case DiscreteAction.RollMinus:
                 state.roll -= controller.discreteActionStep;
-                state.roll = Clamp(state.roll, -1.0f, 1.0f);
+                state.roll = Utility.Clamp(state.roll, -1.0f, 1.0f);
                 return;
             case DiscreteAction.XPlus:
                 state.X += controller.discreteActionStep;
-                state.X = Clamp(state.X, -1.0f, 1.0f);
+                state.X = Utility.Clamp(state.X, -1.0f, 1.0f);
                 return;
             case DiscreteAction.XMinus:
                 state.X -= controller.discreteActionStep;
-                state.X = Clamp(state.X, -1.0f, 1.0f);
+                state.X = Utility.Clamp(state.X, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YPlus:
                 state.Y += controller.discreteActionStep;
-                state.Y = Clamp(state.Y, -1.0f, 1.0f);
+                state.Y = Utility.Clamp(state.Y, -1.0f, 1.0f);
                 return;
             case DiscreteAction.YMinus:
                 state.Y -= controller.discreteActionStep;
-                state.Y = Clamp(state.Y, -1.0f, 1.0f);
+                state.Y = Utility.Clamp(state.Y, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ZPlus:
                 state.Z += controller.discreteActionStep;
-                state.Z = Clamp(state.Z, -1.0f, 1.0f);
+                state.Z = Utility.Clamp(state.Z, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ZMinus:
                 state.Z -= controller.discreteActionStep;
-                state.Z = Clamp(state.Z, -1.0f, 1.0f);
+                state.Z = Utility.Clamp(state.Z, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ThrottlePlus:
                 m_Throttle += controller.discreteActionStep;
-                m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
+                m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
                 return;
             case DiscreteAction.ThrottleMinus:
                 m_Throttle -= controller.discreteActionStep;
-                m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
+                m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
                 return;
             case DiscreteAction.Stage:
                 Staging.ActivateNextStage();
@@ -466,7 +355,6 @@ namespace KSPAdvancedFlyByWire
                 {
                     return;
                 }
-
                 controller.currentPreset++;
                 return;
             case DiscreteAction.PreviousPreset:
@@ -474,7 +362,6 @@ namespace KSPAdvancedFlyByWire
                 {
                     return;
                 }
-
                 controller.currentPreset--;
                 return;
             case DiscreteAction.CameraZoomPlus:
@@ -513,7 +400,6 @@ namespace KSPAdvancedFlyByWire
                 {
                     break;
                 }
-
                 TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, false);
                 return;
             case DiscreteAction.NavballToggle:
@@ -567,51 +453,51 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case ContinuousAction.Yaw:
                     state.yaw = value;
-                    state.yaw = Clamp(state.yaw, -1.0f, 1.0f);
+                    state.yaw = Utility.Clamp(state.yaw, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.YawTrim:
                     state.yawTrim = value;
-                    state.yawTrim = Clamp(state.yawTrim, -1.0f, 1.0f);
+                    state.yawTrim = Utility.Clamp(state.yawTrim, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Pitch:
                     state.pitch = value;
-                    state.pitch = Clamp(state.pitch, -1.0f, 1.0f);
+                    state.pitch = Utility.Clamp(state.pitch, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.PitchTrim:
                     state.pitchTrim = value;
-                    state.pitchTrim = Clamp(state.pitchTrim, -1.0f, 1.0f);
+                    state.pitchTrim = Utility.Clamp(state.pitchTrim, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Roll:
                     state.roll = value;
-                    state.roll = Clamp(state.roll, -1.0f, 1.0f);
+                    state.roll = Utility.Clamp(state.roll, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.RollTrim:
                     state.rollTrim = value;
-                    state.rollTrim = Clamp(state.rollTrim, -1.0f, 1.0f);
+                    state.rollTrim = Utility.Clamp(state.rollTrim, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.X:
                     state.X = value;
-                    state.X = Clamp(state.X, -1.0f, 1.0f);
+                    state.X = Utility.Clamp(state.X, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Y:
                     state.Y = value;
-                    state.Y = Clamp(state.Y, -1.0f, 1.0f);
+                    state.Y = Utility.Clamp(state.Y, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Z:
                     state.Z = value;
-                    state.Z = Clamp(state.Z, -1.0f, 1.0f);
+                    state.Z = Utility.Clamp(state.Z, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Throttle:
                     m_Throttle += value;
-                    m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
+                    m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.ThrottleIncrement:
                     m_Throttle += value * controller.incrementalThrottleSensitivity;
-                    m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
+                    m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.ThrottleDecrement:
                     m_Throttle -= value * controller.incrementalThrottleSensitivity;
-                    m_Throttle = Clamp(m_Throttle, -1.0f, 1.0f);
+                    m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.CameraX:
                     FlightCamera.CamHdg += value;
@@ -635,6 +521,9 @@ namespace KSPAdvancedFlyByWire
                 }
                 else
                 {
+                    // we have to remove and re-add the callback every frame to make
+                    // sure that it's always the last callback
+                    // otherwise we break SAS and probably some mods
                     FlightGlobals.ActiveVessel.OnFlyByWire -= m_Callback;
                 }
 
@@ -642,8 +531,6 @@ namespace KSPAdvancedFlyByWire
                 m_CallbackSet = true;
             }
         }
-
-        private bool m_UIHidden = false;
 
         void OnGUI()
         {

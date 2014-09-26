@@ -111,7 +111,6 @@ namespace KSPAdvancedFlyByWire
         CameraZoom
     }
 
-    [Serializable]
     public class ControllerPreset
     {
 
@@ -129,11 +128,11 @@ namespace KSPAdvancedFlyByWire
         [XmlIgnore()]
         public Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>> continuousActionsMap = new Dictionary<int, List<KeyValuePair<Bitset, ContinuousAction>>>();
 
-        public List<KeyValuePair<DiscreteAction, Bitset>> serializableDiscreteActionMap = new List<KeyValuePair<DiscreteAction, Bitset>>();
-        public List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>> serialiazableContinuousActionMap = new List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>>();
-
         [XmlIgnore()]
         public List<KeyValuePair<Bitset, OnCustomActionCallback>> customActionsMap = new List<KeyValuePair<Bitset, OnCustomActionCallback>>();
+
+        public List<KeyValuePair<DiscreteAction, Bitset>> serializableDiscreteActionMap = new List<KeyValuePair<DiscreteAction, Bitset>>();
+        public List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>> serialiazableContinuousActionMap = new List<KeyValuePair<int, List<KeyValuePair<Bitset, ContinuousAction>>>>();
 
         public void OnPreSerialize()
         {

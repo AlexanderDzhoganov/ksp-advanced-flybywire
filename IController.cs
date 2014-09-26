@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 namespace KSPAdvancedFlyByWire
 {
 
+    public enum InputWrapper
+    {
+        XInput = 0,
+        SDL = 1,
+        KeyboardMouse = 2,
+    }
+
     public abstract class IController
     {
 
@@ -23,6 +30,24 @@ namespace KSPAdvancedFlyByWire
         public float[] axisNegativeDeadZones;
 
         public Bitset lastUpdateMask;
+
+        public static List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> EnumerateAllControllers()
+        {
+            List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> controllers = new List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>>();
+
+            foreach (var controllerName in XInputController.EnumerateControllers())
+            {
+                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.XInput, controllerName));
+            }
+
+            foreach (var controllerName in SDLController.EnumerateControllers())
+            {
+                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.SDL, controllerName));
+            }
+
+            controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Mouse&Keyboard")));
+            return controllers;
+        }
 
         public virtual void Update(FlightCtrlState state)
         {

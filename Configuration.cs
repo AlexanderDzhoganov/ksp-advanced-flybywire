@@ -9,7 +9,6 @@ using System.Xml.Serialization;
 namespace KSPAdvancedFlyByWire
 {
 
-    [Serializable]
     public class ControllerConfiguration
     {
         public InputWrapper wrapper = InputWrapper.XInput;
@@ -27,11 +26,86 @@ namespace KSPAdvancedFlyByWire
         public HashSet<Bitset> evaluatedDiscreteActionMasks = new HashSet<Bitset>();
     }
 
-    [Serializable]
     public class Configuration
     {
 
         public Configuration() {}
+
+        public void ActivateController(InputWrapper wrapper, int controllerIndex, IController.ButtonPressedCallback pressedCallback, IController.ButtonReleasedCallback releasedCallback)
+        {
+            foreach (var config in controllers)
+            {
+                if (config.wrapper == wrapper && config.controllerIndex == controllerIndex)
+                {
+                    return;
+                }
+            }
+
+            ControllerConfiguration controller = new ControllerConfiguration();
+
+            controller.wrapper = wrapper;
+            controller.controllerIndex = controllerIndex;
+
+            if (wrapper == InputWrapper.XInput)
+            {
+                controller.iface = new XInputController(controller.controllerIndex);
+            }
+            else if (wrapper == InputWrapper.SDL)
+            {
+                controller.iface = new SDLController(controller.controllerIndex);
+            }
+            else if (wrapper == InputWrapper.KeyboardMouse)
+            {
+                controller.iface = new KeyboardMouseController();
+            }
+
+            controller.iface.analogEvaluationCurve = CurveFactory.Instantiate(controller.analogInputCurve);
+            controller.iface.buttonPressedCallback = new IController.ButtonPressedCallback(pressedCallback);
+            controller.iface.buttonReleasedCallback = new IController.ButtonReleasedCallback(releasedCallback);
+
+            controller.presets = DefaultControllerPresets.GetDefaultPresets(controller.iface);
+            controller.currentPreset = 0;
+
+            controllers.Add(controller);
+        }
+
+        public void DeactivateController(InputWrapper wrapper, int controllerIndex)
+        {
+            for (int i = 0; i < controllers.Count; i++)
+            {
+                var config = controllers[i];
+
+                if (config.wrapper == wrapper && config.controllerIndex == controllerIndex)
+                {
+                    controllers[i].iface = null;
+                    controllers.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+
+        public void SetAnalogInputCurveType(IController controller, CurveType type)
+        {
+            var config = GetConfigurationByIController(controller);
+            config.analogInputCurve = type;
+            config.iface.analogEvaluationCurve = CurveFactory.Instantiate(type);
+        }
+
+        public ControllerPreset GetCurrentPreset(IController controller)
+        {
+            var config = GetConfigurationByIController(controller);
+
+            if (config.currentPreset >= config.presets.Count)
+            {
+                config.currentPreset = 0;
+                if (config.presets.Count == 0)
+                {
+                    config.presets.Add(new ControllerPreset());
+                }
+            }
+
+            return config.presets[config.currentPreset];
+        }
 
         public void OnPreSerialize()
         {
@@ -73,6 +147,19 @@ namespace KSPAdvancedFlyByWire
             foreach (ControllerConfiguration ctrlr in controllers)
             {
                 if(ctrlr.iface == controller)
+                {
+                    return ctrlr;
+                }
+            }
+
+            return null;
+        }
+
+        public ControllerConfiguration GetConfigurationByControllerType(InputWrapper wrapper, int controllerIndex)
+        {
+            foreach (ControllerConfiguration ctrlr in controllers)
+            {
+                if (ctrlr.wrapper == wrapper && ctrlr.controllerIndex == controllerIndex)
                 {
                     return ctrlr;
                 }
