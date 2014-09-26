@@ -538,8 +538,19 @@ namespace KSPAdvancedFlyByWire
             {
                 return;
             }
-           
-            GUI.Window(0, new Rect(32, 32, 400, 600), DoMainWindow, "Advanced FlyByWire");
+
+            Rect rect = new Rect(32, 32, 400, 600);
+
+            if (rect.Contains(Input.mousePosition))
+            {
+                InputLockManager.SetControlLock("AdvancedFlyByWire");
+            }
+            else
+            {
+                InputLockManager.RemoveControlLock("AdvancedFlyByWire");
+            }
+
+            GUI.Window(0, rect, DoMainWindow, "Advanced FlyByWire");
 
             foreach (var presetEditor in presetEditors)
             {

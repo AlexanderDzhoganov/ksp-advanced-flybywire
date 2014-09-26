@@ -161,11 +161,11 @@ namespace KSPAdvancedFlyByWire
 
         public ControllerConfiguration GetConfigurationByControllerType(InputWrapper wrapper, int controllerIndex)
         {
-            foreach (ControllerConfiguration ctrlr in controllers)
+            foreach (ControllerConfiguration config in controllers)
             {
-                if (ctrlr.wrapper == wrapper && ctrlr.controllerIndex == controllerIndex)
+                if (config.wrapper == wrapper && config.controllerIndex == controllerIndex)
                 {
-                    return ctrlr;
+                    return config;
                 }
             }
 

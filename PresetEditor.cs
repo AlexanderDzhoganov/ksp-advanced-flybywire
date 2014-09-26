@@ -146,7 +146,19 @@ namespace KSPAdvancedFlyByWire
 
         public void OnGUI()
         {
-            GUI.Window(1337, new Rect(position.x, position.y, size.x, size.y), DoWindow, "Fly-By-Wire Preset Editor");
+            var rect = new Rect(position.x, position.y, size.x, size.y);
+            string hash = "PresetEditor " + m_Controller.wrapper.ToString() + " - " + m_Controller.controllerIndex.ToString();
+
+            if (rect.Contains(Input.mousePosition))
+            {
+                InputLockManager.SetControlLock(hash);
+            }
+            else
+            {
+                InputLockManager.RemoveControlLock(hash);
+            }
+
+            GUI.Window(1337, rect, DoWindow, "Fly-By-Wire Preset Editor");
         }
 
     }
