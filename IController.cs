@@ -55,7 +55,22 @@ namespace KSPAdvancedFlyByWire
         public float[] axisIdentity;
         public float[] axisRight;
 
+        public bool[] axisInvert;
+
         public Bitset lastUpdateMask;
+
+        public void InitializeStateArrays(int buttons, int axes)
+        {
+            buttonStates = new bool[buttons];
+            axisPositiveDeadZones = new float[axes];
+            axisNegativeDeadZones = new float[axes];
+
+            axisLeft = new float[axes];
+            axisIdentity = new float[axes];
+            axisRight = new float[axes];
+
+            axisInvert = new bool[axes];
+        }
 
         public abstract string GetControllerName();
 
@@ -213,7 +228,7 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
-            return Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
+            return (axisInvert[input] ? -1.0f : 1.0f) * Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
         }
 
     }

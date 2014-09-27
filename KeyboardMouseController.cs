@@ -18,9 +18,7 @@ namespace KSPAdvancedFlyByWire
 
         public KeyboardMouseController()
         {
-             buttonStates = new bool[GetButtonsCount()];
-             axisPositiveDeadZones = new float[GetAxesCount()];
-             axisNegativeDeadZones = new float[GetAxesCount()];
+            InitializeStateArrays(GetButtonsCount(), GetAxesCount());
 
             for (int i = 0; i < 10; i++)
             {

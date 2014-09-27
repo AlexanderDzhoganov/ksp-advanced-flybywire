@@ -101,8 +101,17 @@ namespace KSPAdvancedFlyByWire
             for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
             {
                 string label = "";
-                label += m_Controller.iface.GetAxisName(i) + ") " + m_Controller.iface.GetAxisState(i).ToString();
-                
+                float value = m_Controller.iface.GetAxisState(i);
+                label += m_Controller.iface.GetAxisName(i) + ") ";
+                if(value >= 0.0f)
+                {
+                    label += " ";
+                }
+
+                label += value.ToString("0.00");
+
+                GUILayout.BeginHorizontal();
+
                 if(m_ShowDetails)
                 {
                     label += " (min: " + m_Controller.iface.axisLeft[i].ToString() +
@@ -116,14 +125,19 @@ namespace KSPAdvancedFlyByWire
                 }
                 else
                 {
-                    GUILayout.BeginHorizontal();
                     GUILayout.Label(label);
 
                     GUI.enabled = false;
-                    GUILayout.HorizontalSlider(m_Controller.iface.GetAxisState(i), -1.0f, 1.0f, GUILayout.Width(150));
+                    GUILayout.HorizontalSlider(value, -1.0f, 1.0f, GUILayout.Width(150));
                     GUI.enabled = true;
-                    GUILayout.EndHorizontal();
                 }
+
+                GUILayout.FlexibleSpace();
+
+                GUILayout.Label("Invert");
+                m_Controller.iface.axisInvert[i] = GUILayout.Toggle(m_Controller.iface.axisInvert[i], "");
+
+                GUILayout.EndHorizontal();
             }
 
             GUILayout.Label("Buttons");

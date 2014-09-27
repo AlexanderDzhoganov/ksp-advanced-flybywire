@@ -34,6 +34,7 @@ namespace KSPAdvancedFlyByWire
         public List<float> axisLeft = null;
         public List<float> axisIdentity = null;
         public List<float> axisRight = null;
+        public List<bool> axisInvert = null;
 
         [XmlIgnore()]
         public IController iface;
@@ -153,6 +154,7 @@ namespace KSPAdvancedFlyByWire
                 config.axisLeft = new List<float>();
                 config.axisIdentity = new List<float>();
                 config.axisRight = new List<float>();
+                config.axisInvert = new List<bool>();
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
@@ -161,6 +163,7 @@ namespace KSPAdvancedFlyByWire
                     config.axisLeft.Add(config.iface.axisLeft[i]);
                     config.axisIdentity.Add(config.iface.axisIdentity[i]);
                     config.axisRight.Add(config.iface.axisRight[i]);
+                    config.axisInvert.Add(config.iface.axisInvert[i]);
                 }
             }
         }
@@ -198,6 +201,7 @@ namespace KSPAdvancedFlyByWire
                     config.iface.axisLeft[i] = config.axisLeft[i];
                     config.iface.axisIdentity[i] = config.axisIdentity[i];
                     config.iface.axisRight[i] = config.axisRight[i];
+                    config.iface.axisInvert[i] = config.axisInvert[i];
                 }
 
                 config.axisPositiveDeadZones = null;

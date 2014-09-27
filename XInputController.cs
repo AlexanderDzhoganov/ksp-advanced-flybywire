@@ -59,18 +59,13 @@ namespace KSPAdvancedFlyByWire
                 buttonStates[i] = false;
             }
 
-            axisPositiveDeadZones = new float[6];
-            axisNegativeDeadZones = new float[6];
+            InitializeStateArrays(GetButtonsCount(), GetAxesCount());
 
             for (int i = 0; i < 6; i++)
             {
                 axisNegativeDeadZones[i] = float.MaxValue;
                 axisPositiveDeadZones[i] = float.MaxValue;
             }
-
-            axisLeft = new float[6];
-            axisIdentity = new float[6];
-            axisRight = new float[6];
 
             for (int i = 0; i < 4; i++)
             {

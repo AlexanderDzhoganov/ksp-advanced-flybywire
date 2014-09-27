@@ -41,9 +41,7 @@ namespace KSPAdvancedFlyByWire
             m_AxesCount = SDL2.SDL.SDL_JoystickNumAxes(m_Joystick);
             m_ButtonsCount = SDL2.SDL.SDL_JoystickNumButtons(m_Joystick);
 
-            buttonStates = new bool[m_ButtonsCount];
-            axisPositiveDeadZones = new float[m_AxesCount];
-            axisNegativeDeadZones = new float[m_AxesCount];
+            InitializeStateArrays(m_ButtonsCount, m_AxesCount);
 
             for (int i = 0; i < m_ButtonsCount; i++)
             {
@@ -55,10 +53,6 @@ namespace KSPAdvancedFlyByWire
                 axisNegativeDeadZones[i] = float.MaxValue;
                 axisPositiveDeadZones[i] = float.MaxValue;
             }
-
-            axisLeft = new float[m_AxesCount];
-            axisIdentity = new float[m_AxesCount];
-            axisRight = new float[m_AxesCount];
 
             for (int i = 0; i < m_AxesCount; i++)
             {
