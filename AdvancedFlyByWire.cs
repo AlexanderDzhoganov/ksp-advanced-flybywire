@@ -8,7 +8,7 @@ using UnityEngine;
 namespace KSPAdvancedFlyByWire
 {
 
-    [KSPAddon(KSPAddon.Startup.Flight, true)]
+    [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
         private Configuration m_Configuration = null;
@@ -25,7 +25,7 @@ namespace KSPAdvancedFlyByWire
         private List<PresetEditorWindow> m_PresetEditors = new List<PresetEditorWindow>();
         private List<ControllerConfigurationWindow> m_ControllerTests = new List<ControllerConfigurationWindow>();
 
-       // private IButton m_ToolbarButton = null;
+        private Toolbar.IButton m_ToolbarButton = null;
 
         private void LoadState(ConfigNode configNode)
         {
@@ -44,13 +44,6 @@ namespace KSPAdvancedFlyByWire
 
         public void Awake()
         {
-            GameEvents.onFlightReady.Add(new EventVoid.OnEvent(OnFlightReady));
-        }
-
-        public void OnFlightReady()
-        {
-            print("KSPAdvancedFlyByWire: Initialized");
-
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onHideUI.Add(OnHideUI);
             GameEvents.onGameStateSave.Add(new EventData<ConfigNode>.OnEvent(SaveState));
@@ -61,17 +54,16 @@ namespace KSPAdvancedFlyByWire
 
             LoadState(null);
 
-          /*  if (ToolbarManager.ToolbarAvailable)
-            {
-                m_ToolbarButton = ToolbarManager.Instance.add("advancedflybywire", "mainButton");
-                m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire";
-                m_ToolbarButton.ToolTip = "Advanced Fly-By-Wire";
-                m_ToolbarButton.Visibility = new GameScenesVisibility(GameScenes.FLIGHT);
-                m_ToolbarButton.OnClick += new ClickHandler(OnToolbarButtonClick);
-            }
-            */
+            m_ToolbarButton = Toolbar.ToolbarManager.Instance.add("advancedflybywire", "mainButton");
+            m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire";
+            m_ToolbarButton.ToolTip = "Advanced Fly-By-Wire";
+            m_ToolbarButton.Visibility = new Toolbar.GameScenesVisibility(GameScenes.FLIGHT);
+            m_ToolbarButton.OnClick += new Toolbar.ClickHandler(OnToolbarButtonClick);
+
             m_UIHidden = false;
             m_UIActive = true;
+
+            print("KSPAdvancedFlyByWire: Initialized");
         }
 
         void OnGUIRecoveryDialogSpawn(MissionRecoveryDialog dialog)
@@ -91,10 +83,10 @@ namespace KSPAdvancedFlyByWire
 
         public void OnDestroy()
         {
-           /* if (m_ToolbarButton != null)
+            if (m_ToolbarButton != null)
             {
                 m_ToolbarButton.Destroy();
-            }*/
+            }
 
             SaveState(null);
 
@@ -109,11 +101,12 @@ namespace KSPAdvancedFlyByWire
             print("KSPAdvancedFlyByWire: Deinitialized");
         }
 
-       /* void OnToolbarButtonClick(ClickEvent ev)
+        void OnToolbarButtonClick(Toolbar.ClickEvent ev)
         {
+            this.gameObject.SetActive(true);
             m_UIActive = true;
             m_UIHidden = false;
-        }*/
+        }
 
         void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
         {

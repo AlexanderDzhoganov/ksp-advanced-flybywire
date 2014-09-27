@@ -191,18 +191,13 @@ namespace KSPAdvancedFlyByWire
 
                 config.evaluatedDiscreteActionMasks = new HashSet<Bitset>();
 
-                foreach (var preset in config.presets)
-                {
-                    preset.OnPostDeserialize();
-                }
-
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
-                    config.iface.axisPositiveDeadZones[i] = config.iface.axisPositiveDeadZones[i];
-                    config.iface.axisNegativeDeadZones[i] = config.iface.axisNegativeDeadZones[i];
-                    config.iface.axisLeft[i] = config.iface.axisLeft[i];
-                    config.iface.axisIdentity[i] = config.iface.axisIdentity[i];
-                    config.iface.axisRight[i] = config.iface.axisRight[i];
+                    config.iface.axisPositiveDeadZones[i] = config.axisPositiveDeadZones[i];
+                    config.iface.axisNegativeDeadZones[i] = config.axisNegativeDeadZones[i];
+                    config.iface.axisLeft[i] = config.axisLeft[i];
+                    config.iface.axisIdentity[i] = config.axisIdentity[i];
+                    config.iface.axisRight[i] = config.axisRight[i];
                 }
 
                 config.axisPositiveDeadZones = null;
@@ -211,6 +206,11 @@ namespace KSPAdvancedFlyByWire
                 config.axisLeft = null;
                 config.axisIdentity = null;
                 config.axisRight = null;
+
+                foreach (var preset in config.presets)
+                {
+                    preset.OnPostDeserialize();
+                }
             }
         }
 

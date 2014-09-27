@@ -101,7 +101,7 @@ namespace KSPAdvancedFlyByWire
             for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
             {
                 string label = "";
-                label += m_Controller.iface.GetAxisName(i) + ": " + m_Controller.iface.GetAxisState(i).ToString();
+                label += m_Controller.iface.GetAxisName(i) + ") " + m_Controller.iface.GetAxisState(i).ToString();
                 
                 if(m_ShowDetails)
                 {
@@ -111,9 +111,19 @@ namespace KSPAdvancedFlyByWire
                         ", raw: " + m_Controller.iface.GetRawAxisState(i).ToString() +
                         ", deadzone min: " + m_Controller.iface.axisNegativeDeadZones[i].ToString() + 
                         ", deadzone max: " + m_Controller.iface.axisPositiveDeadZones[i].ToString() + ")";
-                }
 
-                GUILayout.Label(label);
+                    GUILayout.Label(label);
+                }
+                else
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(label);
+
+                    GUI.enabled = false;
+                    GUILayout.HorizontalSlider(m_Controller.iface.GetAxisState(i), -1.0f, 1.0f, GUILayout.Width(150));
+                    GUI.enabled = true;
+                    GUILayout.EndHorizontal();
+                }
             }
 
             GUILayout.Label("Buttons");

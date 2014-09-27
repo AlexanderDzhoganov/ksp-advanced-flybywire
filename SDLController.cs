@@ -150,7 +150,7 @@ namespace KSPAdvancedFlyByWire
 
         public override string GetButtonName(int id)
         {
-            return String.Format("Button {0}", id);
+            return String.Format("Button #{0}", id);
         }
 
         public override int GetAxesCount()
@@ -160,7 +160,7 @@ namespace KSPAdvancedFlyByWire
 
         public override string GetAxisName(int id)
         {
-            return String.Format("Axis {0}", id);
+            return String.Format("Axis #{0}", id);
         }
 
         public override bool GetButtonState(int button)
