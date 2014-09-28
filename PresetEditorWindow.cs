@@ -27,6 +27,8 @@ namespace KSPAdvancedFlyByWire
 
         public string inputLockHash;
 
+        private float m_ClickSleepTimer = 0.0f;
+
         public PresetEditorWindow(ControllerConfiguration controller, int editorId)
         {
             m_Controller = controller;
@@ -122,7 +124,7 @@ namespace KSPAdvancedFlyByWire
 
                     for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
                     {
-                        if (m_Controller.iface.GetAxisState(i) != 0.0f)
+                        if (m_Controller.iface.GetAxisState(i) != 0.0f && m_ClickSleepTimer == 0.0f)
                         {
                             currentPreset.SetContinuousBinding(i, m_Controller.iface.GetButtonsMask(), action);
                             m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -149,6 +151,7 @@ namespace KSPAdvancedFlyByWire
                     {
                         m_CurrentlyEditingContinuousAction = action;
                         m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+                        m_ClickSleepTimer = 0.25f;
                     }
 
                     m_CurrentMask = null;
@@ -184,7 +187,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     label = "Press desired combination";
 
-                    if (m_CurrentMask != null)
+                    if (m_CurrentMask != null && m_ClickSleepTimer == 0.0f)
                     {
                         currentPreset.SetDiscreteBinding(m_CurrentMask, action);
                         m_CurrentMask = null;
@@ -211,6 +214,7 @@ namespace KSPAdvancedFlyByWire
                     {
                         m_CurrentlyEditingDiscreteAction = action;
                         m_CurrentlyEditingContinuousAction = ContinuousAction.None;
+                        m_ClickSleepTimer = 0.25f;
                     }
 
                     m_CurrentMask = null;
@@ -235,6 +239,16 @@ namespace KSPAdvancedFlyByWire
             {
                 shouldBeDestroyed = true;
                 return;
+            }
+
+            if (m_ClickSleepTimer > 0.0f)
+            {
+                m_ClickSleepTimer -= Time.deltaTime;
+                if (m_ClickSleepTimer < 0.0f)
+                {
+                    m_CurrentMask = null;
+                    m_ClickSleepTimer = 0.0f;
+                }
             }
             
             if (windowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))

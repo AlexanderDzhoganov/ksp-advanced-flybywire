@@ -76,7 +76,7 @@ namespace KSPAdvancedFlyByWire
 
         public virtual void Update(FlightCtrlState state)
         {
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < GetButtonsCount(); i++)
             {
                 if (GetButtonState(i) && !buttonStates[i])
                 {

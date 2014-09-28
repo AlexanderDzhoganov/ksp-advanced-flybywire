@@ -35,6 +35,8 @@ namespace KSPAdvancedFlyByWire
                 m_Configuration = new Configuration();
                 Configuration.Serialize(m_ConfigurationPath, m_Configuration);
             }
+
+          
         }
 
         public void SaveState(ConfigNode configNode)
@@ -42,8 +44,20 @@ namespace KSPAdvancedFlyByWire
             Configuration.Serialize(m_ConfigurationPath, m_Configuration);
         }
 
+        private static AdvancedFlyByWire m_Instance = null;
+
+        public static AdvancedFlyByWire Instance
+        {
+            get
+            {
+                return m_Instance;
+            }
+        }
+
         public void Awake()
         {
+            m_Instance = this;
+
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onHideUI.Add(OnHideUI);
             GameEvents.onGameStateSave.Add(new EventData<ConfigNode>.OnEvent(SaveState));
@@ -61,7 +75,7 @@ namespace KSPAdvancedFlyByWire
             m_ToolbarButton.OnClick += new Toolbar.ClickHandler(OnToolbarButtonClick);
 
             m_UIHidden = false;
-            m_UIActive = true;
+          //  m_UIActive = true;
 
             print("KSPAdvancedFlyByWire: Initialized");
         }
@@ -83,6 +97,8 @@ namespace KSPAdvancedFlyByWire
 
         public void OnDestroy()
         {
+            m_Instance = null;
+
             if (m_ToolbarButton != null)
             {
                 m_ToolbarButton.Destroy();
@@ -108,7 +124,7 @@ namespace KSPAdvancedFlyByWire
             m_UIHidden = false;
         }
 
-        void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
+        public void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
         {
             var config = m_Configuration.GetConfigurationByIController(controller);
 
@@ -131,7 +147,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state)
+        public void ButtonReleasedCallback(IController controller, int button, FlightCtrlState state)
         {
             var config = m_Configuration.GetConfigurationByIController(controller);
 
@@ -182,7 +198,8 @@ namespace KSPAdvancedFlyByWire
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
                 config.iface.Update(state);
-                state.mainThrottle = m_Throttle;
+                state.mainThrottle += m_Throttle;
+                state.mainThrottle = Utility.Clamp(state.mainThrottle, 0.0f, 1.0f);
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
@@ -275,11 +292,11 @@ namespace KSPAdvancedFlyByWire
                 return;
             case DiscreteAction.ThrottlePlus:
                 m_Throttle += controller.discreteActionStep;
-                m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
+                m_Throttle = Utility.Clamp(m_Throttle, 0.0f, 1.0f - state.mainThrottle);
                 return;
             case DiscreteAction.ThrottleMinus:
                 m_Throttle -= controller.discreteActionStep;
-                m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
+                m_Throttle = Utility.Clamp(m_Throttle, 0.0f, 1.0f - state.mainThrottle);
                 return;
             case DiscreteAction.Stage:
                 Staging.ActivateNextStage();
@@ -526,15 +543,15 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case ContinuousAction.Throttle:
                     m_Throttle += value;
-                    m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
+                    m_Throttle = Utility.Clamp(m_Throttle, 0.0f, 1.0f - state.mainThrottle);
                     return;
                 case ContinuousAction.ThrottleIncrement:
                     m_Throttle += value * controller.incrementalThrottleSensitivity;
-                    m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
+                    m_Throttle = Utility.Clamp(m_Throttle, 0.0f, 1.0f - state.mainThrottle);
                     return;
                 case ContinuousAction.ThrottleDecrement:
                     m_Throttle -= value * controller.incrementalThrottleSensitivity;
-                    m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
+                    m_Throttle = Utility.Clamp(m_Throttle, 0.0f, 1.0f - state.mainThrottle);
                     return;
                 case ContinuousAction.CameraX:
                     FlightCamera.CamHdg += value;

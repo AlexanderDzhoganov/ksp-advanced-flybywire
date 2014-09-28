@@ -115,7 +115,6 @@ namespace KSPAdvancedFlyByWire
                 {
                     label += " ";
                 }
-                GUILayout.Label(label);
 
                 if(m_ShowDetails)
                 {
@@ -123,11 +122,13 @@ namespace KSPAdvancedFlyByWire
                         ", ident: " + m_Controller.iface.axisIdentity[i].ToString() +
                         ", max: " + m_Controller.iface.axisRight[i].ToString() +
                         ", raw: " + m_Controller.iface.GetRawAxisState(i).ToString() +
-                        ", deadzone min: " + m_Controller.iface.axisNegativeDeadZones[i].ToString() + 
+                        ", deadzone min: " + m_Controller.iface.axisNegativeDeadZones[i].ToString() +
                         ", deadzone max: " + m_Controller.iface.axisPositiveDeadZones[i].ToString() + ")";
-
                 }
-                else
+
+                GUILayout.Label(label);
+                
+                if(!m_ShowDetails)
                 {
                     GUI.enabled = false;
                     GUILayout.HorizontalSlider(value, -1.0f, 1.0f, GUILayout.Width(150));

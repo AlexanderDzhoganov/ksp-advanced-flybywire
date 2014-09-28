@@ -192,6 +192,9 @@ namespace KSPAdvancedFlyByWire
                     config.iface = new KeyboardMouseController();
                 }
 
+                config.iface.buttonPressedCallback = new IController.ButtonPressedCallback(AdvancedFlyByWire.Instance.ButtonPressedCallback);
+                config.iface.buttonReleasedCallback = new IController.ButtonReleasedCallback(AdvancedFlyByWire.Instance.ButtonReleasedCallback);
+
                 config.evaluatedDiscreteActionMasks = new HashSet<Bitset>();
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
