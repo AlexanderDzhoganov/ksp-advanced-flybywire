@@ -62,11 +62,6 @@ namespace KSPAdvancedFlyByWire
 
         // EVA
         EVAToggleJetpack,
-        EVAJump,
-        EVAReorientAttitude,
-        EVAUseBoard,
-        EVADirectionJump,
-        EVASprint,
         EVAToggleHeadlamps,
 
         // Various

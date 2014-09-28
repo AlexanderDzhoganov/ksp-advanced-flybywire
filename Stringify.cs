@@ -80,16 +80,6 @@ namespace KSPAdvancedFlyByWire
                     return "Custom 10";
                 case DiscreteAction.EVAToggleJetpack:
                     return "Toggle jetpack (EVA)";
-                case DiscreteAction.EVAJump:
-                    return "Jump (EVA)";
-                case DiscreteAction.EVAReorientAttitude:
-                    return "Reorient (EVA)";
-                case DiscreteAction.EVAUseBoard:
-                    return "Use (EVA)";
-                case DiscreteAction.EVADirectionJump:
-                    return "Direction jump (EVA)";
-                case DiscreteAction.EVASprint:
-                    return "Sprint (EVA)";
                 case DiscreteAction.EVAToggleHeadlamps:
                     return "Headlamps (EVA) [Toggle]";
                 case DiscreteAction.CutThrottle:
