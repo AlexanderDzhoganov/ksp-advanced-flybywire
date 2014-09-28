@@ -76,6 +76,7 @@
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="ControllerConfigurationWindow.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
+    <Compile Include="FlightProperty.cs" />
     <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="PresetEditorWindow.cs" />
     <Compile Include="SDL2.cs" />

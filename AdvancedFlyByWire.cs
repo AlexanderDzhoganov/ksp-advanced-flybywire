@@ -14,25 +14,25 @@ namespace KSPAdvancedFlyByWire
         private Configuration m_Configuration = null;
         private string m_ConfigurationPath = "GameData/ksp-advanced-flybywire/advanced_flybywire_config.xml";
 
-        private float m_Yaw = 0.0f;
+        private FlightProperty m_Yaw = new FlightProperty(-1.0f, 1.0f);
         private int m_YawIncrement = 0;
 
-        private float m_Pitch = 0.0f;
+        private FlightProperty m_Pitch = new FlightProperty(-1.0f, 1.0f);
         private int m_PitchIncrement = 0;
 
-        private float m_Roll = 0.0f;
+        private FlightProperty m_Roll = new FlightProperty(-1.0f, 1.0f);
         private int m_RollIncrement = 0;
 
-        private float m_X = 0.0f;
+        private FlightProperty m_X = new FlightProperty(-1.0f, 1.0f);
         private int m_XIncrement = 0;
 
-        private float m_Y = 0.0f;
+        private FlightProperty m_Y = new FlightProperty(-1.0f, 1.0f);
         private int m_YIncrement = 0;
 
-        private float m_Z = 0.0f;
+        private FlightProperty m_Z = new FlightProperty(-1.0f, 1.0f);
         private int m_ZIncrement = 0;
 
-        private float m_Throttle = 0.0f;
+        private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
         private int m_ThrottleIncrement = 0;
 
         private bool m_CallbackSet = false;
@@ -85,6 +85,7 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGUIRecoveryDialogSpawn.Add(new EventData<MissionRecoveryDialog>.OnEvent(OnGUIRecoveryDialogSpawn));
             GameEvents.onGamePause.Add(new EventVoid.OnEvent(OnGamePause));
             GameEvents.onGameUnpause.Add(new EventVoid.OnEvent(OnGameUnpause));
+            GameEvents.onFlightReady.Add(new EventVoid.OnEvent(OnFlightReady));
 
             LoadState(null);
 
@@ -96,8 +97,12 @@ namespace KSPAdvancedFlyByWire
 
             m_UIHidden = false;
             m_UIActive = false;
-
+            
             print("KSPAdvancedFlyByWire: Initialized");
+        }
+
+        void OnFlightReady()
+        {
         }
 
         void OnGUIRecoveryDialogSpawn(MissionRecoveryDialog dialog)
@@ -128,11 +133,12 @@ namespace KSPAdvancedFlyByWire
 
             GameEvents.onShowUI.Remove(OnShowUI);
             GameEvents.onHideUI.Remove(OnHideUI);
-            GameEvents.onGameStateSave.Remove(new EventData<ConfigNode>.OnEvent(SaveState));
-            GameEvents.onGameStateLoad.Remove(new EventData<ConfigNode>.OnEvent(LoadState));
-            GameEvents.onGUIRecoveryDialogSpawn.Remove(new EventData<MissionRecoveryDialog>.OnEvent(OnGUIRecoveryDialogSpawn));
-            GameEvents.onGamePause.Remove(new EventVoid.OnEvent(OnGamePause));
-            GameEvents.onGameUnpause.Remove(new EventVoid.OnEvent(OnGameUnpause));
+            GameEvents.onGameStateSave.Remove(SaveState);
+            GameEvents.onGameStateLoad.Remove(LoadState);
+            GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogSpawn);
+            GameEvents.onGamePause.Remove(OnGamePause);
+            GameEvents.onGameUnpause.Remove(OnGameUnpause);
+            GameEvents.onFlightReady.Remove(OnFlightReady);
 
             print("KSPAdvancedFlyByWire: Deinitialized");
         }
@@ -199,8 +205,10 @@ namespace KSPAdvancedFlyByWire
                     presetEditor.SetCurrentBitmask(bitset);
                 }
             }
-            
-            var actions = config.GetCurrentPreset().GetDiscreteBinding(controller.GetButtonsMask());
+
+            var mask = controller.GetButtonsMask();
+            mask.Set(button);
+            var actions = config.GetCurrentPreset().GetDiscreteBinding(mask);
 
             if(actions != null)
             {
@@ -219,34 +227,70 @@ namespace KSPAdvancedFlyByWire
             {
                 config.iface.Update(state);
 
-                m_Yaw += m_YawIncrement * config.discreteActionStep * Time.deltaTime;
-                m_Yaw = Utility.Clamp(m_Yaw, -1.0f, 1.0f);
-                state.yaw = Utility.Clamp(state.yaw + m_Yaw, -1.0f, 1.0f);
+                if(m_YawIncrement == 0)
+                {
+                    m_Yaw.SetValue(0.0f);
+                }
+                else
+                {
+                    m_Yaw.SetAcceleration(m_YawIncrement * config.discreteActionStep);
+                }
 
-                m_Pitch += m_PitchIncrement * config.discreteActionStep * Time.deltaTime;
-                m_Pitch = Utility.Clamp(m_Pitch, -1.0f, 1.0f);
-                state.pitch = Utility.Clamp(state.pitch + m_Pitch, -1.0f, 1.0f);
+                if (m_PitchIncrement == 0)
+                {
+                    m_Pitch.SetValue(0.0f);
+                }
+                else
+                {
+                    m_Pitch.SetAcceleration(m_PitchIncrement * config.discreteActionStep);
+                }
 
-                m_Roll += m_RollIncrement * config.discreteActionStep * Time.deltaTime;
-                m_Roll = Utility.Clamp(m_Roll, -1.0f, 1.0f);
-                state.roll = Utility.Clamp(state.roll + m_Roll, -1.0f, 1.0f);
+                if(m_RollIncrement == 0)
+                {
+                    m_Roll.SetValue(0.0f);
+                }
+                else
+                {
+                    m_Roll.SetAcceleration(m_RollIncrement * config.discreteActionStep);
+                }
 
-                m_X += m_XIncrement * config.discreteActionStep * Time.deltaTime;
-                m_X = Utility.Clamp(m_X, -1.0f, 1.0f);
-                state.X = Utility.Clamp(state.X + m_X, -1.0f, 1.0f);
+                if (m_XIncrement == 0)
+                {
+                    m_X.SetValue(0.0f);
+                }
+                else
+                {
+                    m_X.SetAcceleration(m_XIncrement * config.discreteActionStep);
+                }
 
-                m_Y += m_YIncrement * config.discreteActionStep * Time.deltaTime;
-                m_Y = Utility.Clamp(m_Y, -1.0f, 1.0f);
-                state.Y = Utility.Clamp(state.Y + m_Y, -1.0f, 1.0f);
+                if (m_YIncrement == 0)
+                {
+                    m_Y.SetValue(0.0f);
+                }
+                else
+                {
+                    m_Y.SetAcceleration(m_YIncrement * config.discreteActionStep);
+                }
 
-                m_Z += m_ZIncrement * config.discreteActionStep * Time.deltaTime;
-                m_Z = Utility.Clamp(m_Z, -1.0f, 1.0f);
-                state.Z = Utility.Clamp(state.Z + m_Z, -1.0f, 1.0f);
+                if (m_ZIncrement == 0)
+                {
+                    m_Z.SetValue(0.0f);
+                }
+                else
+                {
+                    m_Z.SetAcceleration(m_ZIncrement * config.discreteActionStep);
+                }
 
-                m_Throttle += m_ThrottleIncrement * config.discreteActionStep * Time.deltaTime;
-                m_Throttle = Utility.Clamp(m_Throttle, -1.0f, 1.0f);
-                state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle, -1.0f, 1.0f);
-                
+                if (m_ThrottleIncrement == 0)
+                {
+                    m_Throttle.SetVelocity(0.0f);
+                    m_Throttle.SetAcceleration(0.0f);
+                }
+                else
+                {
+                    m_Throttle.SetAcceleration(m_ThrottleIncrement * config.discreteActionStep);
+                }
+
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
                     List<ContinuousAction> actions = config.GetCurrentPreset().GetContinuousBinding(i, config.iface.GetButtonsMask());
@@ -264,6 +308,14 @@ namespace KSPAdvancedFlyByWire
                         }
                     }
                 }
+
+                state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update(), -1.0f, 1.0f);
+                state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update(), -1.0f, 1.0f);
+                state.roll = Utility.Clamp(state.roll + m_Roll.Update(), -1.0f, 1.0f);
+                state.X = Utility.Clamp(state.X + m_X.Update(), -1.0f, 1.0f);
+                state.Y = Utility.Clamp(state.Y + m_Y.Update(), -1.0f, 1.0f);
+                state.Z = Utility.Clamp(state.Z + m_Z.Update(), -1.0f, 1.0f);
+                state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
             }
 
            FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
@@ -394,10 +446,10 @@ namespace KSPAdvancedFlyByWire
                 }
                 return;
             case DiscreteAction.CutThrottle:
-                m_Throttle = 0.0f;
+                m_Throttle.SetZero();
                 return;
             case DiscreteAction.FullThrottle:
-                m_Throttle = 1.0f;
+                m_Throttle.SetMax();
                 return;
             case DiscreteAction.NextPreset:
                 if (controller.currentPreset >= controller.presets.Count - 1)
@@ -454,16 +506,16 @@ namespace KSPAdvancedFlyByWire
                 }
                 return;
             case DiscreteAction.TimeWarpPlus:
-                if (TimeWarp.WarpMode == TimeWarp.Modes.HIGH)
+                if (TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH)
                 {
-                    if (TimeWarp.CurrentRateIndex >= TimeWarp.fetch.warpRates.Length - 1)
+                    if (TimeWarp.CurrentRateIndex >= TimeWarp.fetch.warpRates.Count() - 1)
                     {
                         return;
                     }
                 }
                 else
                 {
-                    if (TimeWarp.CurrentRateIndex >= TimeWarp.fetch.physicsWarpRates.Length - 1)
+                    if (TimeWarp.CurrentRateIndex >= TimeWarp.fetch.physicsWarpRates.Count() - 1)
                     {
                         return;
                     }
@@ -570,52 +622,43 @@ namespace KSPAdvancedFlyByWire
                 case ContinuousAction.None:
                     return;
                 case ContinuousAction.Yaw:
-                    m_Yaw += value;
-                    m_Yaw = Utility.Clamp(m_Yaw, -1.0f, 1.0f);
+                    m_Yaw.SetValue(value);
                     return;
                 case ContinuousAction.YawTrim:
                     state.yawTrim = value;
                     state.yawTrim = Utility.Clamp(state.yawTrim, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Pitch:
-                    m_Pitch += value;
-                    m_Pitch = Utility.Clamp(m_Pitch, -1.0f, 1.0f);
+                    m_Pitch.SetValue(value);
                     return;
                 case ContinuousAction.PitchTrim:
                     state.pitchTrim = value;
                     state.pitchTrim = Utility.Clamp(state.pitchTrim, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Roll:
-                    m_Roll += value;
-                    m_Roll = Utility.Clamp(m_Roll, -1.0f, 1.0f);
+                    m_Roll.SetValue(value);
                     return;
                 case ContinuousAction.RollTrim:
                     state.rollTrim = value;
                     state.rollTrim = Utility.Clamp(state.rollTrim, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.X:
-                    m_X += value;
-                    m_X = Utility.Clamp(m_X, -1.0f, 1.0f);
+                    m_X.SetValue(value);
                     return;
                 case ContinuousAction.Y:
-                    m_Y += value;
-                    m_Y = Utility.Clamp(m_Y, -1.0f, 1.0f);
+                    m_Y.SetValue(value);
                     return;
                 case ContinuousAction.Z:
-                    m_Z += value;
-                    m_Z = Utility.Clamp(m_Z, -1.0f, 1.0f);
+                    m_Z.SetValue(value);
                     return;
                 case ContinuousAction.Throttle:
-                    m_Throttle += value;
-                    m_Throttle = Utility.Clamp(m_Throttle, 0.0f, 1.0f - state.mainThrottle);
+                    m_Throttle.SetValue(value);
                     return;
                 case ContinuousAction.ThrottleIncrement:
-                    m_Throttle += value * controller.incrementalThrottleSensitivity;
-                    m_Throttle = Utility.Clamp(m_Throttle, 0.0f, 1.0f - state.mainThrottle);
+                    m_Throttle.SetValue(m_Throttle.GetValue() + value * controller.incrementalThrottleSensitivity);
                     return;
                 case ContinuousAction.ThrottleDecrement:
-                    m_Throttle -= value * controller.incrementalThrottleSensitivity;
-                    m_Throttle = Utility.Clamp(m_Throttle, 0.0f, 1.0f - state.mainThrottle);
+                    m_Throttle.SetValue(m_Throttle.GetValue() - value * controller.incrementalThrottleSensitivity);
                     return;
                 case ContinuousAction.CameraX:
                     FlightCamera.CamHdg += value * controller.incrementalThrottleSensitivity;
