@@ -1,10 +1,9 @@
 ## Advanced Fly-By-Wire v1.0
 ### Kerbal Space Program input system overhaul mod
 
-### Please note that the mod is still in testing and is NOT officially released. The author assumes no responsibility if anything or everything breaks.
-### You can download the latest preview version from:
-- 32 bit - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp_advanced_flybywire_x32_preview.zip
-- 64 bit - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp_advanced_flybywire_x64_preview.zip
+Latest version - 1.0
+Windows x86- https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/builds/ksp-advanced-flybywire_v1.0.0_x86.zip
+Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/builds/ksp-advanced-flybywire_v1.0.0_x64.zip
 
 ### What is this?
 This is a mod for Kerbal Space Program (http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
@@ -12,19 +11,19 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 
 ### How is it better than stock?
 
-- Fully integrated with the stock input system. The mod will not override or break your current setup.
 - Edit your control setup at any time during flight, no need to go back to the main menu to change bindings.
-- Support for the Xbox 360 controller (and PS3 controller using MotionJoy) through the XInput wrapper. A built-in example preset is available.
-- Supports all other controller types through the SDL wrapper.
+- Supports almost all controller types through the SDL wrapper.
+- Native support for the Xbox 360 controller (and PS3 controller using MotionJoy) through the XInput wrapper. A built-in example preset is available.
 - Unlimited number of controller buttons and axes
-- Full mouse & keyboard support
-- Significantly lower latency and better analog precision than KSP's stock input
+- Full keyboard & mouse support
+- Lower latency and better analog precision than KSP's stock input
 - Smart dead-zone detection and analog calibration 
-- Remaps analog inputs to achieve better precision for small input values
+- Remaps analog inputs to achieve better precision
 - Acceleration-based discrete inputs for precise keyboard flight
-- Supports key combinations with infinite number of keys
+- Supports key combinations with an infinite number of keys
 - Multiple presets per controller
 - Extremely simple to configure and use
+- Works alongside the stock input system. The mod will not override or break your current setup.
 
 ### How to use
 The mod adds a new button to the mod toolbar. Click the game controller icon or press Shift + L during flight to bring up Fly-By-Wire's main configuration screen.
@@ -49,21 +48,28 @@ no noticeable effect on CPU usage. Memory usage is in the order of a few megabyt
 ### Limitations
 There is only one known limitation so far - most EVA controls are unavailable, you should continue using the stock input system for EVA.
 
-### Known bugs
-Camera X/Y rotation is broken as of latest patch.
-
 ### Compatibility with other mods
 The mod has been tested to work with over 50 of the most popular mods.
 
-Here is a (non-exhaustive) list of mods that have been tested to be compatible:
+Here is a (non-exhaustive) list of mods that have been tested to be compatible, in no particular order:
 - MechJeb
-- Ferram  Aerospace Research (FAR)
-- B9 Aerospace
+- Ferram Aerospace Research (FAR)
 - KW Rocketry
 - OKS/ MKS
 - Kethane
-.. 
-and many more
+- Infernal Robotics
+- Kerbal Engineer Redux
+- ORS
+- PreciseNode
+- TextureReplacer
+- Deadly Reentry
+- Crossfeed Enabler
+- Chatterer
+- Environmental Visual Enhancements
+- TAC Life Support .. and more
+
+Incompatible with:
+- B9 Aerospace - there may be a loading-screen crash when B9 is present alongside this mod, I am investigating this
 
 ### Roadmap
 
@@ -72,4 +78,4 @@ and many more
 - EVA actions
 
 ### Bug reports
-Please report any bugs using GitHub's built-in issue tracker or by email at alexander.dzhoganov (at) gmail (dot) com.
+Please report any bugs using GitHub's built-in issue tracker.
