@@ -110,6 +110,10 @@ namespace KSPAdvancedFlyByWire
                     return "TimeWarp+";
                 case DiscreteAction.TimeWarpMinus:
                     return "TimeWarp-";
+                case DiscreteAction.PhysicsTimeWarpPlus:
+                    return "Physics TimeWarp+";
+                case DiscreteAction.PhysicsTimeWarpMinus:
+                    return "Physics TimeWarp-";
                 case DiscreteAction.NavballToggle:
                     return "Navball [Toggle]";
                 case DiscreteAction.IVAViewToggle:

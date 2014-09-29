@@ -59,6 +59,19 @@ namespace KSPAdvancedFlyByWire
             m_Acceleration = 0.0f;
         }
 
+        public void SetMinMaxValues(float min, float max)
+        {
+            m_MinValue = min;
+            m_MaxValue = max;
+        }
+
+        public void Increment(float value)
+        {
+            m_Value += value;
+            m_Velocity = 0.0f;
+            m_Acceleration = 0.0f;
+        }
+
         public float Update()
         {
             m_Velocity += m_Acceleration * Time.deltaTime;

@@ -29,6 +29,9 @@ namespace KSPAdvancedFlyByWire
 
         private float m_ClickSleepTimer = 0.0f;
 
+        private bool m_DestructiveActionWait = false;
+        private float m_DestructiveActionTimer = 0.0f;
+
         public PresetEditorWindow(ControllerConfiguration controller, int editorId)
         {
             m_Controller = controller;
@@ -92,11 +95,41 @@ namespace KSPAdvancedFlyByWire
                 GUI.enabled = true;
             }
 
-            if (GUILayout.Button("+"))
+            if (GUILayout.Button("New"))
             {
                 m_Controller.presets.Add(new ControllerPreset());
                 m_Controller.currentPreset = m_Controller.presets.Count - 1;
             }
+
+            string destructiveRemoveLabel = "Delete";
+            if (m_DestructiveActionWait)
+            {
+                destructiveRemoveLabel = "Sure?";
+            }
+
+            if (m_Controller.presets.Count <= 1)
+            {
+                GUI.enabled = false;
+            }
+
+            if (GUILayout.Button(destructiveRemoveLabel))
+            {
+                if(m_DestructiveActionWait)
+                {
+                    if(m_Controller.presets.Count > 1)
+                    {
+                        m_Controller.presets.RemoveAt(m_Controller.currentPreset);
+                        m_Controller.currentPreset--;
+                    }
+                }
+                else
+                {
+                    m_DestructiveActionWait = true;
+                    m_DestructiveActionTimer = 2.0f;
+                }
+            }
+
+            GUI.enabled = true;
 
             GUILayout.EndHorizontal();
 
@@ -248,6 +281,16 @@ namespace KSPAdvancedFlyByWire
                 {
                     m_CurrentMask = null;
                     m_ClickSleepTimer = 0.0f;
+                }
+            }
+
+            if (m_DestructiveActionTimer > 0.0f)
+            {
+                m_DestructiveActionTimer -= Time.deltaTime;
+                if (m_DestructiveActionTimer < 0.0f)
+                {
+                    m_DestructiveActionWait = false;
+                    m_DestructiveActionTimer = 0.0f;
                 }
             }
             
