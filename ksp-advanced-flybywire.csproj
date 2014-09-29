@@ -90,7 +90,7 @@
     </Reference>
     <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>builds\32bit\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
+      <HintPath>builds\64bit\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

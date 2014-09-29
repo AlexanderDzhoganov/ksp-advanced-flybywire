@@ -44,11 +44,11 @@ namespace KSPAdvancedFlyByWire
         private int m_ZIncrement = 0;
         private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
         private int m_ThrottleIncrement = 0;
-        private FlightProperty m_CameraPitch = new FlightProperty(-(float)Math.PI * 2.0f, (float)Math.PI * 2.0f);
+        private FlightProperty m_CameraPitch = new FlightProperty(-1.0f, 1.0f);
         private int m_CameraPitchIncrement = 0;
-        private FlightProperty m_CameraHeading = new FlightProperty(-(float)Math.PI * 2.0f, (float)Math.PI * 2.0f);
+        private FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
         private int m_CameraHeadingIncrement = 0;
-        private FlightProperty m_CameraZoom = new FlightProperty(-10.0f, 10.0f);
+        private FlightProperty m_CameraZoom = new FlightProperty(-1.0f, 1.0f);
         private int m_CameraZoomIncrement = 0;
 
         private void LoadState(ConfigNode configNode)
