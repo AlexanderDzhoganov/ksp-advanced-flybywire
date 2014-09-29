@@ -2,7 +2,9 @@
 ### Kerbal Space Program input system overhaul mod
 
 Latest version - 1.0
+
 Windows x86- https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/builds/ksp-advanced-flybywire_v1.0.0_x86.zip
+
 Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/builds/ksp-advanced-flybywire_v1.0.0_x64.zip
 
 ### What is this?
