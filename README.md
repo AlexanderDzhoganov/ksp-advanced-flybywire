@@ -1,8 +1,9 @@
-# Advanced Fly-By-Wire v1.0
-## Kerbal Space Program input system overhaul mod
+## Advanced Fly-By-Wire v1.0
+### Kerbal Space Program input system overhaul mod
 
 ### What is this?
 This is a mod for Kerbal Space Program (http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
+It dramatically enhances the stock input system with a bunch of fixes and many new features.
 
 ### How is it better than stock?
 
@@ -42,12 +43,12 @@ There is only one known limitation so far - most EVA controls are unavailable, y
 The mod has been tested to work with over 50 of the most popular mods.
 
 Here is a (non-exhaustive) list of mods that have been tested to be compatible:
-MechJeb
-Ferram  Aerospace Research (FAR)
-B9 Aerospace
-KW Rocketry
-OKS/ MKS
-Kethane
+- MechJeb
+- Ferram  Aerospace Research (FAR)
+- B9 Aerospace
+- KW Rocketry
+- OKS/ MKS
+- Kethane
 .. 
 and many more
 
