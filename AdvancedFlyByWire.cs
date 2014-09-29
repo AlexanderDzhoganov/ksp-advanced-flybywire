@@ -909,6 +909,8 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.EndHorizontal();
+
+                GUILayout.Space(16);
             }
 
             GUILayout.EndScrollView();

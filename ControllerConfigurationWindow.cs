@@ -77,6 +77,29 @@ namespace KSPAdvancedFlyByWire
             FloatField(m_Controller.cameraSensitivity, out m_Controller.cameraSensitivity);
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Analog input curve");
+
+            string curveLabel = "Quadratic";
+            if(m_Controller.analogInputCurve == CurveType.Identity)
+            {
+                curveLabel = "Linear";
+            }
+            
+            if(GUILayout.Button(curveLabel))
+            {
+                if(m_Controller.analogInputCurve == CurveType.Identity)
+                {
+                    m_Controller.SetAnalogInputCurveType(CurveType.XSquared);
+                }
+                else
+                {
+                    m_Controller.SetAnalogInputCurveType(CurveType.Identity);
+                }
+            }
+
+            GUILayout.EndHorizontal();
+
             GUILayout.Label("If some axes below are not displaying 0.0 when the controller is left untouched then it needs calibration.");
             GUILayout.Label("Leave the controller and press calibrate, then move around all the axes");
 
