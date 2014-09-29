@@ -20,7 +20,7 @@ namespace KSPAdvancedFlyByWire
         public int currentPreset = 0;
         public CurveType analogInputCurve = CurveType.XSquared;
         public float discreteActionStep = 0.15f;
-        public float incrementalThrottleSensitivity = 0.05f;
+        public float incrementalActionSensitivity = 0.05f;
 
         [XmlIgnore()]
         public bool presetEditorOpen = false;

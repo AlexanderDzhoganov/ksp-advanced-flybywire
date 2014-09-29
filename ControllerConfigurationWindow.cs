@@ -68,8 +68,8 @@ namespace KSPAdvancedFlyByWire
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Incremental throttle sensitivity");
-            FloatField(m_Controller.incrementalThrottleSensitivity, out m_Controller.incrementalThrottleSensitivity);
+            GUILayout.Label("Incremental action sensitivity");
+            FloatField(m_Controller.incrementalActionSensitivity, out m_Controller.incrementalActionSensitivity);
             GUILayout.EndHorizontal();
 
             GUILayout.Label("If some axes below are not displaying 0.0 when the controller is left untouched then it needs calibration.");
