@@ -49,6 +49,9 @@ no noticeable effect on CPU usage. Memory usage is in the order of a few megabyt
 ### Limitations
 There is only one known limitation so far - most EVA controls are unavailable, you should continue using the stock input system for EVA.
 
+### Known bugs
+Camera X/Y rotation is broken as of latest patch.
+
 ### Compatibility with other mods
 The mod has been tested to work with over 50 of the most popular mods.
 
