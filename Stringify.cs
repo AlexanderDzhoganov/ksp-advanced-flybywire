@@ -112,8 +112,6 @@ namespace KSPAdvancedFlyByWire
                     return "TimeWarp-";
                 case DiscreteAction.NavballToggle:
                     return "Navball [Toggle]";
-                case DiscreteAction.QuickSave:
-                    return "Quick save";
                 case DiscreteAction.IVAViewToggle:
                     return "IVA view [Toggle]";
                 case DiscreteAction.CameraViewToggle:

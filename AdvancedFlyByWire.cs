@@ -538,9 +538,6 @@ namespace KSPAdvancedFlyByWire
                     MapView.fetch.maneuverModeToggle.OnPress.Invoke();
                 }
                 return;
-            case DiscreteAction.QuickSave:
-                GamePersistence.SaveGame("persistent", HighLogic.SaveFolder, SaveMode.OVERWRITE);
-                return;
             case DiscreteAction.IVAViewToggle:
                 CameraManager.Instance.SetCameraIVA();
                 return;

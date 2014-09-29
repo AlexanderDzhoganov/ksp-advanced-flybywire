@@ -34,7 +34,6 @@ namespace KSPAdvancedFlyByWire
             preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.DPadDown), DiscreteAction.Gear);
 
             preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.Back), DiscreteAction.Abort);
-            preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.Start), DiscreteAction.QuickSave);
 
             preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.X), DiscreteAction.NextPreset);
             preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.Y), DiscreteAction.FullThrottle);
