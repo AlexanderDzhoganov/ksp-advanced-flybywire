@@ -14,39 +14,9 @@ namespace KSPAdvancedFlyByWire
         private Configuration m_Configuration = null;
         private string m_ConfigurationPath = "GameData/ksp-advanced-flybywire/advanced_flybywire_config.xml";
 
-        private FlightProperty m_Yaw = new FlightProperty(-1.0f, 1.0f);
-        private int m_YawIncrement = 0;
-
-        private FlightProperty m_Pitch = new FlightProperty(-1.0f, 1.0f);
-        private int m_PitchIncrement = 0;
-
-        private FlightProperty m_Roll = new FlightProperty(-1.0f, 1.0f);
-        private int m_RollIncrement = 0;
-
-        private FlightProperty m_X = new FlightProperty(-1.0f, 1.0f);
-        private int m_XIncrement = 0;
-
-        private FlightProperty m_Y = new FlightProperty(-1.0f, 1.0f);
-        private int m_YIncrement = 0;
-
-        private FlightProperty m_Z = new FlightProperty(-1.0f, 1.0f);
-        private int m_ZIncrement = 0;
-
-        private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
-        private int m_ThrottleIncrement = 0;
-
-        private FlightProperty m_CameraPitch = new FlightProperty(-(float)Math.PI * 2.0f, (float)Math.PI * 2.0f);
-        private int m_CameraPitchIncrement = 0;
-
-        private FlightProperty m_CameraHeading = new FlightProperty(-(float)Math.PI * 2.0f, (float)Math.PI * 2.0f);
-        private int m_CameraHeadingIncrement = 0;
-
-        private FlightProperty m_CameraZoom = new FlightProperty(-10.0f, 10.0f);
-        private int m_CameraZoomIncrement = 0;
-
         private bool m_CallbackSet = false;
 
-        private FlightInputCallback m_Callback;
+        private FlightInputCallback m_Callback = null;
 
         private bool m_UIActive = true;
         private bool m_UIHidden = false;
@@ -59,6 +29,27 @@ namespace KSPAdvancedFlyByWire
         private Rect windowRect = new Rect(0, 64, 432, 576);
 
         private static AdvancedFlyByWire m_Instance = null;
+
+        private FlightProperty m_Yaw = new FlightProperty(-1.0f, 1.0f);
+        private int m_YawIncrement = 0;
+        private FlightProperty m_Pitch = new FlightProperty(-1.0f, 1.0f);
+        private int m_PitchIncrement = 0;
+        private FlightProperty m_Roll = new FlightProperty(-1.0f, 1.0f);
+        private int m_RollIncrement = 0;
+        private FlightProperty m_X = new FlightProperty(-1.0f, 1.0f);
+        private int m_XIncrement = 0;
+        private FlightProperty m_Y = new FlightProperty(-1.0f, 1.0f);
+        private int m_YIncrement = 0;
+        private FlightProperty m_Z = new FlightProperty(-1.0f, 1.0f);
+        private int m_ZIncrement = 0;
+        private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
+        private int m_ThrottleIncrement = 0;
+        private FlightProperty m_CameraPitch = new FlightProperty(-(float)Math.PI * 2.0f, (float)Math.PI * 2.0f);
+        private int m_CameraPitchIncrement = 0;
+        private FlightProperty m_CameraHeading = new FlightProperty(-(float)Math.PI * 2.0f, (float)Math.PI * 2.0f);
+        private int m_CameraHeadingIncrement = 0;
+        private FlightProperty m_CameraZoom = new FlightProperty(-10.0f, 10.0f);
+        private int m_CameraZoomIncrement = 0;
 
         private void LoadState(ConfigNode configNode)
         {
