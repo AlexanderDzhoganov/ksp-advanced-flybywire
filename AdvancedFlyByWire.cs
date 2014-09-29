@@ -362,8 +362,8 @@ namespace KSPAdvancedFlyByWire
                     m_CameraZoom.SetAcceleration(m_CameraZoomIncrement * config.discreteActionStep);
                 }
 
-                FlightCamera.CamHdg += m_CameraHeading.Update();
-                FlightCamera.CamPitch += m_CameraPitch.Update();
+                FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
+                FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
                 FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
             }
 

@@ -72,6 +72,11 @@ namespace KSPAdvancedFlyByWire
             FloatField(m_Controller.incrementalActionSensitivity, out m_Controller.incrementalActionSensitivity);
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Camera sensitivity");
+            FloatField(m_Controller.cameraSensitivity, out m_Controller.cameraSensitivity);
+            GUILayout.EndHorizontal();
+
             GUILayout.Label("If some axes below are not displaying 0.0 when the controller is left untouched then it needs calibration.");
             GUILayout.Label("Leave the controller and press calibrate, then move around all the axes");
 

@@ -21,6 +21,7 @@ namespace KSPAdvancedFlyByWire
         public CurveType analogInputCurve = CurveType.XSquared;
         public float discreteActionStep = 0.15f;
         public float incrementalActionSensitivity = 0.05f;
+        public float cameraSensitivity = 0.05f;
 
         [XmlIgnore()]
         public bool presetEditorOpen = false;
@@ -106,6 +107,11 @@ namespace KSPAdvancedFlyByWire
             else  if (wrapper == InputWrapper.KeyboardMouse)
             {
                 controller.iface = new KeyboardMouseController();
+            }
+            else
+            {
+                // invalid configuration, bail out..
+                return;
             }
 
             controller.iface.analogEvaluationCurve = CurveFactory.Instantiate(controller.analogInputCurve);
