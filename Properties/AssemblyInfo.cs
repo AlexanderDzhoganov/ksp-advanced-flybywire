@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ksp-graphics-overhaul")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("KSPAdvancedFlyByWire")]
+[assembly: AssemblyDescription("Input mod for Kerbal Space Program")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ksp-graphics-overhaul")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCompany("Alexander \"nlight\" Dzhoganov (alexander.dzhoganov@gmail.com)")]
+[assembly: AssemblyProduct("KSPAdvancedFlyByWire")]
+[assembly: AssemblyCopyright("Copyright © Alexander Dzhoganov 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
