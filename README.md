@@ -43,7 +43,7 @@ Fully tested and compatible with KSP x32 and x64 on Windows operating systems.
 Linux/ MacOSX support available but still in early testing.
 XInput support unavailable on Linux and MacOSX.
 
-### Performance implications
+### Performance considerations
 The mod is extremely lightweight both on performance and memory. It only does a bit of arithmetic and remapping of incoming inputs which should have
 no noticeable effect on CPU usage. Memory usage is in the order of a few megabytes.
 
