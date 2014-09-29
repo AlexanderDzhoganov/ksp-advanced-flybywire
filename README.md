@@ -14,7 +14,7 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 
 - Fully integrated with the stock input system. The mod will not override or break your current setup.
 - Edit your control setup at any time during flight, no need to go back to the main menu to change bindings.
-- Support for the Xbox 360 controller (and PS3 controller using MotionJoy) input through the XInput wrapper. A default preset is also available.
+- Support for the Xbox 360 controller (and PS3 controller using MotionJoy) through the XInput wrapper. A built-in example preset is available.
 - Supports all other controller types through the SDL wrapper.
 - Unlimited number of controller buttons and axes
 - Full mouse & keyboard support
@@ -28,9 +28,13 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 
 ### How to use
 The mod adds a new button to the mod toolbar. Click the game controller icon or press Shift + L during flight to bring up Fly-By-Wire's main configuration screen.
+
 From there you will see a list of detected controllers. You can click on "Enable" to enable a controller from the list - two new buttons will appear - "Presets" and "Configure".
+
 "Presets" will open up the preset editor which is very similar to KSP's stock bindings editor. Using the preset editor you can modify your controller layout at any time.
+
 "Configure" will open up the controller configuration screen. It allows you to set some configuration values as well as calibrate the controller if necessary.
+
 After setting up your controller you should save your game (by using quicksave or exiting to space center), which will automatically save your controller configuration as well.
 
 ### Operating system compatibility
