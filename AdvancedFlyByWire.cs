@@ -76,8 +76,21 @@ namespace KSPAdvancedFlyByWire
 
         public void Awake()
         {
-            m_Instance = this;
+            Utility.CheckLibrarySupport();
 
+            m_Instance = this;
+            RegisterCallbacks(); 
+            LoadState(null);
+            InitializeToolbarButton();
+
+            m_UIHidden = false;
+            m_UIActive = false;
+            
+            print("Advanced Fly-By-Wire: Initialized");
+        }
+
+        private void RegisterCallbacks()
+        {
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onHideUI.Add(OnHideUI);
             GameEvents.onGameStateSave.Add(new EventData<ConfigNode>.OnEvent(SaveState));
@@ -86,19 +99,34 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGamePause.Add(new EventVoid.OnEvent(OnGamePause));
             GameEvents.onGameUnpause.Add(new EventVoid.OnEvent(OnGameUnpause));
             GameEvents.onFlightReady.Add(new EventVoid.OnEvent(OnFlightReady));
+        }
 
-            LoadState(null);
+        private void UnregisterCallbacks()
+        {
+            GameEvents.onShowUI.Remove(OnShowUI);
+            GameEvents.onHideUI.Remove(OnHideUI);
+            GameEvents.onGameStateSave.Remove(SaveState);
+            GameEvents.onGameStateLoad.Remove(LoadState);
+            GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogSpawn);
+            GameEvents.onGamePause.Remove(OnGamePause);
+            GameEvents.onGameUnpause.Remove(OnGameUnpause);
+            GameEvents.onFlightReady.Remove(OnFlightReady);
+        }
 
+        private void InitializeToolbarButton()
+        {
             m_ToolbarButton = Toolbar.ToolbarManager.Instance.add("advancedflybywire", "mainButton");
             m_ToolbarButton.TexturePath = "000_Toolbar/img_buttonAdvancedFlyByWire";
             m_ToolbarButton.ToolTip = "Advanced Fly-By-Wire";
             m_ToolbarButton.Visibility = new Toolbar.GameScenesVisibility(GameScenes.FLIGHT);
             m_ToolbarButton.OnClick += new Toolbar.ClickHandler(OnToolbarButtonClick);
+        }
 
+        void OnToolbarButtonClick(Toolbar.ClickEvent ev)
+        {
+            this.gameObject.SetActive(true);
+            m_UIActive = true;
             m_UIHidden = false;
-            m_UIActive = false;
-            
-            print("KSPAdvancedFlyByWire: Initialized");
         }
 
         void OnFlightReady()
@@ -130,24 +158,9 @@ namespace KSPAdvancedFlyByWire
             }
 
             SaveState(null);
+            UnregisterCallbacks();
 
-            GameEvents.onShowUI.Remove(OnShowUI);
-            GameEvents.onHideUI.Remove(OnHideUI);
-            GameEvents.onGameStateSave.Remove(SaveState);
-            GameEvents.onGameStateLoad.Remove(LoadState);
-            GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogSpawn);
-            GameEvents.onGamePause.Remove(OnGamePause);
-            GameEvents.onGameUnpause.Remove(OnGameUnpause);
-            GameEvents.onFlightReady.Remove(OnFlightReady);
-
-            print("KSPAdvancedFlyByWire: Deinitialized");
-        }
-
-        void OnToolbarButtonClick(Toolbar.ClickEvent ev)
-        {
-            this.gameObject.SetActive(true);
-            m_UIActive = true;
-            m_UIHidden = false;
+            print("Advanced Fly-By-Wire: Deinitialized");
         }
 
         public void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
@@ -312,9 +325,11 @@ namespace KSPAdvancedFlyByWire
                 state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update(), -1.0f, 1.0f);
                 state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update(), -1.0f, 1.0f);
                 state.roll = Utility.Clamp(state.roll + m_Roll.Update(), -1.0f, 1.0f);
+
                 state.X = Utility.Clamp(state.X + m_X.Update(), -1.0f, 1.0f);
                 state.Y = Utility.Clamp(state.Y + m_Y.Update(), -1.0f, 1.0f);
                 state.Z = Utility.Clamp(state.Z + m_Z.Update(), -1.0f, 1.0f);
+
                 state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
             }
 
@@ -506,30 +521,16 @@ namespace KSPAdvancedFlyByWire
                 }
                 return;
             case DiscreteAction.TimeWarpPlus:
-                if (TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH)
-                {
-                    if (TimeWarp.CurrentRateIndex >= TimeWarp.fetch.warpRates.Count() - 1)
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    if (TimeWarp.CurrentRateIndex >= TimeWarp.fetch.physicsWarpRates.Count() - 1)
-                    {
-                        return;
-                    }
-                }
-
-                TimeWarp.SetRate(TimeWarp.CurrentRateIndex + 1, false);
+                WarpController.IncreaseWarp();
                 return;
             case DiscreteAction.TimeWarpMinus:
-                if (TimeWarp.CurrentRateIndex <= 0)
-                {
-                    break;
-                }
-
-                TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, false);
+                WarpController.DecreaseWarp();
+                return;
+            case DiscreteAction.PhysicsTimeWarpPlus:
+                WarpController.IncreasePhysicsWarp();
+                return;
+            case DiscreteAction.PhysicsTimeWarpMinus:
+                WarpController.DecreasePhysicsWarp();
                 return;
             case DiscreteAction.NavballToggle:
                 if (MapView.MapIsEnabled)

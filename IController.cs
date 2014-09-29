@@ -9,9 +9,7 @@ namespace KSPAdvancedFlyByWire
 
     public enum InputWrapper
     {
-#if _WINDOWS
         XInput = 0,
-#endif
         SDL = 1,
         KeyboardMouse = 2,
     }
@@ -26,16 +24,20 @@ namespace KSPAdvancedFlyByWire
         {
             List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>> controllers = new List<KeyValuePair<InputWrapper, KeyValuePair<int, string>>>();
 
-#if _WINDOWS
-            foreach (var controllerName in XInputController.EnumerateControllers())
+            if (Utility.CheckXInputSupport())
             {
-                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.XInput, controllerName));
+                foreach (var controllerName in XInputController.EnumerateControllers())
+                {
+                    controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.XInput, controllerName));
+                }
             }
-#endif
 
-            foreach (var controllerName in SDLController.EnumerateControllers())
+            if (Utility.CheckSDLSupport())
             {
-                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.SDL, controllerName));
+                foreach (var controllerName in SDLController.EnumerateControllers())
+                {
+                    controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.SDL, controllerName));
+                }
             }
 
             controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Mouse&Keyboard")));

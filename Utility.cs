@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.InteropServices;
 
 using UnityEngine;
 
@@ -39,6 +40,33 @@ namespace KSPAdvancedFlyByWire
             }
 
             return item;
+        }
+
+        [DllImport("kernel32", SetLastError = true)]
+        public static extern IntPtr LoadLibrary(string lpFileName);
+
+        public static bool CheckLibrary(string fileName)
+        {
+            return LoadLibrary(fileName) == IntPtr.Zero;
+        }
+
+        private static bool m_XInputExists = false;
+        private static bool m_SDLExists = false;
+
+        public static void CheckLibrarySupport()
+        {
+            m_XInputExists = CheckLibrary("XInputDotNetPure.dll");
+            m_SDLExists = CheckLibrary("SDL2.dll");
+        }
+
+        public static bool CheckXInputSupport()
+        {
+            return m_XInputExists;
+        }
+
+        public static bool CheckSDLSupport()
+        {
+            return m_SDLExists;
         }
 
     }

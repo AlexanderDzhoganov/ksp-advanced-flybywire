@@ -57,7 +57,7 @@ namespace KSPAdvancedFlyByWire
 
             if(preset == null)
             {
-                MonoBehaviour.print("KSPAdvancedFlyByWire: null preset error");
+                MonoBehaviour.print("Advanced Fly-By-Wire: null preset error");
             }
 
             return preset;
@@ -95,19 +95,15 @@ namespace KSPAdvancedFlyByWire
             controller.wrapper = wrapper;
             controller.controllerIndex = controllerIndex;
 
-#if _WINDOWS
-            if (wrapper == InputWrapper.XInput)
+            if (Utility.CheckXInputSupport() && wrapper == InputWrapper.XInput)
             {
                 controller.iface = new XInputController(controller.controllerIndex);
             }
-#endif
-
-            if (wrapper == InputWrapper.SDL)
+            else if (Utility.CheckSDLSupport() && wrapper == InputWrapper.SDL)
             {
                 controller.iface = new SDLController(controller.controllerIndex);
             }
-
-            if (wrapper == InputWrapper.KeyboardMouse)
+            else  if (wrapper == InputWrapper.KeyboardMouse)
             {
                 controller.iface = new KeyboardMouseController();
             }
@@ -172,22 +168,15 @@ namespace KSPAdvancedFlyByWire
         {
             foreach (ControllerConfiguration config in controllers)
             {
-
-#if _WINDOWS
-
-                if (config.wrapper == InputWrapper.XInput)
+                if (Utility.CheckXInputSupport() && config.wrapper == InputWrapper.XInput)
                 {
                     config.iface = new XInputController(config.controllerIndex);
                 }
-
-#endif
-
-                if (config.wrapper == InputWrapper.SDL)
+                else if (Utility.CheckSDLSupport() && config.wrapper == InputWrapper.SDL)
                 {
                     config.iface = new SDLController(config.controllerIndex);
                 }
-
-                if (config.wrapper == InputWrapper.KeyboardMouse)
+                else if (config.wrapper == InputWrapper.KeyboardMouse)
                 {
                     config.iface = new KeyboardMouseController();
                 }

@@ -78,6 +78,8 @@ namespace KSPAdvancedFlyByWire
 
         TimeWarpPlus,
         TimeWarpMinus,
+        PhysicsTimeWarpPlus,
+        PhysicsTimeWarpMinus,
 
         OrbitMapToggle,
         IVAViewToggle,
