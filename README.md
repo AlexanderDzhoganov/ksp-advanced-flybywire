@@ -1,6 +1,11 @@
 ## Advanced Fly-By-Wire v1.0
 ### Kerbal Space Program input system overhaul mod
 
+### Please note that the mod is still in testing and is NOT officially released. The author assumes no responsibility if anything or everything breaks.
+### You can download the latest preview version from:
+- 32 bit - <url>
+- 64 bit - <url>
+
 ### What is this?
 This is a mod for Kerbal Space Program (http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
 It dramatically enhances the stock input system with a bunch of fixes and many new features.

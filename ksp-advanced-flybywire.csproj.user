@@ -12,4 +12,10 @@
     <StartArguments>-popupwindow</StartArguments>
     <StartAction>Program</StartAction>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <StartProgram>C:\Program Files %28x86%29\Steam\steamapps\common\Kerbal Space Program\KSP_x64.exe</StartProgram>
+    <StartWorkingDirectory>C:\Program Files %28x86%29\Steam\steamapps\common\Kerbal Space Program\</StartWorkingDirectory>
+    <StartArguments>-popupwindow</StartArguments>
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
 </Project>
