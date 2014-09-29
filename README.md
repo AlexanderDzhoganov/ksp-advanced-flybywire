@@ -3,8 +3,8 @@
 
 ### Please note that the mod is still in testing and is NOT officially released. The author assumes no responsibility if anything or everything breaks.
 ### You can download the latest preview version from:
-- 32 bit - <url>
-- 64 bit - <url>
+- 32 bit - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp_advanced_flybywire_x32_preview.zip
+- 64 bit - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp_advanced_flybywire_x64_preview.zip
 
 ### What is this?
 This is a mod for Kerbal Space Program (http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
