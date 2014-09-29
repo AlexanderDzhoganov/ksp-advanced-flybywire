@@ -711,13 +711,13 @@ namespace KSPAdvancedFlyByWire
                     m_Throttle.SetValue(m_Throttle.GetValue() - value * controller.incrementalActionSensitivity);
                     return;
                 case ContinuousAction.CameraX:
-                    m_CameraHeading.SetValue(m_CameraHeading.GetValue() + value * controller.incrementalActionSensitivity);
+                    m_CameraHeading.SetValue(m_CameraHeading.GetValue() + value);
                     return;
                 case ContinuousAction.CameraY:
-                    m_CameraPitch.SetValue(m_CameraPitch.GetValue() + value * controller.incrementalActionSensitivity);
+                    m_CameraPitch.SetValue(m_CameraPitch.GetValue() + value);
                     return;
                 case ContinuousAction.CameraZoom:
-                    m_CameraZoom.SetValue(m_CameraZoom.GetValue() + value * controller.incrementalActionSensitivity);
+                    m_CameraZoom.SetValue(m_CameraZoom.GetValue() + value);
                     return;
             }
         }
