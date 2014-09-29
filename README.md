@@ -16,6 +16,7 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 - Edit your control setup at any time during flight, no need to go back to the main menu to change bindings.
 - Support for the Xbox 360 controller (and PS3 controller using MotionJoy) input through the XInput wrapper. A default preset is also available.
 - Supports all other controller types through the SDL wrapper.
+- Unlimited number of controller buttons and axes
 - Full mouse & keyboard support
 - Significantly lower latency and better analog precision than KSP's stock input
 - Smart dead-zone detection and analog calibration 
@@ -39,7 +40,7 @@ XInput support unavailable on Linux and MacOSX.
 
 ### Performance implications
 The mod is extremely lightweight both on performance and memory. It only does a bit of arithmetic and remapping of incoming inputs which should have
-no noticable effect on CPU usage. Memory usage is in the order of a few megabytes.
+no noticeable effect on CPU usage. Memory usage is in the order of a few megabytes.
 
 ### Limitations
 There is only one known limitation so far - most EVA controls are unavailable, you should continue using the stock input system for EVA.
@@ -56,6 +57,12 @@ Here is a (non-exhaustive) list of mods that have been tested to be compatible:
 - Kethane
 .. 
 and many more
+
+### Roadmap
+
+- Linux/ MacOSX support
+- Support for controller hats and trackballs
+- EVA actions
 
 ### Bug reports
 Please report any bugs using GitHub's built-in issue tracker or by email at alexander.dzhoganov (at) gmail (dot) com.
