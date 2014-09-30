@@ -1,11 +1,11 @@
 ## Advanced Fly-By-Wire v1.0
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.0.1
+Latest version - 1.0.2
 
-Windows x86 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.1_x86.zip
+Windows x86 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.2_x86.zip
 
-Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.1_x64.zip
+Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.2_x64.zip
 
 Licensed under the MIT License (https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -98,5 +98,8 @@ Incompatible with:
 Please report any bugs using GitHub's built-in issue tracker.
 
 ### Changelog
+v1.0.2
+- Added negative versions of Yaw, Pitch, Roll, X, Y and Z
+
 v1.0.1 
 - SDL2.dll wasn't always recognized to exist
