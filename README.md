@@ -3,9 +3,9 @@
 
 Latest version - 1.0.1
 
-Windows x86 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/builds/ksp-advanced-flybywire_v1.0.1_x86.zip
+Windows x86 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.1_x86.zip
 
-Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/builds/ksp-advanced-flybywire_v1.0.1_x64.zip
+Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.1_x64.zip
 
 Licensed under the MIT License (https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
