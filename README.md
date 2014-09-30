@@ -9,6 +9,10 @@ Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/
 
 Licensed under the MIT License (https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
+You can also find the mod on:
+- Curse.com - http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire
+- KerbalStuff - https://kerbalstuff.com/mod/232/Advanced Fly-By-Wire
+
 ### What is this?
 This is a mod for Kerbal Space Program (http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
 It dramatically enhances the stock input system with a bunch of fixes and many new features.
