@@ -141,22 +141,34 @@ namespace KSPAdvancedFlyByWire
                     return "None";
                 case ContinuousAction.Yaw:
                     return "Yaw";
+                case ContinuousAction.NegativeYaw:
+                    return "Yaw (Negative)";
                 case ContinuousAction.YawTrim:
                     return "Yaw (Trim)";
                 case ContinuousAction.Pitch:
                     return "Pitch";
+                case ContinuousAction.NegativePitch:
+                    return "Pitch (Negative)";
                 case ContinuousAction.PitchTrim:
                     return "Pitch (Trim)";
                 case ContinuousAction.Roll:
                     return "Roll";
+                case ContinuousAction.NegativeRoll:
+                    return "Roll (Negative)";
                 case ContinuousAction.RollTrim:
                     return "Roll (Trim)";
                 case ContinuousAction.X:
-                    return "Translate X";
+                    return "Transl. X";
+                case ContinuousAction.NegativeX:
+                    return "Transl. X (Negative)";
                 case ContinuousAction.Y:
-                    return "Translate Y";
+                    return "Transl. Y";
+                case ContinuousAction.NegativeY:
+                    return "Transl. Y (Negative)";
                 case ContinuousAction.Z:
-                    return "Translate Z";
+                    return "Transl. Z";
+                case ContinuousAction.NegativeZ:
+                    return "Transl. Z (Negative)";
                 case ContinuousAction.Throttle:
                     return "Throttle";
                 case ContinuousAction.ThrottleIncrement:

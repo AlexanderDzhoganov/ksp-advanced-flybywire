@@ -718,12 +718,18 @@ namespace KSPAdvancedFlyByWire
                 case ContinuousAction.Yaw:
                     m_Yaw.SetValue(value);
                     return;
+                case ContinuousAction.NegativeYaw:
+                    m_Yaw.SetValue(-value);
+                    return;
                 case ContinuousAction.YawTrim:
                     state.yawTrim = value;
                     state.yawTrim = Utility.Clamp(state.yawTrim, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Pitch:
                     m_Pitch.SetValue(value);
+                    return;
+                case ContinuousAction.NegativePitch:
+                    m_Pitch.SetValue(-value);
                     return;
                 case ContinuousAction.PitchTrim:
                     state.pitchTrim = value;
@@ -732,6 +738,9 @@ namespace KSPAdvancedFlyByWire
                 case ContinuousAction.Roll:
                     m_Roll.SetValue(value);
                     return;
+                case ContinuousAction.NegativeRoll:
+                    m_Roll.SetValue(-value);
+                    return;
                 case ContinuousAction.RollTrim:
                     state.rollTrim = value;
                     state.rollTrim = Utility.Clamp(state.rollTrim, -1.0f, 1.0f);
@@ -739,11 +748,20 @@ namespace KSPAdvancedFlyByWire
                 case ContinuousAction.X:
                     m_X.SetValue(value);
                     return;
+                case ContinuousAction.NegativeX:
+                    m_X.SetValue(-value);
+                    return;
                 case ContinuousAction.Y:
                     m_Y.SetValue(value);
                     return;
+                case ContinuousAction.NegativeY:
+                    m_Y.SetValue(-value);
+                    return;
                 case ContinuousAction.Z:
                     m_Z.SetValue(value);
+                    return;
+                case ContinuousAction.NegativeZ:
+                    m_Z.SetValue(-value);
                     return;
                 case ContinuousAction.Throttle:
                     m_Throttle.SetValue(value);

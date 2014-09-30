@@ -117,6 +117,7 @@ namespace KSPAdvancedFlyByWire
         {
             return RescaleAxis(analogInput, GetRawAxisState(analogInput));
         }
+
         public abstract float GetRawAxisState(int analogInput);
 
         public virtual Bitset GetButtonsMask()
