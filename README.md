@@ -11,7 +11,7 @@ Licensed under the MIT License (https://github.com/AlexanderDzhoganov/ksp-advanc
 
 You can also find the mod on:
 - Curse.com - http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire
-- KerbalStuff - https://kerbalstuff.com/mod/232/Advanced Fly-By-Wire
+- KerbalStuff - https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire
 
 ### What is this?
 This is a mod for Kerbal Space Program (http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
