@@ -64,11 +64,16 @@ namespace KSPAdvancedFlyByWire
 
         public static bool IncreaseRegularWarp(bool instant = false)
         {
-            if (!CheckRegularWarp()) return false; //make sure we are in regular warp
-
+            if (!CheckRegularWarp())
+            {
+                return false; //make sure we are in regular warp
+            }
             //do a bunch of checks to see if we can increase the warp rate:
-            if (TimeWarp.CurrentRateIndex + 1 == TimeWarp.fetch.warpRates.Length) return false; //already at max warp
-            
+            if (TimeWarp.CurrentRateIndex + 1 == TimeWarp.fetch.warpRates.Length)
+            {
+                return false; //already at max warp
+            }
+
             if (!FlightGlobals.ActiveVessel.LandedOrSplashed)
             {
                 double instantAltitudeASL = (FlightGlobals.ActiveVessel.CoM - FlightGlobals.ActiveVessel.mainBody.position).magnitude - FlightGlobals.ActiveVessel.mainBody.Radius;
@@ -89,7 +94,10 @@ namespace KSPAdvancedFlyByWire
 
         public static bool IncreasePhysicsWarp(bool instant = false)
         {
-            if (!CheckPhysicsWarp()) return false; //make sure we are in regular warp
+            if (!CheckPhysicsWarp())
+            {
+                return false; //make sure we are in physics warp
+            }
 
             //do a bunch of checks to see if we can increase the warp rate:
             if (TimeWarp.CurrentRateIndex + 1 == TimeWarp.fetch.physicsWarpRates.Length)
@@ -109,9 +117,7 @@ namespace KSPAdvancedFlyByWire
         public static bool DecreaseRegularWarp(bool instant = false)
         {
             if (!CheckRegularWarp()) return false;
-
             if (TimeWarp.CurrentRateIndex == 0) return false; //already at minimum warp
-
             TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, instant);
             return true;
         }
@@ -119,9 +125,7 @@ namespace KSPAdvancedFlyByWire
         public static bool DecreasePhysicsWarp(bool instant = false)
         {
             if (!CheckPhysicsWarp()) return false;
-
             if (TimeWarp.CurrentRateIndex == 0) return false; //already at minimum warp
-
             TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, instant);
             return true;
         }

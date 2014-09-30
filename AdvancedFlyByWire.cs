@@ -802,6 +802,12 @@ namespace KSPAdvancedFlyByWire
 
                 FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
                 m_CallbackSet = true;
+
+                if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
+                {
+                    FlightCtrlState state = new FlightCtrlState();
+                    OnFlyByWire(state);
+                }
             }
 
             if(Input.GetKey("left shift") && Input.GetKey("k"))

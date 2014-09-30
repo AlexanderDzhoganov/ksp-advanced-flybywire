@@ -62,7 +62,6 @@ namespace KSPAdvancedFlyByWire
             var currentPreset = m_Controller.GetCurrentPreset();
 
             GUILayout.BeginHorizontal();
-
             GUILayout.Label("Preset: ");
 
             currentPreset.name = GUILayout.TextField(currentPreset.name, GUILayout.Width(256));
@@ -120,6 +119,8 @@ namespace KSPAdvancedFlyByWire
                     {
                         m_Controller.presets.RemoveAt(m_Controller.currentPreset);
                         m_Controller.currentPreset--;
+                        m_DestructiveActionWait = false;
+                        m_DestructiveActionTimer = 0.0f;
                     }
                 }
                 else
@@ -130,7 +131,6 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUI.enabled = true;
-
             GUILayout.EndHorizontal();
 
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
