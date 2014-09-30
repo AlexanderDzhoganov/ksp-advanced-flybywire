@@ -61,12 +61,14 @@ namespace KSPAdvancedFlyByWire
 
         public static bool CheckXInputSupport()
         {
-            return m_XInputExists;
+            return true;
+//            return m_XInputExists;
         }
 
         public static bool CheckSDLSupport()
         {
-            return m_SDLExists;
+            return true;
+//            return m_SDLExists;
         }
 
     }
