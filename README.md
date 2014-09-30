@@ -7,6 +7,8 @@ Windows x86 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/
 
 Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/builds/ksp-advanced-flybywire_v1.0.0_x64.zip
 
+Licensed under the MIT License (https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
+
 ### What is this?
 This is a mod for Kerbal Space Program (http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
 It dramatically enhances the stock input system with a bunch of fixes and many new features.
@@ -28,13 +30,22 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 - Works alongside the stock input system. The mod will not override or break your current setup.
 
 ### How to use
-The mod adds a new button to the mod toolbar. Click the game controller icon or press Shift + L during flight to bring up Fly-By-Wire's main configuration screen.
+The mod adds a new button to the mod toolbar.
+![toolbar](http://i.imgur.com/uToMl2R.png)
+
+Click the game controller icon or press Shift + L during flight to bring up Fly-By-Wire's main configuration screen.
+
+![main](http://i.imgur.com/OrsIzF1.png)
 
 From there you will see a list of detected controllers. You can click on "Enable" to enable a controller from the list - two new buttons will appear - "Presets" and "Configure".
 
 "Presets" will open up the preset editor which is very similar to KSP's stock bindings editor. Using the preset editor you can modify your controller layout at any time.
 
+![presets](http://i.imgur.com/5vpxkxJ.png)
+
 "Configure" will open up the controller configuration screen. It allows you to set some configuration values as well as calibrate the controller if necessary.
+
+![config](http://i.imgur.com/zVRH39l.png)
 
 After setting up your controller you should save your game (by using quicksave or exiting to space center), which will automatically save your controller configuration as well.
 
