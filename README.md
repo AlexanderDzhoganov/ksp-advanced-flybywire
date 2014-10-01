@@ -1,11 +1,11 @@
 ## Advanced Fly-By-Wire v1.0
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.0.2
+Latest version - 1.0.3
 
-Windows x86 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.2_x86.zip
+Windows x86 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x86.zip
 
-Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.2_x64.zip
+Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x64.zip
 
 Licensed under the MIT License (https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -85,8 +85,8 @@ Here is a (non-exhaustive) list of mods that have been tested to be compatible, 
 - Environmental Visual Enhancements
 - TAC Life Support .. and more
 
-Incompatible with:
-- B9 Aerospace - there may be a loading-screen crash when B9 is present alongside this mod, I am investigating this
+Some issues:
+- B9 Aerospace - loading crashes in the 64-bit build, 32-bit builds are unaffected
 
 ### Roadmap
 
@@ -98,6 +98,10 @@ Incompatible with:
 Please report any bugs using GitHub's built-in issue tracker.
 
 ### Changelog
+v1.0.3
+- Fixed the issues with time warp
+- B9 Aerospace now supported for 32-bit builds
+
 v1.0.2
 - Added negative versions of Yaw, Pitch, Roll, X, Y and Z
 

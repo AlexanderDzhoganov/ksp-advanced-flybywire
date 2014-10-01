@@ -88,9 +88,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>builds\x64\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
+      <HintPath>builds\x86\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -116,11 +116,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y ksp-advanced-flybywire.dll ..\..\..\builds\x64\GameData\ksp-advanced-flybywire\
-xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)GameData\ksp-advanced-flybywire\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y ksp-advanced-flybywire.dll ..\..\..\builds\x86\GameData\ksp-advanced-flybywire\
+rem xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)GameData\ksp-advanced-flybywire\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>del ..\..\..\builds\x64\GameData\ksp-advanced-flybywire\ksp-advanced-flybywire.dll</PreBuildEvent>
+    <PreBuildEvent>del ..\..\..\builds\x86\GameData\ksp-advanced-flybywire\ksp-advanced-flybywire.dll</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
