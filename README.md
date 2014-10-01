@@ -3,18 +3,18 @@
 
 Latest version - 1.0.3
 
-Windows x86 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x86.zip
+[Windows x86](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x86.zip)
 
-Windows x64 - https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x64.zip
+[Windows x64](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x64.zip)
 
-Licensed under the MIT License (https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
+[Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
 You can also find the mod on:
-- Curse.com - http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire
-- KerbalStuff - https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire
+- [Curse.com](http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire)
+- [KerbalStuff](https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire)
 
 ### What is this?
-This is a mod for Kerbal Space Program (http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
+This is a mod for [Kerbal Space Program](http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
 It dramatically enhances the stock input system with a bunch of fixes and many new features.
 
 ### How is it better than stock?
@@ -95,7 +95,7 @@ Some issues:
 - EVA actions
 
 ### Bug reports
-Please report any bugs using GitHub's built-in issue tracker.
+Please report any bugs using [GitHub's issue tracker](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/issues).
 
 ### Changelog
 v1.0.3
