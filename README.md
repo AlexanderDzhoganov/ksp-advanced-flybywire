@@ -10,7 +10,7 @@ Latest version - 1.0.3
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
 You can also find the mod on:
-- [Official forums](forum.kerbalspaceprogram.com/threads/95022-0-24-2-Advanced-Fly-by-wire-v1-0-%28Better-controller-support%29)
+- [Official forums](http://forum.kerbalspaceprogram.com/threads/95022-0-24-2-Advanced-Fly-by-wire-v1-0-%28Better-controller-support%29)
 - [Curse.com](http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire)
 - [KerbalStuff](https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire)
 
