@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using UnityEngine;
 using SDL2;
@@ -55,47 +53,32 @@ namespace KSPAdvancedFlyByWire
             m_ButtonsCount = SDL2.SDL.SDL_JoystickNumButtons(m_Joystick);
             m_HatsCount = SDL2.SDL.SDL_JoystickNumHats(m_Joystick);
 
+            int buttonsCount = m_ButtonsCount;
+            int axesCount = m_AxesCount;
+
             if (treatHatsAsButtons)
             {
-                InitializeStateArrays(m_ButtonsCount + m_HatsCount * 8, m_AxesCount);
+                buttonsCount += m_HatsCount * 8;
             }
             else
             {
-                InitializeStateArrays(m_ButtonsCount, m_AxesCount + m_HatsCount * 2);
+                axesCount += m_HatsCount * 2;
             }
 
-            for (int i = 0; i < m_ButtonsCount; i++)
+            InitializeStateArrays(buttonsCount, axesCount);
+
+            for (int i = 0; i < buttonsCount; i++)
             {
                 buttonStates[i] = false;
             }
 
-            if (treatHatsAsButtons)
-            {
-                for (int i = m_ButtonsCount; i < m_ButtonsCount + m_HatsCount * 8; i++)
-                {
-                    buttonStates[i] = false;
-                }
-            }
-
-            for (int i = 0; i < m_AxesCount; i++)
+            for (int i = 0; i < axesCount; i++)
             {
                 axisNegativeDeadZones[i] = float.MaxValue;
                 axisPositiveDeadZones[i] = float.MaxValue;
                 axisLeft[i] = -1.0f;
                 axisIdentity[i] = 0.0f;
                 axisRight[i] = 1.0f;
-            }
-
-            if (!treatHatsAsButtons)
-            {
-                for (int i = m_AxesCount; i < m_AxesCount + m_HatsCount * 2; i++)
-                {
-                    axisNegativeDeadZones[i] = float.MaxValue;
-                    axisPositiveDeadZones[i] = float.MaxValue;
-                    axisLeft[i] = -1.0f;
-                    axisIdentity[i] = 0.0f;
-                    axisRight[i] = 1.0f;
-                }
             }
         }
 
