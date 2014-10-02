@@ -373,10 +373,10 @@ namespace KSPAdvancedFlyByWire
                     }
                     return;
                 case DiscreteAction.ResetTrim:
-                    state.ResetTrim();
                     m_YawTrim = 0.0f;
                     m_PitchTrim = 0.0f;
                     m_RollTrim = 0.0f;
+                    state.ResetTrim();
                     return;
             }
         }

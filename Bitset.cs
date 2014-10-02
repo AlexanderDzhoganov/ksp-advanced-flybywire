@@ -9,6 +9,7 @@ namespace KSPAdvancedFlyByWire
     public class Bitset
     {
 
+        public int m_SingleData = 0;
         public int[] m_Data = null;
         public int m_NumBits = 0;
 
@@ -18,9 +19,11 @@ namespace KSPAdvancedFlyByWire
         {
             m_NumBits = numBits;
 
-            if (numBits < 32)
+            if (numBits <= 32)
             {
                 numBits = 32;
+                m_SingleData = 0;
+                return;
             }
 
             int numInts = numBits / 32 + ((numBits % 32 == 0) ? 0 : 1);
@@ -34,6 +37,11 @@ namespace KSPAdvancedFlyByWire
         public Bitset Copy()
         {
             Bitset result = new Bitset(m_NumBits);
+            if (m_NumBits <= 32)
+            {
+                result.m_SingleData = m_SingleData;
+                return result;
+            }
 
             for(int i = 0; i < m_Data.Length; i++)
             {
@@ -66,9 +74,11 @@ namespace KSPAdvancedFlyByWire
         {
             m_NumBits = numBits;
 
-            if (numBits < 32)
+            if (numBits <= 32)
             {
                 numBits = 32;
+                m_SingleData = initialValue;
+                return;
             }
 
             int numInts = numBits / 32 + ((numBits % 32 == 0) ? 0 : 1);
@@ -84,8 +94,9 @@ namespace KSPAdvancedFlyByWire
 
         public void Set(int bit)
         {
-            if (bit >= m_NumBits)
+            if (m_NumBits <= 32)
             {
+                m_SingleData |= 1 << (bit % 32);
                 return;
             }
 
@@ -94,9 +105,9 @@ namespace KSPAdvancedFlyByWire
 
         public bool Get(int bit)
         {
-            if(bit >= m_NumBits)
+            if (m_NumBits <= 32)
             {
-                return false;
+                return (m_SingleData & (1 << (bit % 32))) != 0;
             }
 
             return (m_Data[bit / 32] & (1 << (bit % 32))) != 0;

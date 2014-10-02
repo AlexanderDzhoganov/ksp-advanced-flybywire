@@ -101,11 +101,11 @@ namespace KSPAdvancedFlyByWire
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Treat hats as buttons");
+            GUILayout.Label("Treat hats as buttons (requires restart)");
             var state = GUILayout.Toggle(m_Controller.treatHatsAsButtons, "");
             if (state != m_Controller.treatHatsAsButtons)
             {
-                m_Controller.SetTreatHatsAsButtons(state);
+                m_Controller.treatHatsAsButtons = state;
             }
             GUILayout.EndHorizontal();
 
