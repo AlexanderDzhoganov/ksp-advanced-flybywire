@@ -1,0 +1,5 @@
+- Fixed issue with FAR where FAR's dynamic control adjustment would get overriden
+- Fixed trim issues
+- Added wheel throttle and wheel steer
+- Fixed a bug where throttle wouldn't go below 50%
+- Support for controller hats both as axes and buttons (new "Treat hats as buttons" config option)
