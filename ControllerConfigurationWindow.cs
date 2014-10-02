@@ -106,6 +106,7 @@ namespace KSPAdvancedFlyByWire
             if (state != m_Controller.treatHatsAsButtons)
             {
                 m_Controller.treatHatsAsButtons = state;
+                AdvancedFlyByWire.Instance.SaveState(null);
             }
             GUILayout.EndHorizontal();
 
