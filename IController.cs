@@ -48,6 +48,7 @@ namespace KSPAdvancedFlyByWire
         public ButtonReleasedCallback buttonReleasedCallback = null;
 
         public Curve analogEvaluationCurve = new Curve();
+        public bool treatHatsAsButtons = false;
 
         public bool[] buttonStates;
         public float[] axisPositiveDeadZones;

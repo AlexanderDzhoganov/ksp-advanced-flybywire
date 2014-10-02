@@ -175,6 +175,14 @@ namespace KSPAdvancedFlyByWire
                     return "Throttle (Increment)";
                 case ContinuousAction.ThrottleDecrement:
                     return "Throttle (Decrement)";
+                case ContinuousAction.WheelSteer:
+                    return "Wheel steer";
+                case ContinuousAction.WheelSteerTrim:
+                    return "Wheel steer (Trim)";
+                case ContinuousAction.WheelThrottle:
+                    return "Wheel throttle";
+                case ContinuousAction.WheelThrottleTrim:
+                    return "Wheel throttle (Trim)";
                 case ContinuousAction.CameraX:
                     return "Camera X";
                 case ContinuousAction.CameraY:

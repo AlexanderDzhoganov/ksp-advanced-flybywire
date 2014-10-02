@@ -113,6 +113,7 @@ namespace KSPAdvancedFlyByWire
         ThrottleDecrement,
         WheelSteer,
         WheelSteerTrim,
+        WheelThrottle,
         WheelThrottleTrim,
         CameraX,
         CameraY,

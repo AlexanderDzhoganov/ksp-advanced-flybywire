@@ -153,16 +153,37 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetButtonsCount()
         {
+            if (treatHatsAsButtons)
+            {
+                return m_ButtonsCount + m_HatsCount * 8;
+            }
+
             return m_ButtonsCount;
         }
 
         public override string GetButtonName(int id)
         {
-            return String.Format("Button #{0}", id);
+            if (id < m_ButtonsCount)
+            {
+                return String.Format("Button #{0}", id);
+            }
+            else if(treatHatsAsButtons)
+            {
+                int hatId = (id - m_ButtonsCount) / 8;
+                int buttonId = (id - m_ButtonsCount) % 8;
+                return String.Format("Hat #{0} Button {1}", hatId, buttonId);
+            }
+
+            return "unknown";
         }
 
         public override int GetAxesCount()
         {
+            if (treatHatsAsButtons)
+            {
+                return m_AxesCount;
+            }
+
             return m_AxesCount + m_HatsCount * 2;
         }
 
@@ -172,16 +193,29 @@ namespace KSPAdvancedFlyByWire
             {
                 return String.Format("Axis #{0}", id);
             }
-            else
+            else if(!treatHatsAsButtons)
             {
                 bool xOrY = ((id - m_AxesCount) % 2) == 0;
                 return String.Format("Hat #{0} {1}", id - m_AxesCount, xOrY ? "X" : "Y");
             }
+
+            return "unknown";
         }
 
         public override bool GetButtonState(int button)
         {
-            return SDL2.SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
+            if (button < m_ButtonsCount)
+            {
+                return SDL2.SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
+            }
+            else if(treatHatsAsButtons)
+            {
+                int hatId = (button - m_ButtonsCount) / 8;
+                int buttonId = (button - m_ButtonsCount) % 8;
+                return SDL2.SDL.SDL_JoystickGetHat(m_Joystick, hatId) == buttonId;
+            }
+
+            return false;
         }
 
         public override float GetRawAxisState(int analogInput)
@@ -190,7 +224,7 @@ namespace KSPAdvancedFlyByWire
             {
                 return SDL2.SDL.SDL_JoystickGetAxis(m_Joystick, analogInput);
             }
-            else
+            else if(!treatHatsAsButtons)
             {
                 int hatId = (analogInput - m_AxesCount) / 2;
                 int axisId = (analogInput - m_AxesCount) % 2;
@@ -237,6 +271,8 @@ namespace KSPAdvancedFlyByWire
                     }
                 }
             }
+
+            return 0.0f;
         }
 
     }

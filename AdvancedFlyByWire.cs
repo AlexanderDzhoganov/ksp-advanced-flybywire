@@ -47,6 +47,7 @@ namespace KSPAdvancedFlyByWire
         private int m_ZIncrement = 0;
         private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
         private int m_ThrottleIncrement = 0;
+        private FlightProperty m_WheelThrottle = new FlightProperty(-1.0f, 1.0f);
         private FlightProperty m_WheelSteer = new FlightProperty(-1.0f, 1.0f);
         private FlightProperty m_CameraPitch = new FlightProperty(-1.0f, 1.0f);
         private int m_CameraPitchIncrement = 0;
@@ -347,6 +348,7 @@ namespace KSPAdvancedFlyByWire
 
                 state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
                 state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
+                state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), 0.0f, 1.0f);
 
                 FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
                 FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
@@ -391,6 +393,10 @@ namespace KSPAdvancedFlyByWire
                 m_Throttle.SetVelocity(0.0f);
                 m_Throttle.SetAcceleration(0.0f);
             }
+
+            m_WheelThrottle.SetVelocity(0.0f);
+            m_WheelThrottle.SetAcceleration(0.0f);
+            m_WheelSteer.SetValue(0.0f);
 
             if(zeroCameraX)
             {
@@ -785,6 +791,9 @@ namespace KSPAdvancedFlyByWire
                 case ContinuousAction.ThrottleDecrement:
                     m_Throttle.Increment(-value * controller.incrementalActionSensitivity);
                     return;
+                case ContinuousAction.WheelThrottle:
+                    m_WheelThrottle.SetValue(value);
+                    return;
                 case ContinuousAction.WheelSteer:
                     m_WheelSteer.SetValue(value);
                     return;
@@ -806,25 +815,17 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
                 if(!m_CallbackSet)
                 {
                     m_Callback = new FlightInputCallback(OnFlyByWire);
+                    FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
+                    m_CallbackSet = true;
                 }
-                else
-                {
-                    // we have to remove and re-add the callback every frame to make
-                    // sure that it's always the last callback
-                    // otherwise we break SAS and probably some mods
-                    FlightGlobals.ActiveVessel.OnFlyByWire -= m_Callback;
-                }
-
-                FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
-                m_CallbackSet = true;
-
+                
                 if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
                 {
                     FlightCtrlState state = new FlightCtrlState();
