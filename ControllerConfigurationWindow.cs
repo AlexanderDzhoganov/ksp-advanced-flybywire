@@ -136,7 +136,6 @@ namespace KSPAdvancedFlyByWire
 
             for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
             {
-          
                 GUILayout.BeginHorizontal();
 
                 string label = "";
