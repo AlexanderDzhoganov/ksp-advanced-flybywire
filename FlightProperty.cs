@@ -16,6 +16,7 @@ namespace KSPAdvancedFlyByWire
         private float m_MaxValue = 0.0f;
         private int m_Increment = 0;
         private float m_IncrementStep = 0.0f;
+        private float m_Trim = 0.0f;
 
         public FlightProperty(float minValue, float maxValue)
         {
@@ -44,6 +45,16 @@ namespace KSPAdvancedFlyByWire
         {
             m_Increment = increment;
             m_IncrementStep = incrementStep;
+        }
+
+        public void SetTrim(float trim)
+        {
+            m_Trim = trim;
+        }
+
+        public float GetTrim()
+        {
+            return m_Trim;
         }
 
         public bool HasIncrement()
@@ -92,7 +103,7 @@ namespace KSPAdvancedFlyByWire
 
             m_Velocity += m_Acceleration * Time.deltaTime;
             m_Value += m_Velocity * Time.deltaTime;
-            m_Value = Utility.Clamp(m_Value, m_MinValue, m_MaxValue);
+            m_Value = Utility.Clamp(m_Value + m_Trim, m_MinValue, m_MaxValue);
             return m_Value;
         }
 

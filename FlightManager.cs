@@ -9,13 +9,8 @@ namespace KSPAdvancedFlyByWire
         public Configuration m_Configuration = null;
 
         private FlightProperty m_Yaw = new FlightProperty(-1.0f, 1.0f);
-        private float m_YawTrim = 0.0f;
-
         private FlightProperty m_Pitch = new FlightProperty(-1.0f, 1.0f);
-        private float m_PitchTrim = 0.0f;
-
         private FlightProperty m_Roll = new FlightProperty(-1.0f, 1.0f);
-        private float m_RollTrim = 0.0f;
 
         private FlightProperty m_X = new FlightProperty(-1.0f, 1.0f);
         private FlightProperty m_Y = new FlightProperty(-1.0f, 1.0f);
@@ -24,10 +19,7 @@ namespace KSPAdvancedFlyByWire
         private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
 
         private FlightProperty m_WheelThrottle = new FlightProperty(-1.0f, 1.0f);
-        private float m_WheelThrottleTrim = 0.0f;
-
         private FlightProperty m_WheelSteer = new FlightProperty(-1.0f, 1.0f);
-        private float m_WheelSteerTrim = 0.0f;
 
         private FlightProperty m_CameraPitch = new FlightProperty(-1.0f, 1.0f);
         private FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
@@ -40,52 +32,70 @@ namespace KSPAdvancedFlyByWire
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
                 config.iface.Update(state);
-
-                for (int i = 0; i < config.iface.GetAxesCount(); i++)
-                {
-                    List<ContinuousAction> actions = config.GetCurrentPreset().GetContinuousBinding(i, config.iface.GetButtonsMask());
-                    if (actions == null)
-                    {
-                        continue;
-                    }
-
-                    foreach (var action in actions)
-                    {
-                        float input = config.iface.GetAxisState(i);
-                        if (input != 0.0f || action == ContinuousAction.Throttle)
-                        {
-                            EvaluateContinuousAction(config, action, config.iface.GetAxisState(i), state);
-                        }
-                    }
-                }
-
-                state.yawTrim = m_YawTrim;
-                state.pitchTrim = m_PitchTrim;
-                state.rollTrim = m_RollTrim;
-
-                state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update() + m_YawTrim, -1.0f, 1.0f);
-                state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update() + m_PitchTrim, -1.0f, 1.0f);
-                state.roll = Utility.Clamp(state.roll + m_Roll.Update() + m_RollTrim, -1.0f, 1.0f);
-
-                state.X = Utility.Clamp(state.X + m_X.Update(), -1.0f, 1.0f);
-                state.Y = Utility.Clamp(state.Y + m_Y.Update(), -1.0f, 1.0f);
-                state.Z = Utility.Clamp(state.Z + m_Z.Update(), -1.0f, 1.0f);
-
-                state.wheelSteerTrim = m_WheelSteerTrim;
-                state.wheelThrottleTrim = m_WheelThrottleTrim;
-
-                state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
-                state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update() + m_WheelSteerTrim, -1.0f, 1.0f);
-                state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update() + m_WheelThrottleTrim, 0.0f, 1.0f);
-                
-                FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
-                FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
-                if (FlightCamera.fetch != null)
-                {
-                    FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
-                }
+                UpdateAxes(config, state);
+                UpdateFlightProperties(config, state);                
             }
 
+            ZeroOutFlightProperties();
+
+            if (MustOverrideSAS(state))
+            {
+                OverrideSAS();
+            }
+        }
+
+        private void UpdateAxes(ControllerConfiguration config, FlightCtrlState state)
+        {
+            for (int i = 0; i < config.iface.GetAxesCount(); i++)
+            {
+                List<ContinuousAction> actions = config.GetCurrentPreset().GetContinuousBinding(i, config.iface.GetButtonsMask());
+                if (actions == null)
+                {
+                    continue;
+                }
+
+                foreach (var action in actions)
+                {
+                    float input = config.iface.GetAxisState(i);
+                    if (input != 0.0f || action == ContinuousAction.Throttle)
+                    {
+                        EvaluateContinuousAction(config, action, config.iface.GetAxisState(i), state);
+                    }
+                }
+            }
+        }
+
+        private void UpdateFlightProperties(ControllerConfiguration config, FlightCtrlState state)
+        {
+            state.yawTrim = m_Yaw.GetTrim();
+            state.pitchTrim = m_Pitch.GetTrim();
+            state.rollTrim = m_Roll.GetTrim();
+
+            state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update(), -1.0f, 1.0f);
+            state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update(), -1.0f, 1.0f);
+            state.roll = Utility.Clamp(state.roll + m_Roll.Update(), -1.0f, 1.0f);
+
+            state.X = Utility.Clamp(state.X + m_X.Update(), -1.0f, 1.0f);
+            state.Y = Utility.Clamp(state.Y + m_Y.Update(), -1.0f, 1.0f);
+            state.Z = Utility.Clamp(state.Z + m_Z.Update(), -1.0f, 1.0f);
+
+            state.wheelSteerTrim = m_WheelSteer.GetTrim();
+            state.wheelThrottleTrim = m_WheelThrottle.GetTrim();
+
+            state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
+            state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
+            state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), 0.0f, 1.0f);
+
+            FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
+            FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
+            if (FlightCamera.fetch != null)
+            {
+                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
+            }
+        }
+
+        private void ZeroOutFlightProperties()
+        {
             if (!m_Yaw.HasIncrement())
             {
                 m_Yaw.SetValue(0.0f);
@@ -124,6 +134,7 @@ namespace KSPAdvancedFlyByWire
 
             m_WheelThrottle.SetVelocity(0.0f);
             m_WheelThrottle.SetAcceleration(0.0f);
+
             m_WheelSteer.SetValue(0.0f);
 
             if (!m_CameraHeading.HasIncrement())
@@ -140,12 +151,17 @@ namespace KSPAdvancedFlyByWire
             {
                 m_CameraZoom.SetValue(0.0f);
             }
+        }
 
-            VesselSAS VesselSAS = FlightGlobals.ActiveVessel.vesselSAS;
-            bool overrideSAS = (Math.Abs(state.pitch) > VesselSAS.controlDetectionThreshold) ||
-                                    (Math.Abs(state.yaw) > VesselSAS.controlDetectionThreshold) ||
-                                    (Math.Abs(state.roll) > VesselSAS.controlDetectionThreshold);
-            VesselSAS.ManualOverride(overrideSAS);
+        private bool MustOverrideSAS(FlightCtrlState state)
+        {
+            float t = FlightGlobals.ActiveVessel.vesselSAS.controlDetectionThreshold;
+            return (Math.Abs(state.pitch) > t) || (Math.Abs(state.yaw) > t) || (Math.Abs(state.roll) > t);
+        }
+
+        private void OverrideSAS()
+        {
+            FlightGlobals.ActiveVessel.vesselSAS.ManualOverride(true);
         }
 
         public void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
@@ -371,9 +387,9 @@ namespace KSPAdvancedFlyByWire
                     }
                     return;
                 case DiscreteAction.ResetTrim:
-                    m_YawTrim = 0.0f;
-                    m_PitchTrim = 0.0f;
-                    m_RollTrim = 0.0f;
+                    m_Yaw.SetTrim(0.0f);
+                    m_Pitch.SetTrim(0.0f);
+                    m_Roll.SetTrim(0.0f);
                     state.ResetTrim();
                     return;
             }
@@ -464,7 +480,7 @@ namespace KSPAdvancedFlyByWire
                     m_Yaw.SetValue(-value);
                     return;
                 case ContinuousAction.YawTrim:
-                    m_YawTrim = Utility.Clamp(m_YawTrim + value, -1.0f, 1.0f);
+                    m_Yaw.SetTrim(Utility.Clamp(m_Yaw.GetTrim() + value, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.Pitch:
                     m_Pitch.SetValue(value);
@@ -473,7 +489,7 @@ namespace KSPAdvancedFlyByWire
                     m_Pitch.SetValue(-value);
                     return;
                 case ContinuousAction.PitchTrim:
-                    m_PitchTrim = Utility.Clamp(m_PitchTrim + value, -1.0f, 1.0f);
+                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() + value, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.Roll:
                     m_Roll.SetValue(value);
@@ -482,7 +498,7 @@ namespace KSPAdvancedFlyByWire
                     m_Roll.SetValue(-value);
                     return;
                 case ContinuousAction.RollTrim:
-                    m_RollTrim = Utility.Clamp(m_RollTrim + value, -1.0f, 1.0f);
+                    m_Roll.SetTrim(Utility.Clamp(m_Roll.GetTrim() + value, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.X:
                     m_X.SetValue(value);
@@ -519,10 +535,10 @@ namespace KSPAdvancedFlyByWire
                     m_WheelSteer.SetValue(value);
                     return;
                 case ContinuousAction.WheelThrottleTrim:
-                    m_WheelThrottleTrim = Utility.Clamp(m_WheelThrottleTrim + value, -1.0f, 1.0f);
+                    m_WheelThrottle.SetTrim(Utility.Clamp(m_WheelThrottle.GetTrim() + value, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.WheelSteerTrim:
-                    m_WheelSteerTrim = Utility.Clamp(m_WheelSteerTrim + value, -1.0f, 1.0f);
+                    m_WheelSteer.SetTrim(Utility.Clamp(m_WheelSteer.GetTrim() + value, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.CameraX:
                     m_CameraHeading.Increment(value);

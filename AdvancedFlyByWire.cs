@@ -234,7 +234,7 @@ namespace KSPAdvancedFlyByWire
                 foreach (DiscreteAction action in actions)
                 {
                     m_FlightManager.EvaluateDiscreteActionRelease(config, action, state);
-                }
+                }   
             }
         }
 
