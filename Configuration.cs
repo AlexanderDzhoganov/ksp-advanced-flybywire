@@ -19,6 +19,7 @@ namespace KSPAdvancedFlyByWire
         public List<ControllerPreset> presets = new List<ControllerPreset>();
         public int currentPreset = 0;
         public CurveType analogInputCurve = CurveType.XSquared;
+        public bool treatHatsAsButtons = false;
         public float discreteActionStep = 0.15f;
         public float incrementalActionSensitivity = 0.05f;
         public float cameraSensitivity = 0.05f;
@@ -72,6 +73,15 @@ namespace KSPAdvancedFlyByWire
                 iface.analogEvaluationCurve = CurveFactory.Instantiate(type);
             }
         }
+
+        public void SetTreatHatsAsButtons(bool state)
+        {
+            treatHatsAsButtons = state;
+            if (iface != null)
+            {
+                iface.treatHatsAsButtons = treatHatsAsButtons;
+            }
+        }
     }
 
     public class Configuration
@@ -114,6 +124,7 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
+            controller.SetTreatHatsAsButtons(controller.treatHatsAsButtons);
             controller.iface.analogEvaluationCurve = CurveFactory.Instantiate(controller.analogInputCurve);
             controller.iface.buttonPressedCallback = new IController.ButtonPressedCallback(pressedCallback);
             controller.iface.buttonReleasedCallback = new IController.ButtonReleasedCallback(releasedCallback);

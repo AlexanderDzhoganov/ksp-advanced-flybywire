@@ -100,6 +100,15 @@ namespace KSPAdvancedFlyByWire
 
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Treat hats as buttons");
+            var state = GUILayout.Toggle(m_Controller.treatHatsAsButtons, "");
+            if (state != m_Controller.treatHatsAsButtons)
+            {
+                m_Controller.SetTreatHatsAsButtons(state);
+            }
+            GUILayout.EndHorizontal();
+
             GUILayout.Label("If some axes below are not displaying 0.0 when the controller is left untouched then it needs calibration.");
             GUILayout.Label("Leave the controller and press calibrate, then move around all the axes");
 
