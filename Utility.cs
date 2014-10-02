@@ -12,6 +12,13 @@ namespace KSPAdvancedFlyByWire
     class Utility
     {
 
+        public float ApplyChangeAndClamp(float x, float change, float clampMin = -1.0f, float clampMax = 1.0f)
+        {
+            x += change;
+            x = Utility.Clamp(x, clampMin, clampMax);
+            return x;
+        }
+
         public static float Clamp(float x, float min, float max)
         {
             return x < min ? min : x > max ? max : x;

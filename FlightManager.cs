@@ -8,106 +8,40 @@ namespace KSPAdvancedFlyByWire
 
     class FlightManager
     {
-
         public Configuration m_Configuration = null;
 
         private FlightProperty m_Yaw = new FlightProperty(-1.0f, 1.0f);
-        private int m_YawIncrement = 0;
         private float m_YawTrim = 0.0f;
+
         private FlightProperty m_Pitch = new FlightProperty(-1.0f, 1.0f);
-        private int m_PitchIncrement = 0;
         private float m_PitchTrim = 0.0f;
+
         private FlightProperty m_Roll = new FlightProperty(-1.0f, 1.0f);
-        private int m_RollIncrement = 0;
         private float m_RollTrim = 0.0f;
+
         private FlightProperty m_X = new FlightProperty(-1.0f, 1.0f);
-        private int m_XIncrement = 0;
         private FlightProperty m_Y = new FlightProperty(-1.0f, 1.0f);
-        private int m_YIncrement = 0;
         private FlightProperty m_Z = new FlightProperty(-1.0f, 1.0f);
-        private int m_ZIncrement = 0;
+
         private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
-        private int m_ThrottleIncrement = 0;
+
         private FlightProperty m_WheelThrottle = new FlightProperty(-1.0f, 1.0f);
+        private float m_WheelThrottleTrim = 0.0f;
+
         private FlightProperty m_WheelSteer = new FlightProperty(-1.0f, 1.0f);
+        private float m_WheelSteerTrim = 0.0f;
+
         private FlightProperty m_CameraPitch = new FlightProperty(-1.0f, 1.0f);
-        private int m_CameraPitchIncrement = 0;
         private FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
-        private int m_CameraHeadingIncrement = 0;
         private FlightProperty m_CameraZoom = new FlightProperty(-1.0f, 1.0f);
-        private int m_CameraZoomIncrement = 0;
 
         public void OnFlyByWire(FlightCtrlState state)
         {
             m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
 
-            bool zeroYaw = true, zeroPitch = true, zeroRoll = true,
-                 zeroX = true, zeroY = true, zeroZ = true,
-                 zeroThrottle = true, zeroCameraX = true, zeroCameraY = true, zeroCameraZoom = true;
-
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
                 config.iface.Update(state);
-
-                if (m_YawIncrement != 0)
-                {
-                    zeroYaw = false;
-                    m_Yaw.SetAcceleration(m_YawIncrement * config.discreteActionStep);
-                }
-
-                if (m_PitchIncrement != 0)
-                {
-                    zeroPitch = false;
-                    m_Pitch.SetAcceleration(m_PitchIncrement * config.discreteActionStep);
-                }
-
-                if (m_RollIncrement != 0)
-                {
-                    zeroRoll = false;
-                    m_Roll.SetAcceleration(m_RollIncrement * config.discreteActionStep);
-                }
-
-                if (m_XIncrement != 0)
-                {
-                    zeroX = false;
-                    m_X.SetAcceleration(m_XIncrement * config.discreteActionStep);
-                }
-
-                if (m_YIncrement != 0)
-                {
-                    zeroY = false;
-                    m_Y.SetAcceleration(m_YIncrement * config.discreteActionStep);
-                }
-
-                if (m_ZIncrement != 0)
-                {
-                    zeroZ = false;
-                    m_Z.SetAcceleration(m_ZIncrement * config.discreteActionStep);
-                }
-
-                if (m_ThrottleIncrement != 0)
-                {
-                    zeroThrottle = false;
-                    m_Throttle.SetAcceleration(m_ThrottleIncrement * config.discreteActionStep);
-                }
-
-                if (m_CameraHeadingIncrement != 0)
-                {
-                    zeroCameraX = false;
-                    m_CameraHeading.SetAcceleration(m_CameraHeadingIncrement * config.discreteActionStep);
-                }
-
-                if (m_CameraPitchIncrement != 0)
-                {
-                    zeroCameraY = false;
-                    m_CameraPitch.SetAcceleration(m_CameraPitchIncrement * config.discreteActionStep);
-                }
-
-                if (m_CameraZoomIncrement != 0)
-                {
-                    zeroCameraZoom = false;
-                    m_CameraZoom.SetAcceleration(m_CameraZoomIncrement * config.discreteActionStep);
-                }
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
@@ -135,15 +69,17 @@ namespace KSPAdvancedFlyByWire
                 state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update() + m_PitchTrim, -1.0f, 1.0f);
                 state.roll = Utility.Clamp(state.roll + m_Roll.Update() + m_RollTrim, -1.0f, 1.0f);
 
-
                 state.X = Utility.Clamp(state.X + m_X.Update(), -1.0f, 1.0f);
                 state.Y = Utility.Clamp(state.Y + m_Y.Update(), -1.0f, 1.0f);
                 state.Z = Utility.Clamp(state.Z + m_Z.Update(), -1.0f, 1.0f);
 
-                state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
-                state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
-                state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), 0.0f, 1.0f);
+                state.wheelSteerTrim = m_WheelSteerTrim;
+                state.wheelThrottleTrim = m_WheelThrottleTrim;
 
+                state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
+                state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update() + m_WheelSteerTrim, -1.0f, 1.0f);
+                state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update() + m_WheelThrottleTrim, 0.0f, 1.0f);
+                
                 FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
                 FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
                 if (FlightCamera.fetch != null)
@@ -152,37 +88,37 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
-            if (zeroYaw)
+            if (!m_Yaw.HasIncrement())
             {
                 m_Yaw.SetValue(0.0f);
             }
 
-            if (zeroPitch)
+            if (!m_Pitch.HasIncrement())
             {
                 m_Pitch.SetValue(0.0f);
             }
 
-            if (zeroRoll)
+            if (!m_Roll.HasIncrement())
             {
                 m_Roll.SetValue(0.0f);
             }
 
-            if (zeroX)
+            if (!m_X.HasIncrement())
             {
                 m_X.SetValue(0.0f);
             }
 
-            if (zeroY)
+            if (!m_Y.HasIncrement())
             {
                 m_Y.SetValue(0.0f);
             }
 
-            if (zeroZ)
+            if (!m_Z.HasIncrement())
             {
                 m_Z.SetValue(0.0f);
             }
 
-            if (zeroThrottle)
+            if (!m_Throttle.HasIncrement())
             {
                 m_Throttle.SetVelocity(0.0f);
                 m_Throttle.SetAcceleration(0.0f);
@@ -192,23 +128,23 @@ namespace KSPAdvancedFlyByWire
             m_WheelThrottle.SetAcceleration(0.0f);
             m_WheelSteer.SetValue(0.0f);
 
-            if (zeroCameraX)
+            if (!m_CameraHeading.HasIncrement())
             {
                 m_CameraHeading.SetValue(0.0f);
             }
 
-            if (zeroCameraY)
+            if (!m_CameraPitch.HasIncrement())
             {
                 m_CameraPitch.SetValue(0.0f);
             }
 
-            if (zeroCameraZoom)
+            if (!m_CameraZoom.HasIncrement())
             {
                 m_CameraZoom.SetValue(0.0f);
             }
 
             VesselSAS VesselSAS = FlightGlobals.ActiveVessel.vesselSAS;
-            Boolean overrideSAS = (Math.Abs(state.pitch) > VesselSAS.controlDetectionThreshold) ||
+            bool overrideSAS = (Math.Abs(state.pitch) > VesselSAS.controlDetectionThreshold) ||
                                     (Math.Abs(state.yaw) > VesselSAS.controlDetectionThreshold) ||
                                     (Math.Abs(state.roll) > VesselSAS.controlDetectionThreshold);
             VesselSAS.ManualOverride(overrideSAS);
@@ -227,46 +163,46 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.None:
                     return;
                 case DiscreteAction.YawPlus:
-                    m_YawIncrement = 1;
+                    m_Yaw.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.YawMinus:
-                    m_YawIncrement = -1;
+                    m_Yaw.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.PitchPlus:
-                    m_PitchIncrement = 1;
+                    m_Pitch.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.PitchMinus:
-                    m_PitchIncrement = -1;
+                    m_Pitch.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.RollPlus:
-                    m_RollIncrement = 1;
+                    m_Roll.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.RollMinus:
-                    m_RollIncrement = -1;
+                    m_Roll.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.XPlus:
-                    m_XIncrement = 1;
+                    m_X.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.XMinus:
-                    m_XIncrement = -1;
+                    m_X.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.YPlus:
-                    m_YIncrement = 1;
+                    m_Y.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.YMinus:
-                    m_YIncrement = -1;
+                    m_Y.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.ZPlus:
-                    m_ZIncrement = 1;
+                    m_Z.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.ZMinus:
-                    m_ZIncrement = -1;
+                    m_Z.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.ThrottlePlus:
-                    m_ThrottleIncrement = 1;
+                    m_Throttle.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.ThrottleMinus:
-                    m_ThrottleIncrement = -1;
+                    m_Throttle.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.Stage:
                     Staging.ActivateNextStage();
@@ -364,22 +300,22 @@ namespace KSPAdvancedFlyByWire
                     ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.LOWER_CENTER);
                     return;
                 case DiscreteAction.CameraZoomPlus:
-                    m_CameraZoomIncrement = 1;
+                    m_CameraZoom.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.CameraZoomMinus:
-                    m_CameraZoomIncrement = -1;
+                    m_CameraZoom.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.CameraXPlus:
-                    m_CameraHeadingIncrement = 1;
+                    m_CameraHeading.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.CameraXMinus:
-                    m_CameraHeadingIncrement = -1;
+                    m_CameraHeading.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.CameraYPlus:
-                    m_CameraPitchIncrement = 1;
+                    m_CameraPitch.SetIncrement(1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.CameraYMinus:
-                    m_CameraPitchIncrement = -1;
+                    m_CameraPitch.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.OrbitMapToggle:
                     if (!MapView.MapIsEnabled)
@@ -452,64 +388,64 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.None:
                     return;
                 case DiscreteAction.YawPlus:
-                    m_YawIncrement = 0;
+                    m_Yaw.SetIncrement(0);
                     return;
                 case DiscreteAction.YawMinus:
-                    m_YawIncrement = 0;
+                    m_Yaw.SetIncrement(0);
                     return;
                 case DiscreteAction.PitchPlus:
-                    m_PitchIncrement = 0;
+                    m_Pitch.SetIncrement(0);
                     return;
                 case DiscreteAction.PitchMinus:
-                    m_PitchIncrement = 0;
+                    m_Pitch.SetIncrement(0);
                     return;
                 case DiscreteAction.RollPlus:
-                    m_RollIncrement = 0;
+                    m_Roll.SetIncrement(0);
                     return;
                 case DiscreteAction.RollMinus:
-                    m_RollIncrement = 0;
+                    m_Roll.SetIncrement(0);
                     return;
                 case DiscreteAction.XPlus:
-                    m_XIncrement = 0;
+                    m_X.SetIncrement(0);
                     return;
                 case DiscreteAction.XMinus:
-                    m_XIncrement = 0;
+                    m_X.SetIncrement(0);
                     return;
                 case DiscreteAction.YPlus:
-                    m_YIncrement = 0;
+                    m_Y.SetIncrement(0);
                     return;
                 case DiscreteAction.YMinus:
-                    m_YIncrement = 0;
+                    m_Y.SetIncrement(0);
                     return;
                 case DiscreteAction.ZPlus:
-                    m_ZIncrement = 0;
+                    m_Z.SetIncrement(0);
                     return;
                 case DiscreteAction.ZMinus:
-                    m_ZIncrement = 0;
+                    m_Z.SetIncrement(0);
                     return;
                 case DiscreteAction.ThrottlePlus:
-                    m_ThrottleIncrement = 0;
+                    m_Throttle.SetIncrement(0);
                     return;
                 case DiscreteAction.ThrottleMinus:
-                    m_ThrottleIncrement = 0;
+                    m_Throttle.SetIncrement(0);
                     return;
                 case DiscreteAction.CameraZoomPlus:
-                    m_CameraZoomIncrement = 0;
+                    m_CameraZoom.SetIncrement(0);
                     return;
                 case DiscreteAction.CameraZoomMinus:
-                    m_CameraZoomIncrement = 0;
+                    m_CameraZoom.SetIncrement(0);
                     return;
                 case DiscreteAction.CameraXPlus:
-                    m_CameraHeadingIncrement = 0;
+                    m_CameraHeading.SetIncrement(0);
                     return;
                 case DiscreteAction.CameraXMinus:
-                    m_CameraHeadingIncrement = 0;
+                    m_CameraHeading.SetIncrement(0);
                     return;
                 case DiscreteAction.CameraYPlus:
-                    m_CameraPitchIncrement = 0;
+                    m_CameraPitch.SetIncrement(0);
                     return;
                 case DiscreteAction.CameraYMinus:
-                    m_CameraPitchIncrement = 0;
+                    m_CameraPitch.SetIncrement(0);
                     return;
                 case DiscreteAction.SASHold:
                     FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
@@ -585,10 +521,10 @@ namespace KSPAdvancedFlyByWire
                     m_WheelSteer.SetValue(value);
                     return;
                 case ContinuousAction.WheelThrottleTrim:
-                    state.wheelThrottleTrim = Utility.Clamp(state.wheelThrottleTrim + value, -1.0f, 1.0f);
+                    m_WheelThrottleTrim = Utility.Clamp(m_WheelThrottleTrim + value, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.WheelSteerTrim:
-                    state.wheelSteerTrim = Utility.Clamp(state.wheelSteerTrim + value, -1.0f, 1.0f);
+                    m_WheelSteerTrim = Utility.Clamp(m_WheelSteerTrim + value, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.CameraX:
                     m_CameraHeading.Increment(value);
@@ -600,13 +536,6 @@ namespace KSPAdvancedFlyByWire
                     m_CameraZoom.Increment(value);
                     return;
             }
-        }
-
-        private float ApplyChangeAndClamp(float x, float change, float clampMin = -1.0f, float clampMax = 1.0f)
-        {
-            x += change;
-            x = Utility.Clamp(x, clampMin, clampMax);
-            return x;
         }
 
     }

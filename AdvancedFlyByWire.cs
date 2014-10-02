@@ -11,42 +11,24 @@ namespace KSPAdvancedFlyByWire
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
-        private Configuration m_Configuration = null;
-        private string m_ConfigurationPath = "GameData/ksp-advanced-flybywire/advanced_flybywire_config.xml";
-
-        private bool m_CallbackSet = false;
-
-        private FlightInputCallback m_Callback = null;
-
+        // UI stuff
+        private Toolbar.IButton m_ToolbarButton = null;
         private bool m_UIActive = true;
         private bool m_UIHidden = false;
+        private Rect m_WindowRect = new Rect(0, 64, 432, 576);
+        private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
+        // Configuration
+        private Configuration m_Configuration = null;
+        private string m_ConfigurationPath = "GameData/ksp-advanced-flybywire/advanced_flybywire_config.xml";
         private List<PresetEditorWindow> m_PresetEditors = new List<PresetEditorWindow>();
         private List<ControllerConfigurationWindow> m_ControllerTests = new List<ControllerConfigurationWindow>();
 
-        private Toolbar.IButton m_ToolbarButton = null;
-
-        private Rect windowRect = new Rect(0, 64, 432, 576);
-
-        private static AdvancedFlyByWire m_Instance = null;
+        // Flight state
+        private FlightInputCallback m_Callback = null;
         private FlightManager m_FlightManager = new FlightManager();
 
-        private void LoadState(ConfigNode configNode)
-        {
-            m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
-            if (m_Configuration == null)
-            {
-                m_Configuration = new Configuration();
-                Configuration.Serialize(m_ConfigurationPath, m_Configuration);
-            }
-
-            m_FlightManager.m_Configuration = m_Configuration;
-        }
-
-        public void SaveState(ConfigNode configNode)
-        {
-            Configuration.Serialize(m_ConfigurationPath, m_Configuration);
-        }
+        private static AdvancedFlyByWire m_Instance = null;
 
         public static AdvancedFlyByWire Instance
         {
@@ -72,6 +54,40 @@ namespace KSPAdvancedFlyByWire
             print("Advanced Fly-By-Wire: Initialized");
         }
 
+        public void OnDestroy()
+        {
+            m_Instance = null;
+
+            if (m_ToolbarButton != null)
+            {
+                m_ToolbarButton.Destroy();
+            }
+
+            SaveState(null);
+            UnregisterCallbacks();
+
+            m_FlightManager = null;
+
+            print("Advanced Fly-By-Wire: Deinitialized");
+        }
+
+        private void LoadState(ConfigNode configNode)
+        {
+            m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
+            if (m_Configuration == null)
+            {
+                m_Configuration = new Configuration();
+                Configuration.Serialize(m_ConfigurationPath, m_Configuration);
+            }
+
+            m_FlightManager.m_Configuration = m_Configuration;
+        }
+
+        public void SaveState(ConfigNode configNode)
+        {
+            Configuration.Serialize(m_ConfigurationPath, m_Configuration);
+        }
+
         private void RegisterCallbacks()
         {
             GameEvents.onShowUI.Add(OnShowUI);
@@ -81,7 +97,6 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGUIRecoveryDialogSpawn.Add(new EventData<MissionRecoveryDialog>.OnEvent(OnGUIRecoveryDialogSpawn));
             GameEvents.onGamePause.Add(new EventVoid.OnEvent(OnGamePause));
             GameEvents.onGameUnpause.Add(new EventVoid.OnEvent(OnGameUnpause));
-            GameEvents.onFlightReady.Add(new EventVoid.OnEvent(OnFlightReady));
         }
 
         private void UnregisterCallbacks()
@@ -93,7 +108,6 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogSpawn);
             GameEvents.onGamePause.Remove(OnGamePause);
             GameEvents.onGameUnpause.Remove(OnGameUnpause);
-            GameEvents.onFlightReady.Remove(OnFlightReady);
         }
 
         private void InitializeToolbarButton()
@@ -118,10 +132,6 @@ namespace KSPAdvancedFlyByWire
             m_UIHidden = false;
         }
 
-        void OnFlightReady()
-        {
-        }
-
         void OnGUIRecoveryDialogSpawn(MissionRecoveryDialog dialog)
         {
             m_UIHidden = true;
@@ -137,21 +147,14 @@ namespace KSPAdvancedFlyByWire
             m_UIHidden = false;
         }
 
-        public void OnDestroy()
+        private void OnShowUI()
         {
-            m_Instance = null;
+            m_UIHidden = false;
+        }
 
-            if (m_ToolbarButton != null)
-            {
-                m_ToolbarButton.Destroy();
-            }
-
-            SaveState(null);
-            UnregisterCallbacks();
-
-            m_FlightManager = null;
-
-            print("Advanced Fly-By-Wire: Deinitialized");
+        private void OnHideUI()
+        {
+            m_UIHidden = true;
         }
 
         public void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
@@ -227,11 +230,10 @@ namespace KSPAdvancedFlyByWire
         {
             if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
-                if(!m_CallbackSet)
+                if (m_Callback == null)
                 {
                     m_Callback = new FlightInputCallback(m_FlightManager.OnFlyByWire);
                     FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
-                    m_CallbackSet = true;
                 }
                 
                 if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
@@ -246,18 +248,6 @@ namespace KSPAdvancedFlyByWire
                 m_UIActive = true;
             }
         }
-
-        private void OnShowUI()
-        {
-            m_UIHidden = false;
-        }
-
-        private void OnHideUI()
-        {
-            m_UIHidden = true;
-        }
-
-        private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
         void DoMainWindow(int index)
         {
@@ -378,7 +368,7 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
-            if (windowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
+            if (m_WindowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
             {
                 InputLockManager.SetControlLock(ControlTypes.All, "AdvancedFlyByWireMainWindow");
             }
@@ -387,8 +377,8 @@ namespace KSPAdvancedFlyByWire
                 InputLockManager.RemoveControlLock("AdvancedFlyByWireMainWindow");
             }
 
-            windowRect = GUI.Window(0, windowRect, DoMainWindow, "Advanced Fly-By-Wire");
-            windowRect = Utility.ClampRect(windowRect, new Rect(0, 0, Screen.width, Screen.height));
+            m_WindowRect = GUI.Window(0, m_WindowRect, DoMainWindow, "Advanced Fly-By-Wire");
+            m_WindowRect = Utility.ClampRect(m_WindowRect, new Rect(0, 0, Screen.width, Screen.height));
 
             for (int i = 0; i < m_PresetEditors.Count; i++)
             {
