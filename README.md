@@ -1,11 +1,11 @@
 ## Advanced Fly-By-Wire v1.0
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.0.3
+Latest version - 1.1.0
 
-[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x86.zip)
+[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.0_x86.zip)
 
-[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x64.zip)
+[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.0_x64.zip)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -99,6 +99,17 @@ Some issues:
 Please report any bugs using [GitHub's issue tracker](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/issues).
 
 ### Changelog
+v1.1
+- Fixed issue with FAR where FAR's dynamic control adjustment would get overridden
+- Fixed trim issues
+- Added wheel throttle and wheel steer
+- Fixed a bug where throttle wouldn't go below 50%
+- Support for controller hats both as axes and buttons (new "Treat hats as buttons" config option)
+- Fixed SDL plug and play
+- Fixed a preset editor bug where if time is slowed down (e.g. by using the TimeScale mod), it was not possible to change bindings
+- General optimization
+- Breaks the configuration XML, you will need to recreate your presets.
+
 v1.0.3
 - Fixed the issues with time warp
 - B9 Aerospace now supported for 32-bit builds
