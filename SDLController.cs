@@ -110,7 +110,10 @@ namespace KSPAdvancedFlyByWire
             int numControllers = SDL2.SDL.SDL_NumJoysticks();
             for (int i = 0; i < numControllers; i++)
             {
-                controllers.Add(new KeyValuePair<int, string>(i, SDL2.SDL.SDL_JoystickNameForIndex(i)));
+                if(IsControllerConnected(i))
+                {
+                    controllers.Add(new KeyValuePair<int, string>(i, SDL2.SDL.SDL_JoystickNameForIndex(i)));
+                }
             }
 
             return controllers;

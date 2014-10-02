@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AxisConfiguration.cs" />
     <Compile Include="Bitset.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ControllerPreset.cs" />

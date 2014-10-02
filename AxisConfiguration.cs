@@ -6,14 +6,14 @@ using System.Text;
 namespace KSPAdvancedFlyByWire
 {
 
-    public class AxisConfiguration
+    public struct AxisConfiguration
     {
-        public float m_PositiveDeadZone = 0.0f;
-        public float m_NegativeDeadZone = 0.0f;
-        public float m_Left = 0.0f;
-        public float m_Identity = 0.0f;
-        public float m_Right = 0.0f;
-        public bool m_Invert = false;
+        public float m_PositiveDeadZone;
+        public float m_NegativeDeadZone;
+        public float m_Left;
+        public float m_Identity;
+        public float m_Right;
+        public bool m_Invert;
 
         public float Rescale(float value, Curve analogEvaluationCurve)
         {

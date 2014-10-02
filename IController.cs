@@ -56,6 +56,10 @@ namespace KSPAdvancedFlyByWire
         {
             buttonStates = new bool[buttons];
             axisStates = new AxisConfiguration[axes];
+            for (int i = 0; i < axes; i++)
+            {
+                axisStates[i] = new AxisConfiguration();
+            }
         }
 
         public abstract string GetControllerName();

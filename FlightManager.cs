@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using UnityEngine;
+
 namespace KSPAdvancedFlyByWire
 {
 
@@ -18,7 +20,7 @@ namespace KSPAdvancedFlyByWire
 
         private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
 
-        private FlightProperty m_WheelThrottle = new FlightProperty(-1.0f, 1.0f);
+        private FlightProperty m_WheelThrottle = new FlightProperty(0.0f, 1.0f);
         private FlightProperty m_WheelSteer = new FlightProperty(-1.0f, 1.0f);
 
         private FlightProperty m_CameraPitch = new FlightProperty(-1.0f, 1.0f);
@@ -527,7 +529,7 @@ namespace KSPAdvancedFlyByWire
                     m_WheelSteer.SetValue(value);
                     return;
                 case ContinuousAction.WheelThrottleTrim:
-                    m_WheelThrottle.SetTrim(Utility.Clamp(m_WheelThrottle.GetTrim() + value, -1.0f, 1.0f));
+                    m_WheelThrottle.SetTrim(Utility.Clamp(m_WheelThrottle.GetTrim() + value, 0.0f, 1.0f));
                     return;
                 case ContinuousAction.WheelSteerTrim:
                     m_WheelSteer.SetTrim(Utility.Clamp(m_WheelSteer.GetTrim() + value, -1.0f, 1.0f));

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using XInputDotNetPure;
 
+using UnityEngine;
+
 namespace KSPAdvancedFlyByWire
 {
 
@@ -49,21 +51,19 @@ namespace KSPAdvancedFlyByWire
         public XInputController(int controllerIndex)
         {
             m_ControllerIndex = (PlayerIndex)controllerIndex;
+            InitializeStateArrays(GetButtonsCount(), GetAxesCount());
 
-            buttonStates = new bool[15];
-           
-            for(int i = 0; i < 15; i++)
+            for (int i = 0; i < 15; i++)
             {
                 buttonStates[i] = false;
             }
-
-            InitializeStateArrays(GetButtonsCount(), GetAxesCount());
 
             for (int i = 0; i < 6; i++)
             {
                 axisStates[i].m_NegativeDeadZone = float.MaxValue;
                 axisStates[i].m_PositiveDeadZone = float.MaxValue;
             }
+            MonoBehaviour.print("wtf2");
 
             for (int i = 0; i < 4; i++)
             {
@@ -71,6 +71,7 @@ namespace KSPAdvancedFlyByWire
                 axisStates[i].m_Identity = 0.0f;
                 axisStates[i].m_Right = 1.0f;
             }
+            MonoBehaviour.print("wtf3");
 
             for (int i = 2; i < 6; i++)
             {
