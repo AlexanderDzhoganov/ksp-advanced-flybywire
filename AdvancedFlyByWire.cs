@@ -9,6 +9,9 @@ namespace KSPAdvancedFlyByWire
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
+        public const int versionMajor = 1;
+        public const int versionMinor = 1;
+
         // UI stuff
         private Toolbar.IButton m_ToolbarButton = null;
         private bool m_UIActive = true;
@@ -18,7 +21,9 @@ namespace KSPAdvancedFlyByWire
 
         // Configuration
         private Configuration m_Configuration = null;
-        private string m_ConfigurationPath = "GameData/ksp-advanced-flybywire/advanced_flybywire_config.xml";
+        private string m_ConfigurationPath =
+            "GameData/ksp-advanced-flybywire/advanced_flybywire_config_v" + versionMajor.ToString() + versionMinor.ToString() + ".xml";
+
         private List<PresetEditorWindow> m_PresetEditors = new List<PresetEditorWindow>();
         private List<ControllerConfigurationWindow> m_ControllerTests = new List<ControllerConfigurationWindow>();
 
