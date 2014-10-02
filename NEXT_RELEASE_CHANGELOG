@@ -8,3 +8,5 @@ v1.1
 - Fixed a preset editor bug where if time is slowed down (e.g. by using the TimeScale mod),
 it was not possible to change bindings
 - Large refactoring and optimization of the code base
+- Breaks the configuration XML, you will need to recreate your presets. This will be avoided in the future by providing automatic
+conversion between old and new format configs, but it's not possible for this version.
