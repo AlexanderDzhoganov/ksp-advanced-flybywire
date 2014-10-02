@@ -29,32 +29,7 @@ namespace KSPAdvancedFlyByWire
         private Rect windowRect = new Rect(0, 64, 432, 576);
 
         private static AdvancedFlyByWire m_Instance = null;
-
-        private FlightProperty m_Yaw = new FlightProperty(-1.0f, 1.0f);
-        private int m_YawIncrement = 0;
-        private float m_YawTrim = 0.0f;
-        private FlightProperty m_Pitch = new FlightProperty(-1.0f, 1.0f);
-        private int m_PitchIncrement = 0;
-        private float m_PitchTrim = 0.0f;
-        private FlightProperty m_Roll = new FlightProperty(-1.0f, 1.0f);
-        private int m_RollIncrement = 0;
-        private float m_RollTrim = 0.0f;
-        private FlightProperty m_X = new FlightProperty(-1.0f, 1.0f);
-        private int m_XIncrement = 0;
-        private FlightProperty m_Y = new FlightProperty(-1.0f, 1.0f);
-        private int m_YIncrement = 0;
-        private FlightProperty m_Z = new FlightProperty(-1.0f, 1.0f);
-        private int m_ZIncrement = 0;
-        private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
-        private int m_ThrottleIncrement = 0;
-        private FlightProperty m_WheelThrottle = new FlightProperty(-1.0f, 1.0f);
-        private FlightProperty m_WheelSteer = new FlightProperty(-1.0f, 1.0f);
-        private FlightProperty m_CameraPitch = new FlightProperty(-1.0f, 1.0f);
-        private int m_CameraPitchIncrement = 0;
-        private FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
-        private int m_CameraHeadingIncrement = 0;
-        private FlightProperty m_CameraZoom = new FlightProperty(-1.0f, 1.0f);
-        private int m_CameraZoomIncrement = 0;
+        private FlightManager m_FlightManager = new FlightManager();
 
         private void LoadState(ConfigNode configNode)
         {
@@ -64,6 +39,8 @@ namespace KSPAdvancedFlyByWire
                 m_Configuration = new Configuration();
                 Configuration.Serialize(m_ConfigurationPath, m_Configuration);
             }
+
+            m_FlightManager.m_Configuration = m_Configuration;
         }
 
         public void SaveState(ConfigNode configNode)
@@ -84,6 +61,7 @@ namespace KSPAdvancedFlyByWire
             Utility.CheckLibrarySupport();
 
             m_Instance = this;
+            
             RegisterCallbacks(); 
             LoadState(null);
             InitializeToolbarButton();
@@ -171,6 +149,8 @@ namespace KSPAdvancedFlyByWire
             SaveState(null);
             UnregisterCallbacks();
 
+            m_FlightManager = null;
+
             print("Advanced Fly-By-Wire: Deinitialized");
         }
 
@@ -191,7 +171,7 @@ namespace KSPAdvancedFlyByWire
             {
                 foreach (DiscreteAction action in actions)
                 {
-                    EvaluateDiscreteAction(config, action, state);
+                    m_FlightManager.EvaluateDiscreteAction(config, action, state);
                     config.evaluatedDiscreteActionMasks.Add(mask);
                 }
             }
@@ -238,580 +218,8 @@ namespace KSPAdvancedFlyByWire
             {
                 foreach (DiscreteAction action in actions)
                 {
-                    EvaluateDiscreteActionRelease(config, action, state);
+                    m_FlightManager.EvaluateDiscreteActionRelease(config, action, state);
                 }
-            }
-        }
-
-        private void OnFlyByWire(FlightCtrlState state)
-        {
-            m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
-
-            bool zeroYaw = true, zeroPitch = true, zeroRoll = true,
-                 zeroX = true, zeroY = true, zeroZ = true,
-                 zeroThrottle = true, zeroCameraX = true, zeroCameraY = true, zeroCameraZoom = true;
-
-            foreach (ControllerConfiguration config in m_Configuration.controllers)
-            {
-                config.iface.Update(state);
-
-                if (m_YawIncrement != 0)
-                {
-                    zeroYaw = false;
-                    m_Yaw.SetAcceleration(m_YawIncrement * config.discreteActionStep);
-                }
-
-                if (m_PitchIncrement != 0)
-                {
-                    zeroPitch = false;
-                    m_Pitch.SetAcceleration(m_PitchIncrement * config.discreteActionStep);
-                }
-
-                if (m_RollIncrement != 0)
-                {
-                    zeroRoll = false;
-                    m_Roll.SetAcceleration(m_RollIncrement * config.discreteActionStep);
-                }
-
-                if (m_XIncrement != 0)
-                {
-                    zeroX = false;
-                    m_X.SetAcceleration(m_XIncrement * config.discreteActionStep);
-                }
-
-                if (m_YIncrement != 0)
-                {
-                    zeroY = false;
-                    m_Y.SetAcceleration(m_YIncrement * config.discreteActionStep);
-                }
-
-                if (m_ZIncrement != 0)
-                {
-                    zeroZ = false;
-                    m_Z.SetAcceleration(m_ZIncrement * config.discreteActionStep);
-                }
-
-                if (m_ThrottleIncrement != 0)
-                {
-                    zeroThrottle = false;
-                    m_Throttle.SetAcceleration(m_ThrottleIncrement * config.discreteActionStep);
-                }
-
-                if (m_CameraHeadingIncrement != 0)
-                {
-                    zeroCameraX = false;
-                    m_CameraHeading.SetAcceleration(m_CameraHeadingIncrement * config.discreteActionStep);
-                }
-
-                if (m_CameraPitchIncrement != 0)
-                {
-                    zeroCameraY = false;
-                    m_CameraPitch.SetAcceleration(m_CameraPitchIncrement * config.discreteActionStep);
-                }
-
-                if (m_CameraZoomIncrement != 0)
-                {
-                    zeroCameraZoom = false;
-                    m_CameraZoom.SetAcceleration(m_CameraZoomIncrement * config.discreteActionStep);
-                }
-
-                for (int i = 0; i < config.iface.GetAxesCount(); i++)
-                {
-                    List<ContinuousAction> actions = config.GetCurrentPreset().GetContinuousBinding(i, config.iface.GetButtonsMask());
-                    if (actions == null)
-                    {
-                        continue;
-                    }
-
-                    foreach (var action in actions)
-                    {
-                        float input = config.iface.GetAxisState(i);
-                        if (input != 0.0f || action == ContinuousAction.Throttle)
-                        {
-                            EvaluateContinuousAction(config, action, config.iface.GetAxisState(i), state);
-                        }
-                    }
-                }
-
-                state.yawTrim = m_YawTrim;
-                state.pitchTrim = m_PitchTrim;
-                state.rollTrim = m_RollTrim;
-
-                state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update() + m_YawTrim, -1.0f, 1.0f);
-                state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update() + m_PitchTrim, -1.0f, 1.0f);
-                state.roll = Utility.Clamp(state.roll + m_Roll.Update() + m_RollTrim, -1.0f, 1.0f);
-               
-
-                state.X = Utility.Clamp(state.X + m_X.Update(), -1.0f, 1.0f);
-                state.Y = Utility.Clamp(state.Y + m_Y.Update(), -1.0f, 1.0f);
-                state.Z = Utility.Clamp(state.Z + m_Z.Update(), -1.0f, 1.0f);
-
-                state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
-                state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
-                state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), 0.0f, 1.0f);
-
-                FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
-                FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
-                if(FlightCamera.fetch != null)
-                {
-                    FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
-                }
-            }
-
-            if(zeroYaw)
-            {
-                m_Yaw.SetValue(0.0f);
-            }
-
-            if(zeroPitch)
-            {
-                m_Pitch.SetValue(0.0f);
-            }
-
-            if(zeroRoll)
-            {
-                m_Roll.SetValue(0.0f);
-            }
-
-            if(zeroX)
-            {
-                m_X.SetValue(0.0f);
-            }
-
-            if(zeroY)
-            {
-                m_Y.SetValue(0.0f);
-            }
-
-            if(zeroZ)
-            {
-                m_Z.SetValue(0.0f);
-            }
-
-            if(zeroThrottle)
-            {
-                m_Throttle.SetVelocity(0.0f);
-                m_Throttle.SetAcceleration(0.0f);
-            }
-
-            m_WheelThrottle.SetVelocity(0.0f);
-            m_WheelThrottle.SetAcceleration(0.0f);
-            m_WheelSteer.SetValue(0.0f);
-
-            if(zeroCameraX)
-            {
-                m_CameraHeading.SetValue(0.0f);
-            }
-
-            if(zeroCameraY)
-            {
-                m_CameraPitch.SetValue(0.0f);
-            }
-
-            if(zeroCameraZoom)
-            {
-                m_CameraZoom.SetValue(0.0f);
-            }
-
-            VesselSAS VesselSAS = FlightGlobals.ActiveVessel.vesselSAS;
-            Boolean overrideSAS = (Math.Abs(state.pitch) > VesselSAS.controlDetectionThreshold) ||
-                                    (Math.Abs(state.yaw) > VesselSAS.controlDetectionThreshold) ||
-                                    (Math.Abs(state.roll) > VesselSAS.controlDetectionThreshold);
-            VesselSAS.ManualOverride(overrideSAS);
-        }
-
-        private float ApplyChangeAndClamp(float x, float change, float clampMin = -1.0f, float clampMax = 1.0f)
-        {
-            x += change;
-            x = Utility.Clamp(x, clampMin, clampMax);
-            return x;
-        }
-
-        private void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
-        {
-            KerbalEVA eva = null;
-            if (FlightGlobals.ActiveVessel.isEVA)
-            {
-                eva = FlightGlobals.ActiveVessel.GetComponent<KerbalEVA>();
-            }
-
-            switch (action)
-            {
-            case DiscreteAction.None:
-                return;
-            case DiscreteAction.YawPlus:
-                m_YawIncrement = 1;
-                return;
-            case DiscreteAction.YawMinus:
-                m_YawIncrement = -1;
-                return;
-            case DiscreteAction.PitchPlus:
-                m_PitchIncrement = 1;
-                return;
-            case DiscreteAction.PitchMinus:
-                m_PitchIncrement = -1;
-                return;
-            case DiscreteAction.RollPlus:
-                m_RollIncrement = 1;
-                return;
-            case DiscreteAction.RollMinus:
-                m_RollIncrement = -1;
-                return;
-            case DiscreteAction.XPlus:
-                m_XIncrement = 1;
-                return;
-            case DiscreteAction.XMinus:
-                m_XIncrement = -1;
-                return;
-            case DiscreteAction.YPlus:
-                m_YIncrement = 1;
-                return;
-            case DiscreteAction.YMinus:
-                m_YIncrement = -1;
-                return;
-            case DiscreteAction.ZPlus:
-                m_ZIncrement = 1;
-                return;
-            case DiscreteAction.ZMinus:
-                m_ZIncrement = -1;
-                return;
-            case DiscreteAction.ThrottlePlus:
-                m_ThrottleIncrement = 1;
-                return;
-            case DiscreteAction.ThrottleMinus:
-                m_ThrottleIncrement = -1;
-                return;
-            case DiscreteAction.Stage:
-                Staging.ActivateNextStage();
-                return;
-            case DiscreteAction.Gear:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
-                return;
-            case DiscreteAction.Light:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Light);
-                return;
-            case DiscreteAction.RCS:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.RCS);
-                return;
-            case DiscreteAction.SAS:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.SAS);
-                return;
-            case DiscreteAction.Brakes:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Brakes);
-                return;
-            case DiscreteAction.Abort:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Abort);
-                return;
-            case DiscreteAction.Custom01:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom01);
-                return;
-            case DiscreteAction.Custom02:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom02);
-                return;
-            case DiscreteAction.Custom03:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom03);
-                return;
-            case DiscreteAction.Custom04:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom04);
-                return;
-            case DiscreteAction.Custom05:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom05);
-                return;
-            case DiscreteAction.Custom06:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom06);
-                return;
-            case DiscreteAction.Custom07:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom07);
-                return;
-            case DiscreteAction.Custom08:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom08);
-                return;
-            case DiscreteAction.Custom09:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom09);
-                return;
-            case DiscreteAction.Custom10:
-                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom10);
-                return;
-            case DiscreteAction.EVAToggleJetpack:
-                if (eva != null)
-                {
-                    eva.JetpackDeployed = !eva.JetpackDeployed;
-                }
-                return;
-            case DiscreteAction.EVAToggleHeadlamps:
-                if (eva != null)
-                {
-                    eva.lampOn = !eva.lampOn;
-                }
-                return;
-            case DiscreteAction.CutThrottle:
-                m_Throttle.SetValue(-state.mainThrottle);
-                return;
-            case DiscreteAction.FullThrottle:
-                m_Throttle.SetValue(1.0f - state.mainThrottle);
-                return;
-            case DiscreteAction.NextPreset:
-                if (controller.currentPreset >= controller.presets.Count - 1)
-                {
-                    return;
-                }
-
-                controller.currentPreset++;
-                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.UPPER_CENTER);
-                return;
-            case DiscreteAction.PreviousPreset:
-                if (controller.currentPreset <= 0)   
-                {
-                    return;
-                }
-
-                controller.currentPreset--;
-                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.UPPER_CENTER);
-                return;
-            case DiscreteAction.CyclePresets:
-                controller.currentPreset++;
-                if(controller.currentPreset >= controller.presets.Count)
-                {
-                    controller.currentPreset = 0;
-                }
-                ScreenMessages.PostScreenMessage("PRESET: " + controller.GetCurrentPreset().name.ToUpper(), 1.0f, ScreenMessageStyle.LOWER_CENTER);
-                return;
-            case DiscreteAction.CameraZoomPlus:
-                m_CameraZoomIncrement = 1;
-                return; 
-            case DiscreteAction.CameraZoomMinus:
-                m_CameraZoomIncrement = -1;
-                return;
-            case DiscreteAction.CameraXPlus:
-                m_CameraHeadingIncrement = 1;
-                return;
-            case DiscreteAction.CameraXMinus:
-                m_CameraHeadingIncrement = -1;
-                return;
-            case DiscreteAction.CameraYPlus:
-                m_CameraPitchIncrement = 1;
-                return;
-            case DiscreteAction.CameraYMinus:
-                m_CameraPitchIncrement = -1;
-                return;
-            case DiscreteAction.OrbitMapToggle:
-                if(!MapView.MapIsEnabled)
-                {
-                    MapView.EnterMapView();
-                }
-                else
-                {
-                    MapView.ExitMapView();
-                }
-                return;
-            case DiscreteAction.TimeWarpPlus:
-                WarpController.IncreaseWarp();
-                return;
-            case DiscreteAction.TimeWarpMinus:
-                WarpController.DecreaseWarp();
-                return;
-            case DiscreteAction.PhysicsTimeWarpPlus:
-                WarpController.IncreasePhysicsWarp();
-                return;
-            case DiscreteAction.PhysicsTimeWarpMinus:
-                WarpController.DecreasePhysicsWarp();
-                return;
-            case DiscreteAction.NavballToggle:
-                if (MapView.MapIsEnabled && MapView.fetch != null)
-                {
-                    MapView.fetch.maneuverModeToggle.OnPress.Invoke();
-                }
-                return;
-            case DiscreteAction.IVAViewToggle:
-                if(CameraManager.Instance != null)
-                {
-                    CameraManager.Instance.SetCameraIVA();
-                }
-                return;
-            case DiscreteAction.CameraViewToggle:
-                if(FlightCamera.fetch != null)
-                {
-                    FlightCamera.fetch.SetNextMode();
-                }
-                return;
-            case DiscreteAction.SASHold:
-                FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
-                return;
-            case DiscreteAction.LockStage:
-                if(FlightInputHandler.fetch != null)
-                {
-                    FlightInputHandler.fetch.stageLock = !FlightInputHandler.fetch.stageLock;
-                }
-                return;
-            case DiscreteAction.TogglePrecisionControls:
-                if(FlightInputHandler.fetch != null)
-                {
-                    FlightInputHandler.fetch.precisionMode = !FlightInputHandler.fetch.precisionMode;
-                }
-                return;
-            case DiscreteAction.ResetTrim:
-                state.ResetTrim();
-                m_YawTrim = 0.0f;
-                m_PitchTrim = 0.0f;
-                m_RollTrim = 0.0f;
-                return;
-            }
-        }
-
-        private void EvaluateDiscreteActionRelease(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
-        {
-            switch (action)
-            {
-            case DiscreteAction.None:
-                return;
-            case DiscreteAction.YawPlus:
-                m_YawIncrement = 0;
-                return;
-            case DiscreteAction.YawMinus:
-                m_YawIncrement = 0;
-                return;
-            case DiscreteAction.PitchPlus:
-                m_PitchIncrement = 0;
-                return;
-            case DiscreteAction.PitchMinus:
-                m_PitchIncrement = 0;
-                return;
-            case DiscreteAction.RollPlus:
-                m_RollIncrement = 0;
-                return;
-            case DiscreteAction.RollMinus:
-                m_RollIncrement = 0;
-                return;
-            case DiscreteAction.XPlus:
-                m_XIncrement = 0;
-                return;
-            case DiscreteAction.XMinus:
-                m_XIncrement = 0;
-                return;
-            case DiscreteAction.YPlus:
-                m_YIncrement = 0;
-                return;
-            case DiscreteAction.YMinus:
-                m_YIncrement = 0;
-                return;
-            case DiscreteAction.ZPlus:
-                m_ZIncrement = 0;
-                return;
-            case DiscreteAction.ZMinus:
-                m_ZIncrement = 0;
-                return;
-            case DiscreteAction.ThrottlePlus:
-                m_ThrottleIncrement = 0;
-                return;
-            case DiscreteAction.ThrottleMinus:
-                m_ThrottleIncrement = 0;
-                return;
-            case DiscreteAction.CameraZoomPlus:
-                m_CameraZoomIncrement = 0;
-                return;
-            case DiscreteAction.CameraZoomMinus:
-                m_CameraZoomIncrement = 0;
-                return;
-            case DiscreteAction.CameraXPlus:
-                m_CameraHeadingIncrement = 0;
-                return;
-            case DiscreteAction.CameraXMinus:
-                m_CameraHeadingIncrement = 0;
-                return;
-            case DiscreteAction.CameraYPlus:
-                m_CameraPitchIncrement = 0;
-                return;
-            case DiscreteAction.CameraYMinus:
-                m_CameraPitchIncrement = 0;
-                return;
-            case DiscreteAction.SASHold:
-                FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
-                return;
-            }
-        }
-
-        private void EvaluateContinuousAction(ControllerConfiguration controller, ContinuousAction action, float value, FlightCtrlState state)
-        {
-            switch (action)
-            {
-                case ContinuousAction.None:
-                    return;
-                case ContinuousAction.Yaw:
-                    m_Yaw.SetValue(value);
-                    return;
-                case ContinuousAction.NegativeYaw:
-                    m_Yaw.SetValue(-value);
-                    return;
-                case ContinuousAction.YawTrim:
-                    m_YawTrim = Utility.Clamp(m_YawTrim + value, -1.0f, 1.0f);
-                    return;
-                case ContinuousAction.Pitch:
-                    m_Pitch.SetValue(value);
-                    return;
-                case ContinuousAction.NegativePitch:
-                    m_Pitch.SetValue(-value);
-                    return;
-                case ContinuousAction.PitchTrim:
-                    m_PitchTrim = Utility.Clamp(m_PitchTrim + value, -1.0f, 1.0f);
-                    return;
-                case ContinuousAction.Roll:
-                    m_Roll.SetValue(value);
-                    return;
-                case ContinuousAction.NegativeRoll:
-                    m_Roll.SetValue(-value);
-                    return;
-                case ContinuousAction.RollTrim:
-                    m_RollTrim = Utility.Clamp(m_RollTrim + value, -1.0f, 1.0f);
-                    return;
-                case ContinuousAction.X:
-                    m_X.SetValue(value);
-                    return;
-                case ContinuousAction.NegativeX:
-                    m_X.SetValue(-value);
-                    return;
-                case ContinuousAction.Y:
-                    m_Y.SetValue(value);
-                    return;
-                case ContinuousAction.NegativeY:
-                    m_Y.SetValue(-value);
-                    return;
-                case ContinuousAction.Z:
-                    m_Z.SetValue(value);
-                    return;
-                case ContinuousAction.NegativeZ:
-                    m_Z.SetValue(-value);
-                    return;
-                case ContinuousAction.Throttle:
-                    m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
-                    m_Throttle.SetValue(value - state.mainThrottle);
-                    return;
-                case ContinuousAction.ThrottleIncrement:
-                    m_Throttle.Increment(value * controller.incrementalActionSensitivity);
-                    return;
-                case ContinuousAction.ThrottleDecrement:
-                    m_Throttle.Increment(-value * controller.incrementalActionSensitivity);
-                    return;
-                case ContinuousAction.WheelThrottle:
-                    m_WheelThrottle.SetValue(value);
-                    return;
-                case ContinuousAction.WheelSteer:
-                    m_WheelSteer.SetValue(value);
-                    return;
-                case ContinuousAction.WheelThrottleTrim:
-                    state.wheelThrottleTrim = Utility.Clamp(state.wheelThrottleTrim + value, -1.0f, 1.0f);
-                    return;
-                case ContinuousAction.WheelSteerTrim:
-                    state.wheelSteerTrim = Utility.Clamp(state.wheelSteerTrim + value, -1.0f, 1.0f);
-                    return;
-                case ContinuousAction.CameraX:
-                    m_CameraHeading.Increment(value);
-                    return;
-                case ContinuousAction.CameraY:
-                    m_CameraPitch.Increment(value);
-                    return;
-                case ContinuousAction.CameraZoom:
-                    m_CameraZoom.Increment(value);
-                    return;
             }
         }
 
@@ -821,7 +229,7 @@ namespace KSPAdvancedFlyByWire
             {
                 if(!m_CallbackSet)
                 {
-                    m_Callback = new FlightInputCallback(OnFlyByWire);
+                    m_Callback = new FlightInputCallback(m_FlightManager.OnFlyByWire);
                     FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
                     m_CallbackSet = true;
                 }
@@ -829,7 +237,7 @@ namespace KSPAdvancedFlyByWire
                 if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
                 {
                     FlightCtrlState state = new FlightCtrlState();
-                    OnFlyByWire(state);
+                    m_FlightManager.OnFlyByWire(state);
                 }
             }
 
