@@ -32,10 +32,13 @@ namespace KSPAdvancedFlyByWire
 
         private FlightProperty m_Yaw = new FlightProperty(-1.0f, 1.0f);
         private int m_YawIncrement = 0;
+        private float m_YawTrim = 0.0f;
         private FlightProperty m_Pitch = new FlightProperty(-1.0f, 1.0f);
         private int m_PitchIncrement = 0;
+        private float m_PitchTrim = 0.0f;
         private FlightProperty m_Roll = new FlightProperty(-1.0f, 1.0f);
         private int m_RollIncrement = 0;
+        private float m_RollTrim = 0.0f;
         private FlightProperty m_X = new FlightProperty(-1.0f, 1.0f);
         private int m_XIncrement = 0;
         private FlightProperty m_Y = new FlightProperty(-1.0f, 1.0f);
@@ -44,6 +47,7 @@ namespace KSPAdvancedFlyByWire
         private int m_ZIncrement = 0;
         private FlightProperty m_Throttle = new FlightProperty(0.0f, 1.0f);
         private int m_ThrottleIncrement = 0;
+        private FlightProperty m_WheelSteer = new FlightProperty(-1.0f, 1.0f);
         private FlightProperty m_CameraPitch = new FlightProperty(-1.0f, 1.0f);
         private int m_CameraPitchIncrement = 0;
         private FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
@@ -242,8 +246,6 @@ namespace KSPAdvancedFlyByWire
         {
             m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
 
-            FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(true);
-
             bool zeroYaw = true, zeroPitch = true, zeroRoll = true,
                  zeroX = true, zeroY = true, zeroZ = true,
                  zeroThrottle = true, zeroCameraX = true, zeroCameraY = true, zeroCameraZoom = true;
@@ -323,22 +325,28 @@ namespace KSPAdvancedFlyByWire
                     foreach (var action in actions)
                     {
                         float input = config.iface.GetAxisState(i);
-                        if (input != 0.0f)
+                        if (input != 0.0f || action == ContinuousAction.Throttle)
                         {
                             EvaluateContinuousAction(config, action, config.iface.GetAxisState(i), state);
                         }
                     }
                 }
 
-                state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update(), -1.0f, 1.0f);
-                state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update(), -1.0f, 1.0f);
-                state.roll = Utility.Clamp(state.roll + m_Roll.Update(), -1.0f, 1.0f);
+                state.yawTrim = m_YawTrim;
+                state.pitchTrim = m_PitchTrim;
+                state.rollTrim = m_RollTrim;
+
+                state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update() + m_YawTrim, -1.0f, 1.0f);
+                state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update() + m_PitchTrim, -1.0f, 1.0f);
+                state.roll = Utility.Clamp(state.roll + m_Roll.Update() + m_RollTrim, -1.0f, 1.0f);
+               
 
                 state.X = Utility.Clamp(state.X + m_X.Update(), -1.0f, 1.0f);
                 state.Y = Utility.Clamp(state.Y + m_Y.Update(), -1.0f, 1.0f);
                 state.Z = Utility.Clamp(state.Z + m_Z.Update(), -1.0f, 1.0f);
 
                 state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
+                state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
 
                 FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
                 FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
@@ -399,7 +407,11 @@ namespace KSPAdvancedFlyByWire
                 m_CameraZoom.SetValue(0.0f);
             }
 
-            FlightGlobals.ActiveVessel.VesselSAS.ManualOverride(false);
+            VesselSAS VesselSAS = FlightGlobals.ActiveVessel.vesselSAS;
+            Boolean overrideSAS = (Math.Abs(state.pitch) > VesselSAS.controlDetectionThreshold) ||
+                                    (Math.Abs(state.yaw) > VesselSAS.controlDetectionThreshold) ||
+                                    (Math.Abs(state.roll) > VesselSAS.controlDetectionThreshold);
+            VesselSAS.ManualOverride(overrideSAS);
         }
 
         private float ApplyChangeAndClamp(float x, float change, float clampMin = -1.0f, float clampMax = 1.0f)
@@ -633,6 +645,9 @@ namespace KSPAdvancedFlyByWire
                 return;
             case DiscreteAction.ResetTrim:
                 state.ResetTrim();
+                m_YawTrim = 0.0f;
+                m_PitchTrim = 0.0f;
+                m_RollTrim = 0.0f;
                 return;
             }
         }
@@ -722,8 +737,7 @@ namespace KSPAdvancedFlyByWire
                     m_Yaw.SetValue(-value);
                     return;
                 case ContinuousAction.YawTrim:
-                    state.yawTrim = value;
-                    state.yawTrim = Utility.Clamp(state.yawTrim, -1.0f, 1.0f);
+                    m_YawTrim = Utility.Clamp(m_YawTrim + value, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Pitch:
                     m_Pitch.SetValue(value);
@@ -732,8 +746,7 @@ namespace KSPAdvancedFlyByWire
                     m_Pitch.SetValue(-value);
                     return;
                 case ContinuousAction.PitchTrim:
-                    state.pitchTrim = value;
-                    state.pitchTrim = Utility.Clamp(state.pitchTrim, -1.0f, 1.0f);
+                    m_PitchTrim = Utility.Clamp(m_PitchTrim + value, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.Roll:
                     m_Roll.SetValue(value);
@@ -742,8 +755,7 @@ namespace KSPAdvancedFlyByWire
                     m_Roll.SetValue(-value);
                     return;
                 case ContinuousAction.RollTrim:
-                    state.rollTrim = value;
-                    state.rollTrim = Utility.Clamp(state.rollTrim, -1.0f, 1.0f);
+                    m_RollTrim = Utility.Clamp(m_RollTrim + value, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.X:
                     m_X.SetValue(value);
@@ -764,13 +776,23 @@ namespace KSPAdvancedFlyByWire
                     m_Z.SetValue(-value);
                     return;
                 case ContinuousAction.Throttle:
-                    m_Throttle.SetValue(value);
+                    m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
+                    m_Throttle.SetValue(value - state.mainThrottle);
                     return;
                 case ContinuousAction.ThrottleIncrement:
                     m_Throttle.Increment(value * controller.incrementalActionSensitivity);
                     return;
                 case ContinuousAction.ThrottleDecrement:
                     m_Throttle.Increment(-value * controller.incrementalActionSensitivity);
+                    return;
+                case ContinuousAction.WheelSteer:
+                    m_WheelSteer.SetValue(value);
+                    return;
+                case ContinuousAction.WheelThrottleTrim:
+                    state.wheelThrottleTrim = Utility.Clamp(state.wheelThrottleTrim + value, -1.0f, 1.0f);
+                    return;
+                case ContinuousAction.WheelSteerTrim:
+                    state.wheelSteerTrim = Utility.Clamp(state.wheelSteerTrim + value, -1.0f, 1.0f);
                     return;
                 case ContinuousAction.CameraX:
                     m_CameraHeading.Increment(value);

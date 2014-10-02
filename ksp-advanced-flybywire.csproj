@@ -88,9 +88,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>builds\x86\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
+      <HintPath>builds\x64\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +117,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y ksp-advanced-flybywire.dll ..\..\..\builds\x86\GameData\ksp-advanced-flybywire\
-rem xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)GameData\ksp-advanced-flybywire\"</PostBuildEvent>
+xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)GameData\ksp-advanced-flybywire\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>del ..\..\..\builds\x86\GameData\ksp-advanced-flybywire\ksp-advanced-flybywire.dll</PreBuildEvent>

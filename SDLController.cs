@@ -9,12 +9,26 @@ using SDL2;
 namespace KSPAdvancedFlyByWire
 {
 
+    enum HatAxes
+    {
+        Centered = 0,
+        Up = 1,
+        Right = 2,
+        Down = 3,
+        Left = 4,
+        RightUp = 5, 
+        RightDown = 6,
+        LeftUp = 7, 
+        LeftDown = 8
+    }
+
     public class SDLController : IController
     {
 
         private bool m_Initialized = false;
         private int m_AxesCount = 0;
         private int m_ButtonsCount = 0;
+        private int m_HatsCount = 0;
 
         private IntPtr m_Joystick = IntPtr.Zero;
         int m_ControllerIndex = 0;
@@ -149,12 +163,20 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetAxesCount()
         {
-            return m_AxesCount;
+            return m_AxesCount + m_HatsCount * 2;
         }
 
         public override string GetAxisName(int id)
         {
-            return String.Format("Axis #{0}", id);
+            if (id < m_AxesCount)
+            {
+                return String.Format("Axis #{0}", id);
+            }
+            else
+            {
+                bool xOrY = ((id - m_AxesCount) % 2) == 0;
+                return String.Format("Hat #{0} {1}", id - m_AxesCount, xOrY ? "X" : "Y");
+            }
         }
 
         public override bool GetButtonState(int button)
@@ -164,7 +186,57 @@ namespace KSPAdvancedFlyByWire
 
         public override float GetRawAxisState(int analogInput)
         {
-            return SDL2.SDL.SDL_JoystickGetAxis(m_Joystick, analogInput);
+            if (analogInput < m_AxesCount)
+            {
+                return SDL2.SDL.SDL_JoystickGetAxis(m_Joystick, analogInput);
+            }
+            else
+            {
+                int hatId = (analogInput - m_AxesCount) / 2;
+                int axisId = (analogInput - m_AxesCount) % 2;
+                HatAxes state = (HatAxes) SDL2.SDL.SDL_JoystickGetHat(m_Joystick, hatId);
+
+                if (axisId == 0)
+                {
+                    switch (state)
+                    {
+                        case HatAxes.Left:
+                            return -1.0f;
+                        case HatAxes.LeftDown:
+                            return -1.0f;
+                        case HatAxes.LeftUp:
+                            return -1.0f;
+                        case HatAxes.Right:
+                            return 1.0f;
+                        case HatAxes.RightDown:
+                            return 1.0f;
+                        case HatAxes.RightUp:
+                            return 1.0f;
+                        default:
+                            return 0.0f;
+                    }
+                }
+                else
+                {
+                    switch (state)
+                    {
+                        case HatAxes.Up:
+                            return 1.0f;
+                        case HatAxes.LeftDown:
+                            return -1.0f;
+                        case HatAxes.LeftUp:
+                            return 1.0f;
+                        case HatAxes.Down:
+                            return -1.0f;
+                        case HatAxes.RightDown:
+                            return -1.0f;
+                        case HatAxes.RightUp:
+                            return 1.0f;
+                        default:
+                            return 0.0f;
+                    }
+                }
+            }
         }
 
     }
