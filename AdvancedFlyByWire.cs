@@ -52,6 +52,15 @@ namespace KSPAdvancedFlyByWire
             print("Advanced Fly-By-Wire: Initialized");
         }
 
+        public void Start()
+        {
+            if (m_Callback == null)
+            {
+                m_Callback = new FlightInputCallback(m_FlightManager.OnFlyByWire);
+                FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
+            }
+        }
+
         public void OnDestroy()
         {
             m_Instance = null;
@@ -106,6 +115,11 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogSpawn);
             GameEvents.onGamePause.Remove(OnGamePause);
             GameEvents.onGameUnpause.Remove(OnGameUnpause);
+
+            if (m_Callback != null && FlightGlobals.ActiveVessel != null)
+            {
+                FlightGlobals.ActiveVessel.OnFlyByWire -= m_Callback;
+            }
         }
 
         private void InitializeToolbarButton()
@@ -228,16 +242,9 @@ namespace KSPAdvancedFlyByWire
         {
             if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
-                if (m_Callback == null)
-                {
-                    m_Callback = new FlightInputCallback(m_FlightManager.OnFlyByWire);
-                    FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
-                }
-                
                 if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
                 {
-                    FlightCtrlState state = new FlightCtrlState();
-                    m_FlightManager.OnFlyByWire(state);
+                    m_FlightManager.OnFlyByWire(new FlightCtrlState());
                 }
             }
 
