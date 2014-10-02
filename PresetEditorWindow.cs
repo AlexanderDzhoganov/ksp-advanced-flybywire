@@ -274,7 +274,7 @@ namespace KSPAdvancedFlyByWire
 
             if (m_ClickSleepTimer > 0.0f)
             {
-                m_ClickSleepTimer -= Time.deltaTime;
+                m_ClickSleepTimer -= Time.unscaledDeltaTime;
                 if (m_ClickSleepTimer < 0.0f)
                 {
                     m_CurrentMask = null;
@@ -284,7 +284,7 @@ namespace KSPAdvancedFlyByWire
 
             if (m_DestructiveActionTimer > 0.0f)
             {
-                m_DestructiveActionTimer -= Time.deltaTime;
+                m_DestructiveActionTimer -= Time.unscaledDeltaTime;
                 if (m_DestructiveActionTimer < 0.0f)
                 {
                     m_DestructiveActionWait = false;
