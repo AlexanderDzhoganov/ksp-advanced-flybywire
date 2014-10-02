@@ -25,7 +25,6 @@ namespace KSPAdvancedFlyByWire
     public class SDLController : IController
     {
 
-        private bool m_Initialized = false;
         private int m_AxesCount = 0;
         private int m_ButtonsCount = 0;
         private int m_HatsCount = 0;
@@ -98,8 +97,6 @@ namespace KSPAdvancedFlyByWire
                     axisRight[i] = 1.0f;
                 }
             }
-
-            m_Initialized = true;
         }
 
         public override string GetControllerName()
@@ -114,7 +111,7 @@ namespace KSPAdvancedFlyByWire
 
         bool IsConnected()
         {
-            return m_Initialized;
+            return SDL2.SDL.SDL_JoystickGetAttached(m_Joystick) == SDL.SDL_bool.SDL_TRUE;
         }
 
         public static List<KeyValuePair<int, string>> EnumerateControllers()
