@@ -116,11 +116,11 @@ namespace KSPAdvancedFlyByWire
                 for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
                 {
                     float value = m_Controller.iface.GetRawAxisState(i);
-                    m_Controller.iface.axisLeft[i] = value - 1e-4f;
-                    m_Controller.iface.axisIdentity[i] = value;
-                    m_Controller.iface.axisRight[i] = value + 1e-4f;
-                    m_Controller.iface.axisNegativeDeadZones[i] = float.MaxValue;
-                    m_Controller.iface.axisPositiveDeadZones[i] = float.MaxValue;
+                    m_Controller.iface.axisStates[i].m_Left = value - 1e-4f;
+                    m_Controller.iface.axisStates[i].m_Identity = value;
+                    m_Controller.iface.axisStates[i].m_Right = value + 1e-4f;
+                    m_Controller.iface.axisStates[i].m_NegativeDeadZone = float.MaxValue;
+                    m_Controller.iface.axisStates[i].m_PositiveDeadZone = float.MaxValue;
                 }
             }
 
@@ -154,12 +154,12 @@ namespace KSPAdvancedFlyByWire
 
                 if(m_ShowDetails)
                 {
-                    label += " (min: " + m_Controller.iface.axisLeft[i].ToString() +
-                        ", ident: " + m_Controller.iface.axisIdentity[i].ToString() +
-                        ", max: " + m_Controller.iface.axisRight[i].ToString() +
+                    label += " (min: " + m_Controller.iface.axisStates[i].m_Left.ToString() +
+                        ", ident: " + m_Controller.iface.axisStates[i].m_Identity.ToString() +
+                        ", max: " + m_Controller.iface.axisStates[i].m_Right.ToString() +
                         ", raw: " + m_Controller.iface.GetRawAxisState(i).ToString() +
-                        ", deadzone min: " + m_Controller.iface.axisNegativeDeadZones[i].ToString() +
-                        ", deadzone max: " + m_Controller.iface.axisPositiveDeadZones[i].ToString() + ")";
+                        ", deadzone min: " + m_Controller.iface.axisStates[i].m_NegativeDeadZone.ToString() +
+                        ", deadzone max: " + m_Controller.iface.axisStates[i].m_PositiveDeadZone.ToString() + ")";
                 }
 
                 GUILayout.Label(label);
@@ -172,7 +172,7 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.Label("Invert");
-                m_Controller.iface.axisInvert[i] = GUILayout.Toggle(m_Controller.iface.axisInvert[i], "");
+                m_Controller.iface.axisStates[i].m_Invert = GUILayout.Toggle(m_Controller.iface.axisStates[i].m_Invert, "");
 
                 GUILayout.EndHorizontal();
             }

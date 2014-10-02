@@ -74,11 +74,11 @@ namespace KSPAdvancedFlyByWire
 
             for (int i = 0; i < axesCount; i++)
             {
-                axisNegativeDeadZones[i] = float.MaxValue;
-                axisPositiveDeadZones[i] = float.MaxValue;
-                axisLeft[i] = -1.0f;
-                axisIdentity[i] = 0.0f;
-                axisRight[i] = 1.0f;
+                axisStates[i].m_NegativeDeadZone = float.MaxValue;
+                axisStates[i].m_PositiveDeadZone = float.MaxValue;
+                axisStates[i].m_Left = -1.0f;
+                axisStates[i].m_Identity = 0.0f;
+                axisStates[i].m_Right = 1.0f;
             }
         }
 

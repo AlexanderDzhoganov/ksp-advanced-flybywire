@@ -28,13 +28,7 @@ namespace KSPAdvancedFlyByWire
         [XmlIgnore()]
         public bool controllerConfigurationOpen = false;
 
-        public List<float> axisPositiveDeadZones = null;
-        public List<float> axisNegativeDeadZones = null;
-
-        public List<float> axisLeft = null;
-        public List<float> axisIdentity = null;
-        public List<float> axisRight = null;
-        public List<bool> axisInvert = null;
+        public List<AxisConfiguration> axisConfigurations = null;
 
         [XmlIgnore()]
         public IController iface;
@@ -159,22 +153,11 @@ namespace KSPAdvancedFlyByWire
                     preset.OnPreSerialize();
                 }
 
-                config.axisPositiveDeadZones = new List<float>();
-                config.axisNegativeDeadZones = new List<float>();
-
-                config.axisLeft = new List<float>();
-                config.axisIdentity = new List<float>();
-                config.axisRight = new List<float>();
-                config.axisInvert = new List<bool>();
+                config.axisConfigurations = new List<AxisConfiguration>();
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
-                    config.axisPositiveDeadZones.Add(config.iface.axisPositiveDeadZones[i]);
-                    config.axisNegativeDeadZones.Add(config.iface.axisNegativeDeadZones[i]);
-                    config.axisLeft.Add(config.iface.axisLeft[i]);
-                    config.axisIdentity.Add(config.iface.axisIdentity[i]);
-                    config.axisRight.Add(config.iface.axisRight[i]);
-                    config.axisInvert.Add(config.iface.axisInvert[i]);
+                    config.axisConfigurations.Add(config.iface.axisStates[i]);
                 }
             }
         }
@@ -203,20 +186,10 @@ namespace KSPAdvancedFlyByWire
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
-                    config.iface.axisPositiveDeadZones[i] = config.axisPositiveDeadZones[i];
-                    config.iface.axisNegativeDeadZones[i] = config.axisNegativeDeadZones[i];
-                    config.iface.axisLeft[i] = config.axisLeft[i];
-                    config.iface.axisIdentity[i] = config.axisIdentity[i];
-                    config.iface.axisRight[i] = config.axisRight[i];
-                    config.iface.axisInvert[i] = config.axisInvert[i];
+                    config.iface.axisStates[i] = config.axisConfigurations[i];
                 }
 
-                config.axisPositiveDeadZones = null;
-                config.axisNegativeDeadZones = null;
-
-                config.axisLeft = null;
-                config.axisIdentity = null;
-                config.axisRight = null;
+                config.axisConfigurations = null;
 
                 foreach (var preset in config.presets)
                 {

@@ -11,6 +11,80 @@ namespace KSPAdvancedFlyByWire
         KeyboardMouse = 2,
     }
 
+    public class AxisConfiguration
+    {
+        public float m_PositiveDeadZone = 0.0f;
+        public float m_NegativeDeadZone = 0.0f;
+        public float m_Left = 0.0f;
+        public float m_Identity = 0.0f;
+        public float m_Right = 0.0f;
+        public bool m_Invert = false;
+
+        public float Rescale(float value, Curve analogEvaluationCurve)
+        {
+            if (value < m_Left)
+            {
+                m_Left = value;
+            }
+            else if (value > m_Right)
+            {
+                m_Right = value;
+            }
+
+            float eps = 1e-4f;
+
+            if (value + eps > m_Identity && value - eps < m_Identity)
+            {
+                value = 0.0f;
+            }
+            else if (value < m_Identity)
+            {
+                value = (value - m_Identity) / (m_Identity - m_Left);
+            }
+            else if (value > m_Identity)
+            {
+                value = (value - m_Identity) / (m_Right - m_Identity);
+            }
+
+            if (Math.Abs(value) < 1e-4)
+            {
+                value = 0.0f;
+            }
+
+            if (value > 0.0f)
+            {
+                if (value < m_PositiveDeadZone)
+                {
+                    m_PositiveDeadZone = value;
+                }
+
+                float deadZone = m_PositiveDeadZone;
+                float t = (1.0f - deadZone);
+                if (t != 0.0f)
+                {
+                    value = (value - deadZone) / t;
+                }
+            }
+            else if (value < 0.0f)
+            {
+                if (Math.Abs(value) < m_NegativeDeadZone)
+                {
+                    m_NegativeDeadZone = Math.Abs(value);
+                }
+
+                float deadZone = m_NegativeDeadZone;
+                float t = (1.0f - deadZone);
+                if (t != 0.0f)
+                {
+                    value = -1.0f * (Math.Abs(value) - deadZone) / t;
+                }
+            }
+
+            return (m_Invert ? -1.0f : 1.0f) * Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
+        }
+
+    }
+
     public abstract class IController
     {
 
@@ -48,28 +122,14 @@ namespace KSPAdvancedFlyByWire
         public bool treatHatsAsButtons = false;
 
         public bool[] buttonStates;
-        public float[] axisPositiveDeadZones;
-        public float[] axisNegativeDeadZones;
-        
-        public float[] axisLeft;
-        public float[] axisIdentity;
-        public float[] axisRight;
-
-        public bool[] axisInvert;
+        public AxisConfiguration[] axisStates;
 
         public Bitset lastUpdateMask;
 
         public void InitializeStateArrays(int buttons, int axes)
         {
             buttonStates = new bool[buttons];
-            axisPositiveDeadZones = new float[axes];
-            axisNegativeDeadZones = new float[axes];
-
-            axisLeft = new float[axes];
-            axisIdentity = new float[axes];
-            axisRight = new float[axes];
-
-            axisInvert = new bool[axes];
+            axisStates = new AxisConfiguration[axes];
         }
 
         public abstract string GetControllerName();
@@ -113,7 +173,7 @@ namespace KSPAdvancedFlyByWire
 
         public float GetAxisState(int analogInput)
         {
-            return RescaleAxis(analogInput, GetRawAxisState(analogInput));
+            return axisStates[analogInput].Rescale(GetRawAxisState(analogInput), analogEvaluationCurve);
         }
 
         public abstract float GetRawAxisState(int analogInput);
@@ -167,69 +227,6 @@ namespace KSPAdvancedFlyByWire
             }
 
             return result;
-        }
-
-        public float RescaleAxis(int input, float value)
-        {
-            if (value < axisLeft[input])
-            {
-                axisLeft[input] = value;
-            }
-            else if (value > axisRight[input])
-            {
-                axisRight[input] = value;
-            }
-
-            float eps = 1e-4f;
-
-            if(value + eps > axisIdentity[input] && value - eps < axisIdentity[input])
-            {
-                value = 0.0f;
-            }
-            else if(value < axisIdentity[input])
-            {
-                value = (value - axisIdentity[input]) / (axisIdentity[input] - axisLeft[input]);
-            }
-            else if(value > axisIdentity[input])
-            {
-                value = (value - axisIdentity[input]) / (axisRight[input] - axisIdentity[input]);
-            }
-
-            if (Math.Abs(value) < 1e-4)
-            {
-                value = 0.0f;
-            }
-
-            if (value > 0.0f)
-            {
-                if (value < axisPositiveDeadZones[input])
-                {
-                    axisPositiveDeadZones[input] = value;
-                }
-
-                float deadZone = axisPositiveDeadZones[input];
-                float t = (1.0f - deadZone);
-                if(t != 0.0f)
-                {
-                    value = (value - deadZone) / t;
-                }
-            }
-            else if(value < 0.0f)
-            {
-                if (Math.Abs(value) < axisNegativeDeadZones[input])
-                {
-                    axisNegativeDeadZones[input] = Math.Abs(value);
-                }
-
-                float deadZone = axisNegativeDeadZones[input];
-                float t = (1.0f - deadZone);
-                if (t != 0.0f)
-                {
-                    value = -1.0f * (Math.Abs(value) - deadZone) / t;
-                }
-            }
-
-            return (axisInvert[input] ? -1.0f : 1.0f) * Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
         }
 
     }
