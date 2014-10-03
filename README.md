@@ -1,11 +1,11 @@
 ## Advanced Fly-By-Wire v1.0
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.1.0
+Latest version - 1.1.1
 
-[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.0_x86.zip)
+[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.1_x86.zip)
 
-[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.0_x64.zip)
+[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.1_x64.zip)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -99,6 +99,9 @@ Some issues:
 Please report any bugs using [GitHub's issue tracker](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/issues).
 
 ### Changelog
+v1.1.1
+- Fixed misinterpreted controller hat inputs
+
 v1.1
 - Fixed issue with FAR where FAR's dynamic control adjustment would get overridden
 - Fixed trim issues
