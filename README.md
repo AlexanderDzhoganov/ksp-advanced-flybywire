@@ -1,4 +1,4 @@
-## Advanced Fly-By-Wire v1.0
+## Advanced Fly-By-Wire v1.1
 ### Kerbal Space Program input system overhaul mod
 
 Latest version - 1.1.1
