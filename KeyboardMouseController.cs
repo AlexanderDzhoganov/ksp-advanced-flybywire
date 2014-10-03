@@ -18,7 +18,7 @@ namespace KSPAdvancedFlyByWire
 
         public override string GetControllerName()
         {
-            return "Keyboard/ Mouse";
+            return "Keyboard";
         }
 
         public override void Update(FlightCtrlState state)
