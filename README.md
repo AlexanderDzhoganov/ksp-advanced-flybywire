@@ -14,6 +14,8 @@ You can also find the mod on:
 - [Curse.com](http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire)
 - [KerbalStuff](https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire)
 
+[[Poll] What should future development focus on?](https://docs.google.com/forms/d/1ao4iKmPQX0pbt0O6CqKFn-FbSyEkO6qPJCH64mp0pNg/viewform?c=0&w=1)
+
 ### What is this?
 This is a mod for [Kerbal Space Program](http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
 It dramatically enhances the stock input system with a bunch of fixes and many new features.
