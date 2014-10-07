@@ -75,6 +75,7 @@ Here is a (non-exhaustive) list of mods that have been tested to be compatible, 
 - MechJeb
 - Ferram Aerospace Research (FAR)
 - KW Rocketry
+- B9 Aerospace 
 - OKS/ MKS
 - Kethane
 - Infernal Robotics
@@ -87,9 +88,6 @@ Here is a (non-exhaustive) list of mods that have been tested to be compatible, 
 - Chatterer
 - Environmental Visual Enhancements
 - TAC Life Support .. and more
-
-Some issues:
-- B9 Aerospace - loading crashes in the 64-bit build, 32-bit builds are unaffected
 
 ### Roadmap
 
