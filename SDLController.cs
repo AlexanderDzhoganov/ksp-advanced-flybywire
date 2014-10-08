@@ -9,15 +9,15 @@ namespace KSPAdvancedFlyByWire
 
     enum HatAxes
     {
-        Centered = 0,
-        Up = 1,
-        Right = 2,
-        Down = 3,
-        Left = 4,
-        RightUp = 5, 
-        RightDown = 6,
-        LeftUp = 7, 
-        LeftDown = 8
+        Centered = SDL2.SDL.SDL_HAT_CENTERED,
+        Up = SDL2.SDL.SDL_HAT_UP,
+        Right = SDL2.SDL.SDL_HAT_RIGHT,
+        Down = SDL2.SDL.SDL_HAT_DOWN,
+        Left = SDL2.SDL.SDL_HAT_LEFT,
+        RightUp = SDL2.SDL.SDL_HAT_RIGHTUP, 
+        RightDown = SDL2.SDL.SDL_HAT_RIGHTDOWN,
+        LeftUp = SDL2.SDL.SDL_HAT_LEFTUP,
+        LeftDown = SDL2.SDL.SDL_HAT_LEFTDOWN
     }
 
     public class SDLController : IController

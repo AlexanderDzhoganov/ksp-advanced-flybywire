@@ -1,11 +1,11 @@
-## Advanced Fly-By-Wire v1.0
+## Advanced Fly-By-Wire v1.1
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.0.3
+Latest version - 1.1.1
 
-[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x86.zip)
+[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.1_x86.zip)
 
-[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.0.3_x64.zip)
+[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.1_x64.zip)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -13,6 +13,8 @@ You can also find the mod on:
 - [Official forums](http://forum.kerbalspaceprogram.com/threads/95022-0-24-2-Advanced-Fly-by-wire-v1-0-%28Better-controller-support%29)
 - [Curse.com](http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire)
 - [KerbalStuff](https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire)
+
+## [[Poll] What should future development focus on?](https://docs.google.com/forms/d/1ao4iKmPQX0pbt0O6CqKFn-FbSyEkO6qPJCH64mp0pNg/viewform?c=0&w=1)
 
 ### What is this?
 This is a mod for [Kerbal Space Program](http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
@@ -73,6 +75,7 @@ Here is a (non-exhaustive) list of mods that have been tested to be compatible, 
 - MechJeb
 - Ferram Aerospace Research (FAR)
 - KW Rocketry
+- B9 Aerospace 
 - OKS/ MKS
 - Kethane
 - Infernal Robotics
@@ -86,9 +89,6 @@ Here is a (non-exhaustive) list of mods that have been tested to be compatible, 
 - Environmental Visual Enhancements
 - TAC Life Support .. and more
 
-Some issues:
-- B9 Aerospace - loading crashes in the 64-bit build, 32-bit builds are unaffected
-
 ### Roadmap
 
 - Linux/ MacOSX support
@@ -99,6 +99,20 @@ Some issues:
 Please report any bugs using [GitHub's issue tracker](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/issues).
 
 ### Changelog
+v1.1.1
+- Fixed misinterpreted controller hat inputs
+
+v1.1
+- Fixed issue with FAR where FAR's dynamic control adjustment would get overridden
+- Fixed trim issues
+- Added wheel throttle and wheel steer
+- Fixed a bug where throttle wouldn't go below 50%
+- Support for controller hats both as axes and buttons (new "Treat hats as buttons" config option)
+- Fixed SDL plug and play
+- Fixed a preset editor bug where if time is slowed down (e.g. by using the TimeScale mod), it was not possible to change bindings
+- General optimization
+- Breaks the configuration XML, you will need to recreate your presets.
+
 v1.0.3
 - Fixed the issues with time warp
 - B9 Aerospace now supported for 32-bit builds
