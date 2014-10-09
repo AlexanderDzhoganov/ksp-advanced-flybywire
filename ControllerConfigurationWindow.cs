@@ -12,11 +12,11 @@ namespace KSPAdvancedFlyByWire
         private ControllerConfiguration m_Controller;
         private int m_EditorId;
 
-        private Rect windowRect = new Rect(976, 128, 385, 512);
+        private bool m_ShowOptions = false;
+
+        private Rect windowRect = new Rect(976, 128, 384, 512);
 
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
-
-        private bool m_ShowDetails = false;
 
         public bool shouldBeDestroyed = false;
 
@@ -32,7 +32,7 @@ namespace KSPAdvancedFlyByWire
 
         private bool FloatField(float value, out float retValue)
         {
-            string text = GUILayout.TextField(value.ToString("0.00"));
+            string text = GUILayout.TextField(value.ToString("0.00"), GUILayout.Width(128));
 
             float newValue;
             if (float.TryParse(text, out newValue))
@@ -52,66 +52,93 @@ namespace KSPAdvancedFlyByWire
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Close window") || m_Controller == null || m_Controller.iface == null)
+            if (GUILayout.Button("X", GUILayout.Height(16)) || m_Controller == null || m_Controller.iface == null)
             {
                 shouldBeDestroyed = true;
-                m_Controller.controllerConfigurationOpen = false;
+                if (m_Controller != null)
+                {
+                    m_Controller.controllerConfigurationOpen = false;
+                }
             }
 
             GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Discrete action step");
-            FloatField(m_Controller.discreteActionStep, out m_Controller.discreteActionStep);
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Incremental action sensitivity");
-            FloatField(m_Controller.incrementalActionSensitivity, out m_Controller.incrementalActionSensitivity);
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Camera sensitivity");
-            FloatField(m_Controller.cameraSensitivity, out m_Controller.cameraSensitivity);
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Analog input curve");
-
-            string curveLabel = "Quadratic";
-            if(m_Controller.analogInputCurve == CurveType.Identity)
-            {
-                curveLabel = "Linear";
-            }
             
-            if(GUILayout.Button(curveLabel))
-            {
-                if(m_Controller.analogInputCurve == CurveType.Identity)
-                {
-                    m_Controller.SetAnalogInputCurveType(CurveType.XSquared);
-                }
-                else
-                {
-                    m_Controller.SetAnalogInputCurveType(CurveType.Identity);
-                }
-            }
-
-            GUILayout.EndHorizontal();
-
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Treat hats as buttons (requires restart)");
-            var state = GUILayout.Toggle(m_Controller.treatHatsAsButtons, "");
-            if (state != m_Controller.treatHatsAsButtons)
-            {
-                m_Controller.treatHatsAsButtons = state;
-                AdvancedFlyByWire.Instance.SaveState(null);
-            }
+            GUILayout.Label("Show additional options");
+            m_ShowOptions = GUILayout.Toggle(m_ShowOptions, "");
             GUILayout.EndHorizontal();
+
+            if (m_ShowOptions)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Discrete action step");
+                GUILayout.FlexibleSpace();
+                FloatField(m_Controller.discreteActionStep, out m_Controller.discreteActionStep);
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(8);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Incremental action sensitivity");
+                GUILayout.FlexibleSpace();
+                FloatField(m_Controller.incrementalActionSensitivity, out m_Controller.incrementalActionSensitivity);
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(8);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Camera sensitivity");
+                GUILayout.FlexibleSpace();
+                FloatField(m_Controller.cameraSensitivity, out m_Controller.cameraSensitivity);
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(8);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Analog input curve");
+                GUILayout.FlexibleSpace();
+
+                string curveLabel = "Quadratic";
+                if (m_Controller.analogInputCurve == CurveType.Identity)
+                {
+                    curveLabel = "Linear";
+                }
+
+                if (GUILayout.Button(curveLabel))
+                {
+                    if (m_Controller.analogInputCurve == CurveType.Identity)
+                    {
+                        m_Controller.SetAnalogInputCurveType(CurveType.XSquared);
+                    }
+                    else
+                    {
+                        m_Controller.SetAnalogInputCurveType(CurveType.Identity);
+                    }
+                }
+
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(8);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Treat hats as buttons (requires restart)");
+                GUILayout.FlexibleSpace();
+                var state = GUILayout.Toggle(m_Controller.treatHatsAsButtons, "");
+                if (state != m_Controller.treatHatsAsButtons)
+                {
+                    m_Controller.treatHatsAsButtons = state;
+                    AdvancedFlyByWire.Instance.SaveState(null);
+                }
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(8);
+            }
 
             GUILayout.Label("If some axes below are not displaying 0.0 when the controller is left untouched then it needs calibration.");
             GUILayout.Label("Leave the controller and press calibrate, then move around all the axes");
 
-            if(GUILayout.Button("Calibrate"))
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Calibrate"))
             {
                 for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
                 {
@@ -123,10 +150,6 @@ namespace KSPAdvancedFlyByWire
                     m_Controller.iface.axisStates[i].m_PositiveDeadZone = float.MaxValue;
                 }
             }
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Show details");
-            m_ShowDetails = GUILayout.Toggle(m_ShowDetails, "");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -151,24 +174,11 @@ namespace KSPAdvancedFlyByWire
                     label += " ";
                 }
 
-                if(m_ShowDetails)
-                {
-                    label += " (min: " + m_Controller.iface.axisStates[i].m_Left.ToString() +
-                        ", ident: " + m_Controller.iface.axisStates[i].m_Identity.ToString() +
-                        ", max: " + m_Controller.iface.axisStates[i].m_Right.ToString() +
-                        ", raw: " + m_Controller.iface.GetRawAxisState(i).ToString() +
-                        ", deadzone min: " + m_Controller.iface.axisStates[i].m_NegativeDeadZone.ToString() +
-                        ", deadzone max: " + m_Controller.iface.axisStates[i].m_PositiveDeadZone.ToString() + ")";
-                }
-
                 GUILayout.Label(label);
                 
-                if(!m_ShowDetails)
-                {
-                    GUI.enabled = false;
-                    GUILayout.HorizontalSlider(value, -1.0f, 1.0f, GUILayout.Width(150));
-                    GUI.enabled = true;
-                }
+                GUI.enabled = false;
+                GUILayout.HorizontalSlider(value, -1.0f, 1.0f, GUILayout.Width(150));
+                GUI.enabled = true;
 
                 GUILayout.Label("Invert");
                 m_Controller.iface.axisStates[i].m_Invert = GUILayout.Toggle(m_Controller.iface.axisStates[i].m_Invert, "");
@@ -195,15 +205,6 @@ namespace KSPAdvancedFlyByWire
             else
             {
                 InputLockManager.RemoveControlLock(inputLockHash);
-            }
-
-            if(!m_ShowDetails)
-            {
-                windowRect.width = 384;
-            }
-            else
-            {
-                windowRect.width = 768;
             }
 
             windowRect = GUI.Window(2672 + m_EditorId, windowRect, DoWindow, inputLockHash);

@@ -30,6 +30,7 @@ namespace KSPAdvancedFlyByWire
         public void OnFlyByWire(FlightCtrlState state)
         {
             m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
+            m_WheelThrottle.SetMinMaxValues(-state.wheelThrottle, 1.0f - state.wheelThrottle);
 
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
@@ -130,10 +131,16 @@ namespace KSPAdvancedFlyByWire
                 m_Throttle.SetAcceleration(0.0f);
             }
 
-            m_WheelThrottle.SetVelocity(0.0f);
-            m_WheelThrottle.SetAcceleration(0.0f);
+            if (!m_WheelThrottle.HasIncrement())
+            {
+                m_WheelThrottle.SetVelocity(0.0f);
+                m_WheelThrottle.SetAcceleration(0.0f);
+            }
 
-            m_WheelSteer.SetValue(0.0f);
+            if (!m_WheelSteer.HasIncrement())
+            {
+                m_WheelSteer.SetValue(0.0f);
+            }
 
             if (!m_CameraHeading.HasIncrement())
             {
@@ -523,6 +530,7 @@ namespace KSPAdvancedFlyByWire
                     m_Throttle.Increment(-value * controller.incrementalActionSensitivity);
                     return;
                 case ContinuousAction.WheelThrottle:
+                    m_WheelThrottle.SetMinMaxValues(-state.wheelThrottle, 1.0f - state.wheelThrottle);
                     m_WheelThrottle.SetValue(value);
                     return;
                 case ContinuousAction.WheelSteer:

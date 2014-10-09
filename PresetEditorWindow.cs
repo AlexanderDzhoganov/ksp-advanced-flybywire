@@ -42,17 +42,20 @@ namespace KSPAdvancedFlyByWire
             m_CurrentMask = mask;
         }
 
-        public void DoWindow(int window)
+        public virtual void DoWindow(int window)
         {
             GUI.DragWindow(new Rect(0, 0, 10000, 20));
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Close window"))
+            if (GUILayout.Button("X", GUILayout.Height(16)) || m_Controller == null || m_Controller.iface == null)
             {
                 shouldBeDestroyed = true;
-                m_Controller.presetEditorOpen = false;
+                if (m_Controller != null)
+                {
+                    m_Controller.presetEditorOpen = false;
+                }
             }
 
             GUILayout.EndHorizontal();
@@ -117,6 +120,11 @@ namespace KSPAdvancedFlyByWire
                     {
                         m_Controller.presets.RemoveAt(m_Controller.currentPreset);
                         m_Controller.currentPreset--;
+                        if (m_Controller.currentPreset < 0)
+                        {
+                            m_Controller.currentPreset = 0;
+                        }
+
                         m_DestructiveActionWait = false;
                         m_DestructiveActionTimer = 0.0f;
                     }
