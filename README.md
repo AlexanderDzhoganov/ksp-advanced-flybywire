@@ -96,7 +96,7 @@ Please report any bugs using [GitHub's issue tracker](https://github.com/Alexand
 ### Changelog
 v1.2
 - New preset editor
-- Many small GUI improves
+- Many small GUI improvements
 - Now using KSP skin by default, option to revert to the old one
 - Updated toolbar to 1.7.7
 
