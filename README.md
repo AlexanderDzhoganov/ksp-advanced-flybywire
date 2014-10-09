@@ -1,11 +1,11 @@
-## Advanced Fly-By-Wire v1.1
+## Advanced Fly-By-Wire v1.2
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.1.2
+Latest version - 1.2
 
-[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.2_x86.zip)
+[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.2_x86.zip)
 
-[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.1.2_x64.zip)
+[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.2_x64.zip)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -37,22 +37,17 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 - Works alongside the stock input system. The mod will not override or break your current setup.
 
 ### How to use
+![screenshot](http://i.imgur.com/hrbVE7H.png)
+
 The mod adds a new button to the mod toolbar.
-![toolbar](http://i.imgur.com/uToMl2R.png)
 
 Click the game controller icon or press Shift + L during flight to bring up Fly-By-Wire's main configuration screen.
-
-![main](http://i.imgur.com/OrsIzF1.png)
 
 From there you will see a list of detected controllers. You can click on "Enable" to enable a controller from the list - two new buttons will appear - "Presets" and "Configure".
 
 "Presets" will open up the preset editor which is very similar to KSP's stock bindings editor. Using the preset editor you can modify your controller layout at any time.
 
-![presets](http://i.imgur.com/5vpxkxJ.png)
-
 "Configure" will open up the controller configuration screen. It allows you to set some configuration values as well as calibrate the controller if necessary.
-
-![config](http://i.imgur.com/zVRH39l.png)
 
 After setting up your controller you should save your game (by using quicksave or exiting to space center), which will automatically save your controller configuration as well.
 
@@ -100,6 +95,12 @@ Please report any bugs using [GitHub's issue tracker](https://github.com/Alexand
 
 ### Changelog
 v1.2
+- New preset editor
+- Many small GUI improves
+- Now using KSP skin by default, option to revert to the old one
+- Updated toolbar to 1.7.7
+
+v1.1.2
 - KSP 0.25 support
 
 v1.1.1
