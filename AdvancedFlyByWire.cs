@@ -6,7 +6,7 @@ using UnityEngine;
 namespace KSPAdvancedFlyByWire
 {
 
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
         public const int versionMajor = 1;
@@ -169,13 +169,7 @@ namespace KSPAdvancedFlyByWire
 
             m_ToolbarButton.Visibility = new Toolbar.GameScenesVisibility
             (
-                GameScenes.MAINMENU,
-                GameScenes.FLIGHT,
-                GameScenes.SPH,
-                GameScenes.EDITOR,
-                GameScenes.SETTINGS,
-                GameScenes.SPACECENTER,
-                GameScenes.TRACKSTATION
+                GameScenes.FLIGHT
             );
 
             m_ToolbarButton.OnClick += new Toolbar.ClickHandler(OnToolbarButtonClick);
