@@ -97,6 +97,14 @@ namespace KSPAdvancedFlyByWire
                         configNode.SetValue("useStockSkin", "true");
                     }
                 }
+
+                if (configNode.HasValue("useOldPresetEditor"))
+                {
+                    if (configNode.GetValue("useOldPresetEditor") == "true")
+                    {
+                        configNode.SetValue("useOldPresetEditor", "true");
+                    }
+                }
             }
             
             m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
@@ -114,6 +122,7 @@ namespace KSPAdvancedFlyByWire
             if (configNode != null)
             {
                 configNode.SetValue("useStockSkin", m_UseKSPSkin ? "true" : "false");
+                configNode.SetValue("useOldPresetEditor", m_UseOldPresetsWindow ? "true" : "false");
             }
 
             Configuration.Serialize(m_ConfigurationPath, m_Configuration);
@@ -319,6 +328,12 @@ namespace KSPAdvancedFlyByWire
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Use old presets editor");
+            m_UseOldPresetsWindow = GUILayout.Toggle(m_UseOldPresetsWindow, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
             GUILayout.BeginHorizontal();
@@ -370,6 +385,7 @@ namespace KSPAdvancedFlyByWire
                     {
                         m_PresetEditors.Add(new PresetEditorWindowNG(config, m_PresetEditors.Count));
                     }
+
                     config.presetEditorOpen = true;
                 }
 
@@ -433,6 +449,8 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.Space(24);
+                
+                GUI.enabled = true;
             }
 
             GUILayout.EndScrollView();

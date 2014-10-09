@@ -14,7 +14,7 @@ namespace KSPAdvancedFlyByWire
 
         private bool m_ShowOptions = false;
 
-        private Rect windowRect = new Rect(976, 128, 384, 512);
+        private Rect windowRect = new Rect(976, 128, 420, 512);
 
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
@@ -59,6 +59,8 @@ namespace KSPAdvancedFlyByWire
                 {
                     m_Controller.controllerConfigurationOpen = false;
                 }
+
+                return;
             }
 
             GUILayout.EndHorizontal();
@@ -163,7 +165,7 @@ namespace KSPAdvancedFlyByWire
 
                 string label = "";
                 float value = m_Controller.iface.GetAxisState(i);
-                label += m_Controller.iface.GetAxisName(i) + ") ";
+                label += m_Controller.iface.GetAxisName(i) + " ";
                 GUILayout.Label(label);
 
                 GUILayout.FlexibleSpace();

@@ -76,6 +76,7 @@
     <Compile Include="FlightProperty.cs" />
     <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="PresetEditorWindow.cs" />
+    <Compile Include="PresetEditorWindowNG.cs" />
     <Compile Include="SDL2.cs" />
     <Compile Include="SDLController.cs" />
     <Compile Include="Stringify.cs" />

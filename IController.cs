@@ -37,7 +37,7 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
-            controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Mouse&Keyboard")));
+            controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Keyboard & Mouse")));
             return controllers;
         }
 
