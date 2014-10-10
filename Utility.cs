@@ -66,6 +66,10 @@ namespace KSPAdvancedFlyByWire
 
         public static bool CheckXInputSupport()
         {
+#if LINUX
+            return false;
+#endif
+
             return true;
 //            return m_XInputExists;
         }

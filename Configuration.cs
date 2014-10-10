@@ -100,7 +100,9 @@ namespace KSPAdvancedFlyByWire
 
             if (Utility.CheckXInputSupport() && wrapper == InputWrapper.XInput)
             {
+#if !LINUX
                 controller.iface = new XInputController(controller.controllerIndex);
+#endif
             }
             else if (Utility.CheckSDLSupport() && wrapper == InputWrapper.SDL)
             {
@@ -168,7 +170,9 @@ namespace KSPAdvancedFlyByWire
             {
                 if (Utility.CheckXInputSupport() && config.wrapper == InputWrapper.XInput)
                 {
+#if !LINUX
                     config.iface = new XInputController(config.controllerIndex);
+#endif
                 }
                 else if (Utility.CheckSDLSupport() && config.wrapper == InputWrapper.SDL)
                 {
