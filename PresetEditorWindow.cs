@@ -30,10 +30,13 @@ namespace KSPAdvancedFlyByWire
         private bool m_DestructiveActionWait = false;
         private float m_DestructiveActionTimer = 0.0f;
 
+        private float[] axisSnapshot;
+
         public PresetEditorWindow(ControllerConfiguration controller, int editorId)
         {
             m_Controller = controller;
             m_EditorId = editorId;
+            axisSnapshot = new float[controller.iface.GetAxesCount()];
             inputLockHash = "PresetEditor " + m_Controller.wrapper.ToString() + " - " + m_Controller.controllerIndex.ToString();
         }
 
@@ -163,7 +166,7 @@ namespace KSPAdvancedFlyByWire
 
                     for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
                     {
-                        if (m_Controller.iface.GetAxisState(i) != 0.0f && m_ClickSleepTimer == 0.0f)
+                        if (Math.Abs(m_Controller.iface.GetAxisState(i) - axisSnapshot[i]) > 0.1 && m_ClickSleepTimer == 0.0f)
                         {
                             currentPreset.SetContinuousBinding(i, m_Controller.iface.GetButtonsMask(), action);
                             m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -191,6 +194,11 @@ namespace KSPAdvancedFlyByWire
                         m_CurrentlyEditingContinuousAction = action;
                         m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
                         m_ClickSleepTimer = 0.25f;
+
+                        for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
+                        {
+                            axisSnapshot[i] = m_Controller.iface.GetAxisState(i);
+                        }
                     }
 
                     m_CurrentMask = null;
