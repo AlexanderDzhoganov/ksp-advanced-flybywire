@@ -10,7 +10,17 @@ namespace KSPAdvancedFlyByWire
     class Utility
     {
 
-        public float ApplyChangeAndClamp(float x, float change, float clampMin = -1.0f, float clampMax = 1.0f)
+        public static bool RectContainsMouse(Rect windowRect)
+        {
+            return windowRect.Contains(GetMousePosition());
+        }
+
+        public static Vector2 GetMousePosition()
+        {
+            return new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+        }
+
+        public static float ApplyChangeAndClamp(float x, float change, float clampMin = -1.0f, float clampMax = 1.0f)
         {
             x += change;
             x = Utility.Clamp(x, clampMin, clampMax);
