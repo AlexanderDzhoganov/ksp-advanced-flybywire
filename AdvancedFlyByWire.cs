@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
@@ -30,10 +30,7 @@ namespace KSPAdvancedFlyByWire
         private List<ControllerConfigurationWindow> m_ControllerTests = new List<ControllerConfigurationWindow>();
 
         // Flight state
-        private FlightInputCallback m_Callback = null;
         private FlightManager m_FlightManager = new FlightManager();
-
-        private Vessel m_ActiveVessel = null;
 
         private static AdvancedFlyByWire m_Instance = null;
 
@@ -64,8 +61,6 @@ namespace KSPAdvancedFlyByWire
         {
             m_Instance = this;
 
-            m_ActiveVessel = FlightGlobals.ActiveVessel;
-
             RegisterCallbacks(); 
             LoadState(null);
             InitializeToolbarButton();
@@ -78,12 +73,8 @@ namespace KSPAdvancedFlyByWire
 
         public void Start()
         {
-            if (m_Callback == null && HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
-            {
-                m_ActiveVessel = FlightGlobals.ActiveVessel;
-                m_Callback = new FlightInputCallback(m_FlightManager.OnFlyByWire);
-                m_ActiveVessel.OnFlyByWire += m_Callback;
-            }
+            AddFlyByWireCallbackToActiveVessel();
+            m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
         }
 
         public void OnDestroy()
@@ -168,11 +159,19 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGameUnpause.Remove(OnGameUnpause);
             GameEvents.onVesselChange.Remove(OnVesselChange);
 
-            if (m_Callback != null && m_ActiveVessel != null)
+            if (FlightGlobals.ActiveVessel != null)
             {
-                m_ActiveVessel.OnFlyByWire -= m_Callback;
+                FlightGlobals.ActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
             }
         }
+
+        void AddFlyByWireCallbackToActiveVessel()
+        {
+            FlightGlobals.ActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
+            FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
+        }
+
+        private Vessel m_LastChangedActiveVessel = null;
 
         private void OnVesselChange(Vessel vessel)
         {
@@ -181,12 +180,13 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
-            if (m_Callback != null && m_ActiveVessel != null)
+            if (m_LastChangedActiveVessel != null)
             {
-                m_ActiveVessel.OnFlyByWire -= m_Callback;
-                m_ActiveVessel = FlightGlobals.ActiveVessel;
-                m_ActiveVessel.OnFlyByWire += m_Callback;
+                m_LastChangedActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
+                m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
             }
+
+            AddFlyByWireCallbackToActiveVessel();
         }
 
         private void InitializeToolbarButton()
@@ -327,13 +327,6 @@ namespace KSPAdvancedFlyByWire
                 if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
                 {
                     m_FlightManager.OnFlyByWire(new FlightCtrlState());
-                }
-
-                if (FlightGlobals.ActiveVessel != null && m_ActiveVessel != null && m_ActiveVessel != FlightGlobals.ActiveVessel && m_Callback != null)
-                {
-                    m_ActiveVessel.OnFlyByWire -= m_Callback;
-                    m_ActiveVessel = FlightGlobals.ActiveVessel;
-                    m_ActiveVessel.OnFlyByWire += m_Callback;
                 }
             }
 
@@ -510,7 +503,7 @@ namespace KSPAdvancedFlyByWire
                 GUI.skin = HighLogic.Skin;
             }
 
-            if (m_WindowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
+            if (Utility.RectContainsMouse(m_WindowRect))
             {
                 InputLockManager.SetControlLock(ControlTypes.All, "AdvancedFlyByWireMainWindow");
             }

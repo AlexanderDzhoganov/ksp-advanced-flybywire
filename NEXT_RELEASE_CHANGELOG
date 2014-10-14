@@ -2,9 +2,7 @@ v1.2.1
 - Fixed a bug where changing vessels mid-flight would result in AFBW controlling the old vessel
 - Fixed a bug where if KSP's working directory was not configured correctly the mod wouldn't find its config file
 - Merged Vitor Boschi's axis mapping fix
-- Fixed a bug with opening the orbital map using keyboard
 - Toolbar button now closes the UI if it's already open
 - Added explicit "Save configuration" button to the main screen
 - Fixed input control locks for the new preset editor
-- Support for KSP-AVC (Add-on Version Checker, http://forum.kerbalspaceprogram.com/threads/79745-0-25-0-KSP-AVC-Add-on-Version-Checker-Plugin-1-1-4-3-MiniAVC-KSP-AVC-Online) 
-- Various optimizations
+- Support for KSP-AVC (Add-on Version Checker, http://forum.kerbalspaceprogram.com/threads/79745-0-25-0-KSP-AVC-Add-on-Version-Checker-Plugin-1-1-4-3-MiniAVC-KSP-AVC-Online)

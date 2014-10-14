@@ -311,8 +311,8 @@ namespace KSPAdvancedFlyByWire
                     m_DestructiveActionTimer = 0.0f;
                 }
             }
-            
-            if (windowRect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
+
+            if (Utility.RectContainsMouse(windowRect))
             {
                 InputLockManager.SetControlLock(inputLockHash);
             }
