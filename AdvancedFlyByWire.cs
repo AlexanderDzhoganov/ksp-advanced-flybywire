@@ -214,7 +214,7 @@ namespace KSPAdvancedFlyByWire
         void OnToolbarButtonClick(Toolbar.ClickEvent ev)
         {
             this.gameObject.SetActive(true);
-            m_UIActive = true;
+            m_UIActive = !m_UIActive;
             m_UIHidden = false;
         }
 

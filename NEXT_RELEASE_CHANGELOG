@@ -3,3 +3,4 @@ v1.2.1
 - Fixed a bug where if KSP's working directory was not configured correctly the mod wouldn't find its config file
 - Merged Vitor Boschi's axis mapping fix
 - Fixed a bug with opening the orbital map using keyboard
+- Toolbar button now closes the UI if it's already open
