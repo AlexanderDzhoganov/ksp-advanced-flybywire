@@ -27,6 +27,8 @@ namespace KSPAdvancedFlyByWire
         private FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
         private FlightProperty m_CameraZoom = new FlightProperty(-1.0f, 1.0f);
 
+        private float m_MapOpenDelay = 0.0f;
+
         public void OnFlyByWire(FlightCtrlState state)
         {
             m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
@@ -90,6 +92,15 @@ namespace KSPAdvancedFlyByWire
             if (FlightCamera.fetch != null)
             {
                 FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
+            }
+
+            if (m_MapOpenDelay > 0.0f)
+            {
+                m_MapOpenDelay -= Time.deltaTime;
+                if (m_MapOpenDelay < 0.0f)
+                {
+                    m_MapOpenDelay = 0.0f;
+                }
             }
         }
 
@@ -333,6 +344,11 @@ namespace KSPAdvancedFlyByWire
                     m_CameraPitch.SetIncrement(-1, controller.discreteActionStep);
                     return;
                 case DiscreteAction.OrbitMapToggle:
+                    if (m_MapOpenDelay > 0.0f)
+                    {
+                        return;
+                    }
+
                     if (!MapView.MapIsEnabled)
                     {
                         MapView.EnterMapView();
@@ -341,6 +357,8 @@ namespace KSPAdvancedFlyByWire
                     {
                         MapView.ExitMapView();
                     }
+
+                    m_MapOpenDelay = 0.2f;
                     return;
                 case DiscreteAction.TimeWarpPlus:
                     WarpController.IncreaseWarp();

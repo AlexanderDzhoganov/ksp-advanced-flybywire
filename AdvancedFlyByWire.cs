@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 using UnityEngine;
 
@@ -24,8 +25,6 @@ namespace KSPAdvancedFlyByWire
 
         // Configuration
         private Configuration m_Configuration = null;
-        private string m_ConfigurationPath =
-            "GameData/ksp-advanced-flybywire/advanced_flybywire_config_v" + versionMajor.ToString() + versionMinor.ToString() + ".xml";
 
         private List<PresetEditorWindow> m_PresetEditors = new List<PresetEditorWindow>();
         private List<ControllerConfigurationWindow> m_ControllerTests = new List<ControllerConfigurationWindow>();
@@ -33,6 +32,8 @@ namespace KSPAdvancedFlyByWire
         // Flight state
         private FlightInputCallback m_Callback = null;
         private FlightManager m_FlightManager = new FlightManager();
+
+        private Vessel m_ActiveVessel = null;
 
         private static AdvancedFlyByWire m_Instance = null;
 
@@ -44,12 +45,29 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
+        public string GetAbsoluteConfigurationPath()
+        {
+            return Path.Combine
+            (
+                Path.Combine
+                (
+                    Path.Combine
+                    (
+                        KSPUtil.ApplicationRootPath, "GameData"
+                    ),
+                    "ksp-advanced-flybywire"
+                ), "advanced_flybywire_config_v" + versionMajor.ToString() + versionMinor.ToString() + ".xml"
+            );
+        }
+
         public void Awake()
         {
             Utility.CheckLibrarySupport();
 
             m_Instance = this;
-            
+
+            m_ActiveVessel = FlightGlobals.ActiveVessel;
+
             RegisterCallbacks(); 
             LoadState(null);
             InitializeToolbarButton();
@@ -62,10 +80,11 @@ namespace KSPAdvancedFlyByWire
 
         public void Start()
         {
-            if (m_Callback == null && HighLogic.LoadedSceneIsFlight)
+            if (m_Callback == null && HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
+                m_ActiveVessel = FlightGlobals.ActiveVessel;
                 m_Callback = new FlightInputCallback(m_FlightManager.OnFlyByWire);
-                FlightGlobals.ActiveVessel.OnFlyByWire += m_Callback;
+                m_ActiveVessel.OnFlyByWire += m_Callback;
             }
         }
 
@@ -107,11 +126,11 @@ namespace KSPAdvancedFlyByWire
                 }
             }
             
-            m_Configuration = Configuration.Deserialize(m_ConfigurationPath);
+            m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
             if (m_Configuration == null)
             {
                 m_Configuration = new Configuration();
-                Configuration.Serialize(m_ConfigurationPath, m_Configuration);
+                Configuration.Serialize(GetAbsoluteConfigurationPath(), m_Configuration);
             }
 
             m_FlightManager.m_Configuration = m_Configuration;
@@ -125,7 +144,7 @@ namespace KSPAdvancedFlyByWire
                 configNode.SetValue("useOldPresetEditor", m_UseOldPresetsWindow ? "true" : "false");
             }
 
-            Configuration.Serialize(m_ConfigurationPath, m_Configuration);
+            Configuration.Serialize(GetAbsoluteConfigurationPath(), m_Configuration);
         }
 
         private void RegisterCallbacks()
@@ -137,6 +156,7 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGUIRecoveryDialogSpawn.Add(new EventData<MissionRecoveryDialog>.OnEvent(OnGUIRecoveryDialogSpawn));
             GameEvents.onGamePause.Add(new EventVoid.OnEvent(OnGamePause));
             GameEvents.onGameUnpause.Add(new EventVoid.OnEvent(OnGameUnpause));
+            GameEvents.onVesselChange.Add(new EventData<Vessel>.OnEvent(OnVesselChange));
         }
 
         private void UnregisterCallbacks()
@@ -148,10 +168,26 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogSpawn);
             GameEvents.onGamePause.Remove(OnGamePause);
             GameEvents.onGameUnpause.Remove(OnGameUnpause);
+            GameEvents.onVesselChange.Remove(OnVesselChange);
 
-            if (m_Callback != null && FlightGlobals.ActiveVessel != null)
+            if (m_Callback != null && m_ActiveVessel != null)
             {
-                FlightGlobals.ActiveVessel.OnFlyByWire -= m_Callback;
+                m_ActiveVessel.OnFlyByWire -= m_Callback;
+            }
+        }
+
+        private void OnVesselChange(Vessel vessel)
+        {
+            if (vessel == null)
+            {
+                return;
+            }
+
+            if (m_Callback != null && m_ActiveVessel != null)
+            {
+                m_ActiveVessel.OnFlyByWire -= m_Callback;
+                m_ActiveVessel = FlightGlobals.ActiveVessel;
+                m_ActiveVessel.OnFlyByWire += m_Callback;
             }
         }
 
@@ -293,6 +329,13 @@ namespace KSPAdvancedFlyByWire
                 if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
                 {
                     m_FlightManager.OnFlyByWire(new FlightCtrlState());
+                }
+
+                if (FlightGlobals.ActiveVessel != null && m_ActiveVessel != null && m_ActiveVessel != FlightGlobals.ActiveVessel && m_Callback != null)
+                {
+                    m_ActiveVessel.OnFlyByWire -= m_Callback;
+                    m_ActiveVessel = FlightGlobals.ActiveVessel;
+                    m_ActiveVessel.OnFlyByWire += m_Callback;
                 }
             }
 

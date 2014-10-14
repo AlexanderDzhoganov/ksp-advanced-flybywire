@@ -30,7 +30,7 @@ namespace KSPAdvancedFlyByWire
         public bool m_DestructiveActionWait = false;
         public float m_DestructiveActionTimer = 0.0f;
 
-        private float[] axisSnapshot;
+        public float[] axisSnapshot;
 
         public PresetEditorWindow(ControllerConfiguration controller, int editorId)
         {
