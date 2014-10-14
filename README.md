@@ -1,13 +1,11 @@
 ## Advanced Fly-By-Wire v1.2
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.2
+Latest version - 1.2.1
 
-[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.2_x86.zip)
+[Download (Windows, x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.2.1_x86.zip)
 
-[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.2_x64.zip)
-
-[Download (Linux) -beta-](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.2_linux.zip)
+[Download (Windows, x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.2.1_x64.zip)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -96,6 +94,15 @@ Here is a (non-exhaustive) list of mods that have been tested to be compatible, 
 Please report any bugs using [GitHub's issue tracker](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/issues).
 
 ### Changelog
+v1.2.1
+- Fixed a bug where changing vessels mid-flight would result in AFBW controlling the old vessel
+- Fixed a bug where if KSP's working directory was not configured correctly the mod wouldn't find its config file
+- Merged Vitor Boschi's axis mapping fix
+- Toolbar button now closes the UI if it's already open
+- Added explicit "Save configuration" button to the main screen
+- Fixed input control locks for the new preset editor
+- Support for KSP-AVC
+
 v1.2
 - New preset editor
 - Many small GUI improvements
