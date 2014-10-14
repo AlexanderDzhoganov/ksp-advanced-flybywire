@@ -62,8 +62,6 @@ namespace KSPAdvancedFlyByWire
 
         public void Awake()
         {
-            Utility.CheckLibrarySupport();
-
             m_Instance = this;
 
             m_ActiveVessel = FlightGlobals.ActiveVessel;
@@ -369,6 +367,12 @@ namespace KSPAdvancedFlyByWire
             GUILayout.Label("Use old presets editor");
             m_UseOldPresetsWindow = GUILayout.Toggle(m_UseOldPresetsWindow, "");
             GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Save configuration"))
+            {
+                SaveState(null);
+            }
+
             GUILayout.EndHorizontal();
 
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);

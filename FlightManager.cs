@@ -47,20 +47,24 @@ namespace KSPAdvancedFlyByWire
 
         private void UpdateAxes(ControllerConfiguration config, FlightCtrlState state)
         {
+            var buttonsMask = config.iface.GetButtonsMask();
+
             for (int i = 0; i < config.iface.GetAxesCount(); i++)
             {
-                List<ContinuousAction> actions = config.GetCurrentPreset().GetContinuousBinding(i, config.iface.GetButtonsMask());
+                List<ContinuousAction> actions = config.GetCurrentPreset().GetContinuousBinding(i, buttonsMask);
                 if (actions == null)
                 {
                     continue;
                 }
+
+                var axisState = config.iface.GetAxisState(i);
 
                 foreach (var action in actions)
                 {
                     float input = config.iface.GetAxisState(i);
                     if (input != 0.0f || action == ContinuousAction.Throttle)
                     {
-                        EvaluateContinuousAction(config, action, config.iface.GetAxisState(i), state);
+                        EvaluateContinuousAction(config, action, axisState, state);
                     }
                 }
             }

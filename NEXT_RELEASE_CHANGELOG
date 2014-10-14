@@ -4,3 +4,6 @@ v1.2.1
 - Merged Vitor Boschi's axis mapping fix
 - Fixed a bug with opening the orbital map using keyboard
 - Toolbar button now closes the UI if it's already open
+- Added explicit "Save configuration" button to the main screen
+- Support for KSP-AVC (Add-on Version Checker, http://forum.kerbalspaceprogram.com/threads/79745-0-25-0-KSP-AVC-Add-on-Version-Checker-Plugin-1-1-4-3-MiniAVC-KSP-AVC-Online) 
+- Various optimizations

@@ -58,6 +58,7 @@ namespace KSPAdvancedFlyByWire
         {
             buttonStates = new bool[buttons];
             axisStates = new AxisConfiguration[axes];
+
             for (int i = 0; i < axes; i++)
             {
                 axisStates[i] = new AxisConfiguration();
@@ -103,14 +104,14 @@ namespace KSPAdvancedFlyByWire
 
         public abstract bool GetButtonState(int button);
 
-        public float GetAxisState(int analogInput)
+        public float GetAxisState(int id)
         {
-            return axisStates[analogInput].Rescale(GetRawAxisState(analogInput), analogEvaluationCurve);
+            return axisStates[id].Rescale(GetRawAxisState(id), analogEvaluationCurve);
         }
 
         public abstract float GetRawAxisState(int analogInput);
 
-        public virtual Bitset GetButtonsMask()
+        public Bitset GetButtonsMask()
         {
             int buttonsCount = GetButtonsCount();
             Bitset mask = new Bitset(buttonsCount);

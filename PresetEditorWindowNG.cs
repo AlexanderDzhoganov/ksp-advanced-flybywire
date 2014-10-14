@@ -47,11 +47,13 @@ namespace KSPAdvancedFlyByWire
 
             if (m_CurrentlyEditingContinuousAction != ContinuousAction.None)
             {
+                var buttonsMask = m_Controller.iface.GetButtonsMask();
+                
                 for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
                 {
                     if (m_Controller.iface.GetAxisState(i) != 0.0f && m_ClickSleepTimer == 0.0f)
                     {
-                        currentPreset.SetContinuousBinding(i, m_Controller.iface.GetButtonsMask(), m_CurrentlyEditingContinuousAction);
+                        currentPreset.SetContinuousBinding(i, buttonsMask, m_CurrentlyEditingContinuousAction);
                         m_CurrentlyEditingContinuousAction = ContinuousAction.None;
                     }
                 }
@@ -302,11 +304,13 @@ namespace KSPAdvancedFlyByWire
                 {
                     label = "Press desired combination";
 
+                    var buttonsMask = m_Controller.iface.GetButtonsMask();
+
                     for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
                     {
                         if (Math.Abs(m_Controller.iface.GetAxisState(i) - axisSnapshot[i]) > 0.1 && m_ClickSleepTimer == 0.0f)
                         {
-                            currentPreset.SetContinuousBinding(i, m_Controller.iface.GetButtonsMask(), action);
+                            currentPreset.SetContinuousBinding(i, buttonsMask, action);
                             m_CurrentlyEditingContinuousAction = ContinuousAction.None;
                         }
                     }
