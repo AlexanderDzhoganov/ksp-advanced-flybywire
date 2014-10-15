@@ -1,0 +1,44 @@
+v1.2.2
+- Fixed the input locks bug
+
+v1.2.1
+- Fixed a bug where changing vessels mid-flight would result in AFBW controlling the old vessel
+- Fixed a bug where if KSP's working directory was not configured correctly the mod wouldn't find its config file
+- Merged Vitor Boschi's axis mapping fix
+- Toolbar button now closes the UI if it's already open
+- Added explicit "Save configuration" button to the main screen
+- Fixed input control locks for the new preset editor
+- Support for KSP-AVC
+
+v1.2
+- New preset editor
+- Many small GUI improvements
+- Now using KSP skin by default, option to revert to the old one
+- Updated toolbar to 1.7.7
+
+v1.1.2
+- KSP 0.25 support
+
+v1.1.1
+- Fixed misinterpreted controller hat inputs
+
+v1.1
+- Fixed issue with FAR where FAR's dynamic control adjustment would get overridden
+- Fixed trim issues
+- Added wheel throttle and wheel steer
+- Fixed a bug where throttle wouldn't go below 50%
+- Support for controller hats both as axes and buttons (new "Treat hats as buttons" config option)
+- Fixed SDL plug and play
+- Fixed a preset editor bug where if time is slowed down (e.g. by using the TimeScale mod), it was not possible to change bindings
+- General optimization
+- Breaks the configuration XML, you will need to recreate your presets.
+
+v1.0.3
+- Fixed the issues with time warp
+- B9 Aerospace now supported for 32-bit builds
+
+v1.0.2
+- Added negative versions of Yaw, Pitch, Roll, X, Y and Z
+
+v1.0.1 
+- SDL2.dll wasn't always recognized to exist
