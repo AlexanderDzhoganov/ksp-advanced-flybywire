@@ -466,29 +466,11 @@ namespace KSPAdvancedFlyByWire
 
             if (m_ChooseDiscreteAction)
             {
-                if (Utility.RectContainsMouse(m_ChooseDiscreteActionRect))
-                {
-                    InputLockManager.SetControlLock(inputLockHash + "chooseDiscrete");
-                }
-                else
-                {
-                    InputLockManager.RemoveControlLock(inputLockHash + "chooseDiscrete");
-                }
-
                 GUI.Window(1337 + m_EditorId * 4 + 1, m_ChooseDiscreteActionRect, DoChooseDiscreteActionWindow, "Choose action");
             }
 
             if (m_ChooseContinuousAction)
             {
-                if (Utility.RectContainsMouse(m_ChooseContinuousActionRect))
-                {
-                    InputLockManager.SetControlLock(inputLockHash + "chooseContinuous");
-                }
-                else
-                {
-                    InputLockManager.RemoveControlLock(inputLockHash + "chooseContinuous");
-                }
-
                 GUI.Window(1337 + m_EditorId * 4 + 2, m_ChooseContinuousActionRect, DoChooseContinuousActionWindow, "Choose action");
             }
 
