@@ -322,6 +322,8 @@ namespace KSPAdvancedFlyByWire
 
         private void Update()
         {
+            SDLController.SDLUpdateState();
+
             if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
                 if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
