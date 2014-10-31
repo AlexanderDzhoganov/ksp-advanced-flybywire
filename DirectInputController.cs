@@ -32,7 +32,7 @@ namespace KSPAdvancedFlyByWire
             int id = 0;
             foreach (var device in devices)
             {
-                if (device.Type != DeviceType.Joystick && device.Type != DeviceType.Gamepad)
+                if (device.Type == DeviceType.Mouse || device.Type == DeviceType.Keyboard)
                 {
                     continue;
                 }
@@ -108,7 +108,7 @@ namespace KSPAdvancedFlyByWire
             int id = 0;
             foreach (var device in devices)
             {
-                if (device.Type != DeviceType.Joystick && device.Type != DeviceType.Gamepad)
+                if (device.Type == DeviceType.Mouse || device.Type == DeviceType.Keyboard)
                 {
                     continue;
                 }
