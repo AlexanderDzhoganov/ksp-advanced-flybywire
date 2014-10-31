@@ -48,6 +48,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>builds\x86\GameData\ksp-advanced-flybywire\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DirectInput, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>builds\x86\GameData\ksp-advanced-flybywire\SharpDX.DirectInput.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -79,6 +87,7 @@
     <Compile Include="PresetEditorWindowNG.cs" />
     <Compile Include="SDL2.cs" />
     <Compile Include="SDLController.cs" />
+    <Compile Include="DirectInputController.cs" />
     <Compile Include="Stringify.cs" />
     <Compile Include="StringMarshaller.cs" />
     <Compile Include="Utility.cs" />

@@ -63,7 +63,6 @@ namespace KSPAdvancedFlyByWire
                 axisStates[i].m_NegativeDeadZone = float.MaxValue;
                 axisStates[i].m_PositiveDeadZone = float.MaxValue;
             }
-            MonoBehaviour.print("wtf2");
 
             for (int i = 0; i < 4; i++)
             {
@@ -71,7 +70,6 @@ namespace KSPAdvancedFlyByWire
                 axisStates[i].m_Identity = 0.0f;
                 axisStates[i].m_Right = 1.0f;
             }
-            MonoBehaviour.print("wtf3");
 
             for (int i = 2; i < 6; i++)
             {

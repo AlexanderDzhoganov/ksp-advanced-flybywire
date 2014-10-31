@@ -76,7 +76,7 @@ namespace KSPAdvancedFlyByWire
             AddFlyByWireCallbackToActiveVessel();
             m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
         }
-
+         
         public void OnDestroy()
         {
             m_Instance = null;

@@ -9,6 +9,7 @@ namespace KSPAdvancedFlyByWire
         XInput = 0,
         SDL = 1,
         KeyboardMouse = 2,
+        DirectInput = 3
     }
 
     public abstract class IController
@@ -37,6 +38,11 @@ namespace KSPAdvancedFlyByWire
                 {
                     controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.SDL, controllerName));
                 }
+            }
+
+            foreach (var controllerName in DirectInputController.EnumerateControllers())
+            {
+                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.DirectInput, controllerName));
             }
 
             controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Keyboard & Mouse")));

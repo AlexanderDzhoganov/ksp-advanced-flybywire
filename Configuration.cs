@@ -112,6 +112,10 @@ namespace KSPAdvancedFlyByWire
             {
                 controller.iface = new KeyboardMouseController();
             }
+            else if (wrapper == InputWrapper.DirectInput)
+            {
+                controller.iface = new DirectInputController(controller.controllerIndex);
+            }
             else
             {
                 // invalid configuration, bail out..
