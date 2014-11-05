@@ -40,11 +40,6 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
-            foreach (var controllerName in DirectInputController.EnumerateControllers())
-            {
-                controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.DirectInput, controllerName));
-            }
-
             controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.KeyboardMouse, new KeyValuePair<int, string>(0, "Keyboard & Mouse")));
             return controllers;
         }

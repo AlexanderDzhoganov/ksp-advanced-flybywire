@@ -215,6 +215,25 @@ namespace KSPAdvancedFlyByWire
                 m_Controller.currentPreset = m_Controller.presets.Count - 1;
             }
 
+            if (GUILayout.Button("Clone"))
+            {
+                var preset = m_Controller.presets[m_Controller.currentPreset];
+                var newPreset = new ControllerPreset();
+
+                foreach (var pair in preset.continuousActionsMap)
+                {
+                    newPreset.continuousActionsMap.Add(pair.Key, new KeyValuePair<Bitset, int>(pair.Value.Key.Copy(), pair.Value.Value));
+                }
+
+                foreach (var pair in preset.discreteActionsMap)
+                {
+                    newPreset.discreteActionsMap.Add(pair.Key, pair.Value.Copy());
+                }
+
+                m_Controller.presets.Add(newPreset);
+                m_Controller.currentPreset = m_Controller.presets.Count - 1;
+            }
+
             string destructiveRemoveLabel = "Delete";
             if (m_DestructiveActionWait)
             {
