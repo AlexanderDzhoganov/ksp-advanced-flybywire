@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire_x64", "ksp-advanced-flybywire_x64.csproj", "{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire_x86", "ksp-advanced-flybywire_x86.csproj", "{44FB8186-47F3-4807-9BE9-FE8B52AD0DEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire_x64_linux", "ksp-advanced-flybywire_x64_linux.csproj", "{1C84F0AB-CF76-4C5A-A330-4436C323707E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire_x86_linux", "ksp-advanced-flybywire_x86_linux.csproj", "{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerTestTool", "controller_test_tool\ControllerTestTool\ControllerTestTool.csproj", "{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,26 +41,16 @@ Global
 		{44FB8186-47F3-4807-9BE9-FE8B52AD0DEB}.Release|BuildConfig.Build.0 = Release|Any CPU
 		{44FB8186-47F3-4807-9BE9-FE8B52AD0DEB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{44FB8186-47F3-4807-9BE9-FE8B52AD0DEB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Debug|BuildConfig.ActiveCfg = Debug|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Release|BuildConfig.ActiveCfg = Release|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{1C84F0AB-CF76-4C5A-A330-4436C323707E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Debug|BuildConfig.ActiveCfg = Debug|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Release|BuildConfig.ActiveCfg = Release|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Debug|BuildConfig.ActiveCfg = Debug|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Release|BuildConfig.ActiveCfg = Release|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

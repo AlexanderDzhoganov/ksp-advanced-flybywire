@@ -1,159 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
 {
-    class PresetEditorWindowNG : PresetEditorWindow
+
+    public class PresetEditorWindow
     {
 
-        public PresetEditorWindowNG(ControllerConfiguration controller, int editorId) : base(controller, editorId)
+        public ControllerConfiguration m_Controller;
+        public int m_EditorId;
+
+        public Rect windowRect = new Rect(448, 128, 512, 512);
+
+        public Bitset m_CurrentMask = null;
+
+        public DiscreteAction m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
+        public ContinuousAction m_CurrentlyEditingContinuousAction = ContinuousAction.None;
+
+        public Vector2 m_ScrollPosition = new Vector2(0, 0);
+
+        public bool shouldBeDestroyed = false;
+
+        public string inputLockHash;
+
+        public float m_ClickSleepTimer = 0.0f;
+
+        public bool m_DestructiveActionWait = false;
+        public float m_DestructiveActionTimer = 0.0f;
+
+        public float[] axisSnapshot;
+
+        public PresetEditorWindow(ControllerConfiguration controller, int editorId)
         {
+            m_Controller = controller;
+            m_EditorId = editorId;
+            axisSnapshot = new float[controller.iface.GetAxesCount()];
+            inputLockHash = "PresetEditor " + m_Controller.wrapper.ToString() + " - " + m_Controller.controllerIndex.ToString();
         }
 
-        private bool m_ChooseDiscreteAction = false;
-        private Rect m_ChooseDiscreteActionRect = new Rect();
-        private DiscreteAction m_ChosenDiscreteAction = DiscreteAction.None;
-        private Vector2 m_ChooseDiscreteActionScroll = new Vector2(0, 0);
-
-        private bool m_ChooseContinuousAction = false;
-        private Rect m_ChooseContinuousActionRect = new Rect();
-        private ContinuousAction m_ChosenContinuousAction = ContinuousAction.None;
-        private Vector2 m_ChooseContinuousActionScroll = new Vector2(0, 0);
-
-        public void DoPressDesiredCombinationWindow(int index)
+        public void SetCurrentBitmask(Bitset mask)
         {
-            GUILayout.FlexibleSpace();
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-
-            GUILayout.Label("Press desired combination");
-            GUILayout.Space(8);
-
-            if(GUILayout.Button("Cancel"))
-            {
-                m_CurrentlyEditingContinuousAction = ContinuousAction.None;
-                m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
-            }
-
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            GUILayout.FlexibleSpace();
-
-            var currentPreset = m_Controller.GetCurrentPreset();
-
-            if (m_CurrentlyEditingContinuousAction != ContinuousAction.None)
-            {
-                var buttonsMask = m_Controller.iface.GetButtonsMask();
-                
-                for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
-                {
-                    if (m_Controller.iface.GetAxisState(i) != 0.0f && m_ClickSleepTimer == 0.0f)
-                    {
-                        currentPreset.SetContinuousBinding(i, buttonsMask, m_CurrentlyEditingContinuousAction);
-                        m_CurrentlyEditingContinuousAction = ContinuousAction.None;
-                    }
-                }
-            }
-            else if (m_CurrentlyEditingDiscreteAction != DiscreteAction.None)
-            {
-                if (m_CurrentMask != null && m_ClickSleepTimer == 0.0f)
-                {
-                    currentPreset.SetDiscreteBinding(m_CurrentMask, m_CurrentlyEditingDiscreteAction);
-                    m_CurrentMask = null;
-                    m_CurrentlyEditingDiscreteAction = DiscreteAction.None;
-                }
-            }
+            m_CurrentMask = mask;
         }
 
-        public void DoChooseDiscreteActionWindow(int window)
-        {
-            if (!m_ChooseDiscreteAction)
-            {
-                return;
-            }
-           
-            var currentPreset = m_Controller.GetCurrentPreset();
-
-            if (GUILayout.Button("Cancel"))
-            {
-                m_ChooseDiscreteAction = false;
-                return;
-            }
-
-            m_ChooseDiscreteActionScroll = GUILayout.BeginScrollView(m_ChooseDiscreteActionScroll);
-
-            foreach (var action in (DiscreteAction[]) Enum.GetValues(typeof (DiscreteAction)))
-            {
-                if (action == DiscreteAction.None)
-                {
-                    continue;
-                }
-
-                var bitset = currentPreset.GetBitsetForDiscreteBinding(action);
-                if (bitset != null)
-                {
-                    continue;
-                }
-
-                if (GUILayout.Button(Stringify.DiscreteActionToString(action)))
-                {
-                    m_ChosenDiscreteAction = action;
-                    m_ChooseDiscreteAction = false;
-                    m_CurrentlyEditingDiscreteAction = action;
-                    m_ClickSleepTimer = 0.25f;
-                }
-            }
-
-            GUILayout.EndScrollView();
-        }
-
-        public void DoChooseContinuousActionWindow(int window)
-        {
-            if (!m_ChooseContinuousAction)
-            {
-                return;
-            }
-
-            var currentPreset = m_Controller.GetCurrentPreset();
-
-            if (GUILayout.Button("Cancel"))
-            {
-                m_ChooseContinuousAction = false;
-                return;
-            }
-
-            m_ChooseContinuousActionScroll = GUILayout.BeginScrollView(m_ChooseContinuousActionScroll);
-
-            foreach (var action in (ContinuousAction[]) Enum.GetValues(typeof (ContinuousAction)))
-            {
-                if (action == ContinuousAction.None)
-                {
-                    continue;
-                }
-
-                var axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
-                if (axisBitsetPair.Value != null)
-                {
-                    continue;
-                }
-
-                if (GUILayout.Button(Stringify.ContinuousActionToString(action)))
-                {
-                    m_ChosenContinuousAction = action;
-                    m_ChooseContinuousAction = false;
-                    m_CurrentlyEditingContinuousAction = action;
-                    m_ClickSleepTimer = 0.25f;
-                }
-            }
-
-            GUILayout.EndScrollView();
-        }
-
-        public override void DoWindow(int window)
+        public virtual void DoWindow(int window)
         {
             GUI.DragWindow(new Rect(0, 0, 10000, 20));
 
@@ -168,7 +60,6 @@ namespace KSPAdvancedFlyByWire
                     m_Controller.presetEditorOpen = false;
                 }
 
-                GUILayout.EndHorizontal();
                 return;
             }
 
@@ -215,25 +106,6 @@ namespace KSPAdvancedFlyByWire
                 m_Controller.currentPreset = m_Controller.presets.Count - 1;
             }
 
-            if (GUILayout.Button("Clone"))
-            {
-                var preset = m_Controller.presets[m_Controller.currentPreset];
-                var newPreset = new ControllerPreset();
-
-                foreach (var pair in preset.continuousActionsMap)
-                {
-                    newPreset.continuousActionsMap.Add(pair.Key, new KeyValuePair<Bitset, int>(pair.Value.Key.Copy(), pair.Value.Value));
-                }
-
-                foreach (var pair in preset.discreteActionsMap)
-                {
-                    newPreset.discreteActionsMap.Add(pair.Key, pair.Value.Copy());
-                }
-
-                m_Controller.presets.Add(newPreset);
-                m_Controller.currentPreset = m_Controller.presets.Count - 1;
-            }
-
             string destructiveRemoveLabel = "Delete";
             if (m_DestructiveActionWait)
             {
@@ -247,9 +119,9 @@ namespace KSPAdvancedFlyByWire
 
             if (GUILayout.Button(destructiveRemoveLabel))
             {
-                if (m_DestructiveActionWait)
+                if(m_DestructiveActionWait)
                 {
-                    if (m_Controller.presets.Count > 1)
+                    if(m_Controller.presets.Count > 1)
                     {
                         m_Controller.presets.RemoveAt(m_Controller.currentPreset);
                         m_Controller.currentPreset--;
@@ -272,44 +144,13 @@ namespace KSPAdvancedFlyByWire
             GUI.enabled = true;
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal();
-
-            if (m_ChooseDiscreteAction || m_ChooseContinuousAction)
-            {
-                GUI.enabled = false;
-            }
-
-            if (GUILayout.Button("Add button"))
-            {
-                m_ChooseDiscreteAction = true;
-                m_ChosenDiscreteAction = DiscreteAction.None;
-                m_ChooseDiscreteActionRect = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 256, 512);
-            }
-
-            if (GUILayout.Button("Add axis"))
-            {
-                m_ChooseContinuousAction = true;
-                m_ChosenContinuousAction = ContinuousAction.None;
-                m_ChooseContinuousActionRect = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 256, 512);
-            }
-
-            GUI.enabled = true;
-
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
+
+            GUILayout.Label("Continuous actions");
 
             foreach (var action in (ContinuousAction[])Enum.GetValues(typeof(ContinuousAction)))
             {
                 if (action == ContinuousAction.None)
-                {
-                    continue;
-                }
-
-                var axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
-
-                if (axisBitsetPair.Value == null)
                 {
                     continue;
                 }
@@ -319,6 +160,8 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.FlexibleSpace();
 
                 string label = "";
+
+                var axisBitsetPair = currentPreset.GetBitsetForContinuousBinding(action);
                 if (m_CurrentlyEditingContinuousAction == action)
                 {
                     label = "Press desired combination";
@@ -375,15 +218,11 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.EndHorizontal();
             }
 
+            GUILayout.Label("Discrete actions");
+
             foreach (var action in (DiscreteAction[])Enum.GetValues(typeof(DiscreteAction)))
             {
                 if (action == DiscreteAction.None)
-                {
-                    continue;
-                }
-
-                var bitset = currentPreset.GetBitsetForDiscreteBinding(action);
-                if (bitset == null)
                 {
                     continue;
                 }
@@ -393,6 +232,8 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.FlexibleSpace();
 
                 string label = "";
+
+                var bitset = currentPreset.GetBitsetForDiscreteBinding(action);
                 if (m_CurrentlyEditingDiscreteAction == action)
                 {
                     label = "Press desired combination";
@@ -443,7 +284,7 @@ namespace KSPAdvancedFlyByWire
             GUILayout.EndScrollView();
         }
 
-        public override void OnGUI()
+        public virtual void OnGUI()
         {
             if (m_Controller.iface == null)
             {
@@ -480,23 +321,8 @@ namespace KSPAdvancedFlyByWire
                 InputLockManager.RemoveControlLock(inputLockHash);
             }
 
-            windowRect = GUI.Window(1337 + m_EditorId * 4 + 0, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
+            windowRect = GUI.Window(1337 + m_EditorId, windowRect, DoWindow, "Fly-By-Wire Preset Editor");
             windowRect = Utility.ClampRect(windowRect, new Rect(0, 0, Screen.width, Screen.height));
-
-            if (m_ChooseDiscreteAction)
-            {
-                GUI.Window(1337 + m_EditorId * 4 + 1, m_ChooseDiscreteActionRect, DoChooseDiscreteActionWindow, "Choose action");
-            }
-
-            if (m_ChooseContinuousAction)
-            {
-                GUI.Window(1337 + m_EditorId * 4 + 2, m_ChooseContinuousActionRect, DoChooseContinuousActionWindow, "Choose action");
-            }
-
-            if (m_CurrentlyEditingContinuousAction != ContinuousAction.None || m_CurrentlyEditingDiscreteAction != DiscreteAction.None)
-            {
-                GUI.Window(1337 + m_EditorId * 4 + 3, new Rect(Screen.width / 4, Screen.height / 4, Screen.width / 4, Screen.height / 4), DoPressDesiredCombinationWindow, "");
-            }
         }
 
     }

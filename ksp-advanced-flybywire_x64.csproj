@@ -72,6 +72,7 @@
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="ControllerConfigurationWindow.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
+    <Compile Include="DirectInputController.cs" />
     <Compile Include="FlightManager.cs" />
     <Compile Include="FlightProperty.cs" />
     <Compile Include="KeyboardMouseController.cs" />

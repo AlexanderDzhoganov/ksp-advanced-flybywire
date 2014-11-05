@@ -9,7 +9,6 @@ namespace KSPAdvancedFlyByWire
         XInput = 0,
         SDL = 1,
         KeyboardMouse = 2,
-        DirectInput = 3
     }
 
     public abstract class IController

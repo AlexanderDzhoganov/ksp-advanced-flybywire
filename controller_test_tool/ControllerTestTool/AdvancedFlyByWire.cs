@@ -26,7 +26,6 @@ namespace KSPAdvancedFlyByWire
         // Configuration
         private Configuration m_Configuration = null;
 
-        private ModSettingsWindow m_ModSettings = null;
         private List<PresetEditorWindow> m_PresetEditors = new List<PresetEditorWindow>();
         private List<ControllerConfigurationWindow> m_ControllerTests = new List<ControllerConfigurationWindow>();
 
@@ -77,7 +76,7 @@ namespace KSPAdvancedFlyByWire
             AddFlyByWireCallbackToActiveVessel();
             m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
         }
-         
+
         public void OnDestroy()
         {
             m_Instance = null;
@@ -323,8 +322,6 @@ namespace KSPAdvancedFlyByWire
 
         private void Update()
         {
-            SDLController.SDLUpdateState();
-
             if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
                 if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
@@ -352,14 +349,6 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndHorizontal();
-
-            if (GUILayout.Button("Mod settings"))
-            {
-                if (m_ModSettings == null)
-                {
-                    m_ModSettings = new ModSettingsWindow();
-                }
-            }
             
             GUILayout.BeginHorizontal();
             GUILayout.Label("Use stock skin");
@@ -554,11 +543,6 @@ namespace KSPAdvancedFlyByWire
             foreach (var controllerTest in m_ControllerTests)
             {
                 controllerTest.OnGUI();
-            }
-
-            if (m_ModSettings != null)
-            {
-                m_ModSettings.OnGUI();
             }
 
             GUI.skin = oldSkin;
