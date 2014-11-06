@@ -141,12 +141,12 @@ namespace KSPAdvancedFlyByWire
         {
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onHideUI.Add(OnHideUI);
-            GameEvents.onGameStateSave.Add(new EventData<ConfigNode>.OnEvent(SaveState));
-            GameEvents.onGameStateLoad.Add(new EventData<ConfigNode>.OnEvent(LoadState));
-            GameEvents.onGUIRecoveryDialogSpawn.Add(new EventData<MissionRecoveryDialog>.OnEvent(OnGUIRecoveryDialogSpawn));
-            GameEvents.onGamePause.Add(new EventVoid.OnEvent(OnGamePause));
-            GameEvents.onGameUnpause.Add(new EventVoid.OnEvent(OnGameUnpause));
-            GameEvents.onVesselChange.Add(new EventData<Vessel>.OnEvent(OnVesselChange));
+            GameEvents.onGameStateSave.Add(SaveState);
+            GameEvents.onGameStateLoad.Add(LoadState);
+            GameEvents.onGUIRecoveryDialogSpawn.Add(OnGUIRecoveryDialogSpawn);
+            GameEvents.onGamePause.Add(OnGamePause);
+            GameEvents.onGameUnpause.Add(OnGameUnpause);
+            GameEvents.onVesselChange.Add(OnVesselChange);
         }
 
         private void UnregisterCallbacks()
@@ -378,6 +378,8 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndHorizontal();
+
+            GUILayout.Label("Wheel throttle: " + m_FlightManager.m_WheelThrottle.GetValue().ToString());
 
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
