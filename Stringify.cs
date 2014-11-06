@@ -49,7 +49,9 @@
                 case DiscreteAction.SAS:
                     return "SAS";
                 case DiscreteAction.Brakes:
-                    return "Brakes";
+                    return "Brakes (Toggle)";
+                case DiscreteAction.BrakesHold:
+                    return "Brakes (Hold)";
                 case DiscreteAction.Abort:
                     return "Abort";
                 case DiscreteAction.Custom01:

@@ -241,6 +241,9 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.Brakes:
                     FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Brakes);
                     return;
+                case DiscreteAction.BrakesHold:
+                    FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Brakes, true);
+                    return;
                 case DiscreteAction.Abort:
                     FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Abort);
                     return;
@@ -468,6 +471,9 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case DiscreteAction.SASHold:
                     FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
+                    return;
+                case DiscreteAction.BrakesHold:
+                    FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Brakes, false);
                     return;
             }
         }

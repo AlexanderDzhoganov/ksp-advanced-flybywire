@@ -19,7 +19,6 @@ namespace KSPAdvancedFlyByWire
 
             if (numBits <= 32)
             {
-                numBits = 32;
                 m_SingleData = 0;
                 return;
             }

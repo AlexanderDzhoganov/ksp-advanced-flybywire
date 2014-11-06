@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
@@ -20,8 +18,8 @@ namespace KSPAdvancedFlyByWire
         private Rect m_WindowRect = new Rect(0, 64, 432, 576);
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
-        private bool m_UseKSPSkin = true;
-        private bool m_UseOldPresetsWindow = false;
+        public bool m_UseKSPSkin = true;
+        public bool m_UseOldPresetsWindow = false;
 
         // Configuration
         private Configuration m_Configuration = null;
@@ -54,7 +52,7 @@ namespace KSPAdvancedFlyByWire
                         KSPUtil.ApplicationRootPath, "GameData"
                     ),
                     "ksp-advanced-flybywire"
-                ), "advanced_flybywire_config_v" + versionMajor.ToString() + versionMinor.ToString() + ".xml"
+                ), "advanced_flybywire_config_v" + versionMajor + versionMinor + ".xml"
             );
         }
 
@@ -187,6 +185,12 @@ namespace KSPAdvancedFlyByWire
                 m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
             }
 
+            m_FlightManager.m_Throttle.SetZero();
+            m_FlightManager.m_WheelThrottle.SetZero();
+            m_FlightManager.m_Yaw.SetZero();
+            m_FlightManager.m_Pitch.SetZero();
+            m_FlightManager.m_Roll.SetZero();
+
             AddFlyByWireCallbackToActiveVessel();
         }
 
@@ -207,7 +211,7 @@ namespace KSPAdvancedFlyByWire
                 GameScenes.FLIGHT
             );
 
-            m_ToolbarButton.OnClick += new Toolbar.ClickHandler(OnToolbarButtonClick);
+            m_ToolbarButton.OnClick += OnToolbarButtonClick;
         }
 
         void OnToolbarButtonClick(Toolbar.ClickEvent ev)
@@ -361,26 +365,6 @@ namespace KSPAdvancedFlyByWire
                 }
             }
             
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Use stock skin");
-            m_UseKSPSkin = GUILayout.Toggle(m_UseKSPSkin, "");
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Use old presets editor");
-            m_UseOldPresetsWindow = GUILayout.Toggle(m_UseOldPresetsWindow, "");
-            GUILayout.FlexibleSpace();
-
-            if (GUILayout.Button("Save configuration"))
-            {
-                SaveState(null);
-            }
-
-            GUILayout.EndHorizontal();
-
-            GUILayout.Label("Wheel throttle: " + m_FlightManager.m_WheelThrottle.GetValue().ToString());
-
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
             GUILayout.BeginHorizontal();
@@ -408,8 +392,8 @@ namespace KSPAdvancedFlyByWire
                     (
                         controller.Key,
                         controller.Value.Key,
-                        new IController.ButtonPressedCallback(ButtonPressedCallback),
-                        new IController.ButtonReleasedCallback(ButtonReleasedCallback)
+                        ButtonPressedCallback,
+                        ButtonReleasedCallback
                     );
                 }
                 else if (isEnabled && !newIsEnabled)
@@ -560,7 +544,15 @@ namespace KSPAdvancedFlyByWire
 
             if (m_ModSettings != null)
             {
-                m_ModSettings.OnGUI();
+                if (m_ModSettings.shouldBeDestroyed)
+                {
+                    InputLockManager.RemoveControlLock(m_ModSettings.inputLockHash);
+                    m_ModSettings = null;
+                }
+                else
+                {
+                    m_ModSettings.OnGUI();
+                }
             }
 
             GUI.skin = oldSkin;

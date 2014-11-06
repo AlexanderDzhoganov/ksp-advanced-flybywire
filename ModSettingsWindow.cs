@@ -45,6 +45,24 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Use stock skin");
+            AdvancedFlyByWire.Instance.m_UseKSPSkin = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseKSPSkin, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Use old presets editor");
+            AdvancedFlyByWire.Instance.m_UseOldPresetsWindow = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseOldPresetsWindow, "");
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Save configuration"))
+            {
+                AdvancedFlyByWire.Instance.SaveState(null);
+            }
+
+            GUILayout.EndHorizontal();
         }
 
         public void OnGUI()

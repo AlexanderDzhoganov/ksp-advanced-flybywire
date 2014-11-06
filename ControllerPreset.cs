@@ -45,6 +45,7 @@ namespace KSPAdvancedFlyByWire
         SAS,
         SASHold,
         Brakes,
+        BrakesHold,
         Abort,
         Custom01,
         Custom02,
@@ -120,10 +121,6 @@ namespace KSPAdvancedFlyByWire
 
     public class ControllerPreset
     {
-
-        public ControllerPreset()
-        {
-        }
 
         public string name = "New preset";
 
@@ -304,11 +301,16 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
+            if (matches.Count == 0)
+            {
+                return null;
+            }
+
             List<KeyValuePair<int, ContinuousAction>> matchResults = new List<KeyValuePair<int, ContinuousAction>>();
             for (int i = 0; i < matches.Count; i++)
             {
                 int bits = 0;
-                for(int q = 0; q < state.m_NumBits; q++)
+                for (int q = 0; q < matches[i].Key.m_NumBits; q++)
                 {
                     if(matches[i].Key.Get(q))
                     {
@@ -320,21 +322,16 @@ namespace KSPAdvancedFlyByWire
                 matchResults.Add(new KeyValuePair<int, ContinuousAction>(bits, value));
             }
 
-            if(matches.Count == 0)
-            {
-                return null;
-            }
-
             matchResults.Sort(CompareKeys);
 
-            int minBits = matchResults[matches.Count - 1].Key;
+            int minBits = matchResults[0].Key;
             List<ContinuousAction> actions = new List<ContinuousAction>();
 
-            for (var i = 0; i < matches.Count; i++)
+            for (var i = 0; i < matchResults.Count; i++)
             {
                 if (matchResults[i].Key >= minBits)
                 {
-                    actions.Add(matches[i].Value);
+                    actions.Add(matchResults[i].Value);
                 }
             }
             
@@ -353,7 +350,7 @@ namespace KSPAdvancedFlyByWire
 
         private static int CompareKeys(KeyValuePair<int, ContinuousAction> a, KeyValuePair<int, ContinuousAction> b)
         {
-            return a.Key.CompareTo(b.Key);
+            return b.Key.CompareTo(a.Key);
         }
 
         private static int CompareKeys2(KeyValuePair<int, DiscreteAction> a, KeyValuePair<int, DiscreteAction> b)

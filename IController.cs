@@ -49,6 +49,7 @@ namespace KSPAdvancedFlyByWire
 
         public Curve analogEvaluationCurve = new Curve();
         public bool treatHatsAsButtons = false;
+        public bool manualDeadZones = false;
 
         public bool[] buttonStates;
         public AxisConfiguration[] axisStates;
@@ -107,7 +108,7 @@ namespace KSPAdvancedFlyByWire
 
         public float GetAxisState(int id)
         {
-            return axisStates[id].Rescale(GetRawAxisState(id), analogEvaluationCurve);
+            return axisStates[id].Rescale(GetRawAxisState(id), analogEvaluationCurve, manualDeadZones);
         }
 
         public abstract float GetRawAxisState(int analogInput);

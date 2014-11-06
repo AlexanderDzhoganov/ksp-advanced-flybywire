@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using System.IO;
 using System.Xml.Serialization;
-
+using Contracts;
 using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
@@ -21,6 +21,7 @@ namespace KSPAdvancedFlyByWire
         public float discreteActionStep = 0.15f;
         public float incrementalActionSensitivity = 0.05f;
         public float cameraSensitivity = 0.05f;
+        public bool manualDeadZones = false;
 
         [XmlIgnore()]
         public bool presetEditorOpen = false;
@@ -66,6 +67,15 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
+        public void SetManualDeadZones(bool state)
+        {
+            manualDeadZones = state;
+            if (iface != null)
+            {
+                iface.manualDeadZones = state;
+            }
+        }
+
         public void SetTreatHatsAsButtons(bool state)
         {
             treatHatsAsButtons = state;
@@ -81,8 +91,6 @@ namespace KSPAdvancedFlyByWire
 
         public List<ControllerConfiguration> controllers = new List<ControllerConfiguration>();
 
-        public Configuration() {}
-
         public void ActivateController(InputWrapper wrapper, int controllerIndex, IController.ButtonPressedCallback pressedCallback, IController.ButtonReleasedCallback releasedCallback)
         {
             foreach (var config in controllers)
@@ -93,7 +101,7 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
-            ControllerConfiguration controller = new ControllerConfiguration();
+            var controller = new ControllerConfiguration();
 
             controller.wrapper = wrapper;
             controller.controllerIndex = controllerIndex;
@@ -119,9 +127,10 @@ namespace KSPAdvancedFlyByWire
             }
 
             controller.SetTreatHatsAsButtons(controller.treatHatsAsButtons);
+            controller.SetManualDeadZones(controller.manualDeadZones);
             controller.iface.analogEvaluationCurve = CurveFactory.Instantiate(controller.analogInputCurve);
-            controller.iface.buttonPressedCallback = new IController.ButtonPressedCallback(pressedCallback);
-            controller.iface.buttonReleasedCallback = new IController.ButtonReleasedCallback(releasedCallback);
+            controller.iface.buttonPressedCallback = pressedCallback;
+            controller.iface.buttonReleasedCallback = releasedCallback;
 
             controller.presets = DefaultControllerPresets.GetDefaultPresets(controller.iface);
             controller.currentPreset = 0;
@@ -183,8 +192,8 @@ namespace KSPAdvancedFlyByWire
                     config.iface = new KeyboardMouseController();
                 }
 
-                config.iface.buttonPressedCallback = new IController.ButtonPressedCallback(AdvancedFlyByWire.Instance.ButtonPressedCallback);
-                config.iface.buttonReleasedCallback = new IController.ButtonReleasedCallback(AdvancedFlyByWire.Instance.ButtonReleasedCallback);
+                config.iface.buttonPressedCallback = AdvancedFlyByWire.Instance.ButtonPressedCallback;
+                config.iface.buttonReleasedCallback = AdvancedFlyByWire.Instance.ButtonReleasedCallback;
 
                 config.evaluatedDiscreteActionMasks = new HashSet<Bitset>();
 
@@ -247,7 +256,7 @@ namespace KSPAdvancedFlyByWire
             {
                 using (var reader = new StreamReader(filename))
                 {
-                    Configuration config = (Configuration)serializer.Deserialize(reader);
+                    var config = (Configuration)serializer.Deserialize(reader);
                     config.OnPostDeserialize();
                     return config;
                 }

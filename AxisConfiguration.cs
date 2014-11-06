@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
 {
@@ -15,7 +16,7 @@ namespace KSPAdvancedFlyByWire
         public float m_Right;
         public bool m_Invert;
 
-        public float Rescale(float value, Curve analogEvaluationCurve)
+        public float Rescale(float value, Curve analogEvaluationCurve, bool manualDeadZones)
         {
             if (value < m_Left)
             {
@@ -48,7 +49,7 @@ namespace KSPAdvancedFlyByWire
 
             if (value > 0.0f)
             {
-                if (value < m_PositiveDeadZone)
+                if (value < m_PositiveDeadZone && !manualDeadZones)
                 {
                     m_PositiveDeadZone = value;
                 }
@@ -59,10 +60,12 @@ namespace KSPAdvancedFlyByWire
                 {
                     value = (value - deadZone) / t;
                 }
+
+                value = Mathf.Clamp(value, 0.0f, 1.0f);
             }
             else if (value < 0.0f)
             {
-                if (Math.Abs(value) < m_NegativeDeadZone)
+                if (Math.Abs(value) < m_NegativeDeadZone && !manualDeadZones)
                 {
                     m_NegativeDeadZone = Math.Abs(value);
                 }
@@ -73,6 +76,8 @@ namespace KSPAdvancedFlyByWire
                 {
                     value = -1.0f * (Math.Abs(value) - deadZone) / t;
                 }
+
+                value = Mathf.Clamp(value, -1.0f, 0.0f);
             }
 
             return (m_Invert ? -1.0f : 1.0f) * Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));

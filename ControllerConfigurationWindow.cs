@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using UnityEngine;
 
 namespace KSPAdvancedFlyByWire
@@ -14,7 +12,7 @@ namespace KSPAdvancedFlyByWire
 
         private bool m_ShowOptions = false;
 
-        private Rect windowRect = new Rect(976, 128, 420, 512);
+        private Rect windowRect = new Rect(976, 128, 420, 640);
 
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
@@ -69,7 +67,7 @@ namespace KSPAdvancedFlyByWire
             GUILayout.Label("Show additional options");
             m_ShowOptions = GUILayout.Toggle(m_ShowOptions, "");
             GUILayout.EndHorizontal();
-
+            
             if (m_ShowOptions)
             {
                 GUILayout.BeginHorizontal();
@@ -105,12 +103,20 @@ namespace KSPAdvancedFlyByWire
                 {
                     curveLabel = "Linear";
                 }
+                else if (m_Controller.analogInputCurve == CurveType.SqrtX)
+                {
+                    curveLabel = "Quadratic (Inverted)";
+                }
 
                 if (GUILayout.Button(curveLabel))
                 {
                     if (m_Controller.analogInputCurve == CurveType.Identity)
                     {
                         m_Controller.SetAnalogInputCurveType(CurveType.XSquared);
+                    }
+                    else if (m_Controller.analogInputCurve == CurveType.XSquared)
+                    {
+                        m_Controller.SetAnalogInputCurveType(CurveType.SqrtX);
                     }
                     else
                     {
@@ -134,6 +140,16 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.EndHorizontal();
 
                 GUILayout.Space(8);
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Manual dead-zones");
+                GUILayout.FlexibleSpace();
+                state = GUILayout.Toggle(m_Controller.manualDeadZones, "");
+                if (state != m_Controller.manualDeadZones)
+                {
+                    m_Controller.SetManualDeadZones(state);
+                    AdvancedFlyByWire.Instance.SaveState(null);
+                }
+                GUILayout.EndHorizontal();
             }
 
             GUILayout.Label("If some axes below are not displaying 0.0 when the controller is left untouched then it needs calibration.");
@@ -142,6 +158,8 @@ namespace KSPAdvancedFlyByWire
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Calibrate"))
             {
+                m_Controller.SetManualDeadZones(false);
+
                 for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
                 {
                     float value = m_Controller.iface.GetRawAxisState(i);
@@ -186,6 +204,38 @@ namespace KSPAdvancedFlyByWire
                 m_Controller.iface.axisStates[i].m_Invert = GUILayout.Toggle(m_Controller.iface.axisStates[i].m_Invert, "");
 
                 GUILayout.EndHorizontal();
+
+                if (m_ShowOptions)
+                {
+                    if (!m_Controller.manualDeadZones)
+                    {
+                        GUI.enabled = false;
+                    }
+                    
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Negative dead-zone");
+                    GUILayout.FlexibleSpace();
+
+                    var negativeDeadZone = Mathf.Clamp(m_Controller.iface.axisStates[i].m_NegativeDeadZone, 0.0f, 1.0f);
+                    var positiveDeadZone = Mathf.Clamp(m_Controller.iface.axisStates[i].m_PositiveDeadZone, 0.0f, 1.0f);
+
+                    GUILayout.Label(negativeDeadZone.ToString("0.000"));
+                    m_Controller.iface.axisStates[i].m_NegativeDeadZone = GUILayout.HorizontalSlider(negativeDeadZone, 0.0f, 1.0f, GUILayout.Width(150));
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Positive dead-zone");
+
+                    GUILayout.FlexibleSpace();
+                    GUILayout.Label(positiveDeadZone.ToString("0.000"));
+                    m_Controller.iface.axisStates[i].m_PositiveDeadZone = GUILayout.HorizontalSlider(positiveDeadZone, 0.0f, 1.0f, GUILayout.Width(150));
+                   
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.Space(32);
+
+                    GUI.enabled = true;
+                }
             }
 
             GUILayout.Label("Buttons");
