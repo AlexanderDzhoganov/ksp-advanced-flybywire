@@ -1,3 +1,12 @@
+v1.2.3
+- Fixed the wheel throttle bugs
+- Added a new "Brakes (Hold)" binding, renamed "Brakes" to "Brakes (Toggle)"
+- Fixed an issue where some axis combos wouldn't work
+- New options in controller configuration to set dead-zones from the GUI
+- Added "Quadratic (Inverted)" interpolation option
+- New controller test tool
+- Throttle and wheel throttle now reset to zero when you change vessels
+
 v1.2.2
 - Fixed the input locks bug
 
