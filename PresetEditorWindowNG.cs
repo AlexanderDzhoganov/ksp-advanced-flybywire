@@ -12,6 +12,7 @@ namespace KSPAdvancedFlyByWire
 
         public PresetEditorWindowNG(ControllerConfiguration controller, int editorId) : base(controller, editorId)
         {
+            axisSnapshot = new float[controller.iface.GetAxesCount()];
         }
 
         private bool m_ChooseDiscreteAction = false;
@@ -51,7 +52,7 @@ namespace KSPAdvancedFlyByWire
                 
                 for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
                 {
-                    if (m_Controller.iface.GetAxisState(i) != 0.0f && m_ClickSleepTimer == 0.0f)
+                    if (Math.Abs(m_Controller.iface.GetAxisState(i) - axisSnapshot[i]) > 0.1 && m_ClickSleepTimer == 0.0f)
                     {
                         currentPreset.SetContinuousBinding(i, buttonsMask, m_CurrentlyEditingContinuousAction);
                         m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -147,6 +148,11 @@ namespace KSPAdvancedFlyByWire
                     m_ChooseContinuousAction = false;
                     m_CurrentlyEditingContinuousAction = action;
                     m_ClickSleepTimer = 0.25f;
+
+                    for (int i = 0; i < m_Controller.iface.GetAxesCount(); i++)
+                    {
+                        axisSnapshot[i] = m_Controller.iface.GetAxisState(i);
+                    }
                 }
             }
 
