@@ -193,6 +193,12 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.PitchMinus:
                     m_Pitch.SetIncrement(-1, controller.discreteActionStep);
                     return;
+                case DiscreteAction.PitchTrimPlus:
+                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() + controller.discreteActionStep, -1.0f, 1.0f));
+                    return;
+                case DiscreteAction.PitchTrimMinus:
+                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() - controller.discreteActionStep, -1.0f, 1.0f));
+                    return;
                 case DiscreteAction.RollPlus:
                     m_Roll.SetIncrement(1, controller.discreteActionStep);
                     return;

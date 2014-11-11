@@ -26,6 +26,8 @@ namespace KSPAdvancedFlyByWire
         YawMinus,
         PitchPlus,
         PitchMinus,
+        PitchTrimPlus,
+        PitchTrimMinus,
         RollPlus,
         RollMinus,
         XPlus,

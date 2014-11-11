@@ -18,6 +18,10 @@
                     return "Pitch+";
                 case DiscreteAction.PitchMinus:
                     return "Pitch-";
+                case DiscreteAction.PitchTrimPlus:
+                    return "Pitch(Trim)+";
+                case DiscreteAction.PitchTrimMinus:
+                    return "Pitch(Trim)-";
                 case DiscreteAction.RollPlus:
                     return "Roll+";
                 case DiscreteAction.RollMinus:
