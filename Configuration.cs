@@ -170,6 +170,9 @@ namespace KSPAdvancedFlyByWire
                 {
                     config.axisConfigurations.Add(config.iface.axisStates[i]);
                 }
+
+                config.manualDeadZones = config.iface.manualDeadZones;
+                config.treatHatsAsButtons = config.iface.treatHatsAsButtons;
             }
         }
 
@@ -208,6 +211,9 @@ namespace KSPAdvancedFlyByWire
                 {
                     preset.OnPostDeserialize();
                 }
+
+                config.iface.manualDeadZones = config.manualDeadZones;
+                config.iface.treatHatsAsButtons = config.treatHatsAsButtons;
             }
         }
 
