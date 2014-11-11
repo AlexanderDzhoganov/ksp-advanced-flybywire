@@ -58,6 +58,7 @@ namespace KSPAdvancedFlyByWire
                 if (m_Controller != null)
                 {
                     m_Controller.presetEditorOpen = false;
+                    AdvancedFlyByWire.Instance.SaveState(null);
                 }
 
                 return;
