@@ -56,6 +56,7 @@ namespace KSPAdvancedFlyByWire
                 if (m_Controller != null)
                 {
                     m_Controller.controllerConfigurationOpen = false;
+                    AdvancedFlyByWire.Instance.SaveState(null);
                 }
 
                 return;
