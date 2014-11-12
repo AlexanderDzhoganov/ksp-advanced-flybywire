@@ -89,11 +89,24 @@ namespace KSPAdvancedFlyByWire
             state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
             state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), -1.0f, 1.0f);
 
-            FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
-            FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
-            if (FlightCamera.fetch != null)
+            // Change pitch/yaw for different camera modes
+            switch (CameraManager.Instance.currentCameraMode)
             {
-                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
+                case CameraManager.CameraMode.Flight:
+                    FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
+                    FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
+                    FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
+                    break;
+                case CameraManager.CameraMode.Map:
+                    PlanetariumCamera cam = PlanetariumCamera.fetch;
+                    cam.camHdg += m_CameraHeading.Update() * config.cameraSensitivity;
+                    cam.camPitch += m_CameraPitch.Update() * config.cameraSensitivity;
+
+                    cam.SetDistance(Utility.Clamp(cam.Distance + (cam.Distance * m_CameraZoom.Update() * config.cameraSensitivity), cam.minDistance, cam.maxDistance));
+                    break;
+                case CameraManager.CameraMode.IVA:
+                    //TODO
+                    break;
             }
         }
 
