@@ -398,6 +398,14 @@ namespace KSPAdvancedFlyByWire
                     if (FlightInputHandler.fetch != null)
                     {
                         FlightInputHandler.fetch.precisionMode = !FlightInputHandler.fetch.precisionMode;
+                        //Change color on flight input gauges manually. Hardcoded colors, but unlikely to change.
+                        foreach (var r in FlightInputHandler.fetch.inputGaugeRenderers)
+                        {
+                            if (FlightInputHandler.fetch.precisionMode)
+                                r.material.color = new Color(0.255f, 0.992f, 0.996f);
+                            else
+                                r.material.color = new Color(0.976f, 0.451f, 0.024f);
+                        }
                     }
                     return;
                 case DiscreteAction.ResetTrim:
