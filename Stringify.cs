@@ -128,6 +128,8 @@
                     return "Precision controls [Toggle]";
                 case DiscreteAction.ResetTrim:
                     return "Reset trim";
+                case DiscreteAction.IVANextCamera:
+                    return "IVA Next Kerbal";
                 default:
                     return "Unknown action";
             }

@@ -427,6 +427,9 @@ namespace KSPAdvancedFlyByWire
                     m_Roll.SetTrim(0.0f);
                     state.ResetTrim();
                     return;
+                case DiscreteAction.IVANextCamera:
+                    CameraManager.Instance.NextCameraIVA();
+                    return;
             }
         }
 

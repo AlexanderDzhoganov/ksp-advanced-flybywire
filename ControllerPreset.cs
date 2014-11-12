@@ -87,6 +87,7 @@ namespace KSPAdvancedFlyByWire
         CameraViewToggle,
         NavballToggle,
 
+        IVANextCamera,
         TogglePrecisionControls,
         ResetTrim,
     }
