@@ -359,7 +359,7 @@ namespace KSPAdvancedFlyByWire
                     InternalCamera cam = InternalCamera.Instance;
                     cam.transform.localRotation *= Quaternion.Euler(-m_FlightManager.m_ivaPitch, m_FlightManager.m_ivaYaw, 0);
                     FlightCamera.fetch.transform.rotation = InternalSpace.InternalToWorld(cam.transform.rotation);
-                    Debug.Log("Cam rotation: " + cam.transform.localRotation.ToString());
+                    //Debug.Log("Cam rotation: " + cam.transform.localRotation.ToString());
                 }
             }
 

@@ -93,7 +93,7 @@ namespace KSPAdvancedFlyByWire
             state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
             state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), -1.0f, 1.0f);
 
-            // Change pitch/yaw depending on camera mode
+            // Change pitch/yaw for each camera mode
             switch (CameraManager.Instance.currentCameraMode)
             {
                 case CameraManager.CameraMode.Flight:
@@ -130,7 +130,7 @@ namespace KSPAdvancedFlyByWire
 
                         this.m_ivaPitch = Mathf.Clamp(m_ivaPitch + pitchChange, pitchMinIVA, pitchMaxIVA);
                         this.m_ivaYaw = Mathf.Clamp(m_ivaYaw + yawChange, yawMinIVA, yawMaxIVA);
-                        Debug.LogWarning("Pitch: " + m_ivaPitch + ", Yaw: " + m_ivaYaw);
+                        //Debug.LogWarning("Pitch: " + m_ivaPitch + ", Yaw: " + m_ivaYaw);
 
                         float camChange = m_CameraZoom.Update();
                         if (camChange != 0)
