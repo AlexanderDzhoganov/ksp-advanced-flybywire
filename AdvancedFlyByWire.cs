@@ -25,6 +25,7 @@ namespace KSPAdvancedFlyByWire
         public float m_PrecisionModeFactor = 0.5f;
 
         // Configuration
+        private static readonly string addonFolder = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
         private Configuration m_Configuration = null;
 
         private ModSettingsWindow m_ModSettings = null;
@@ -54,14 +55,8 @@ namespace KSPAdvancedFlyByWire
         {
             return Path.Combine
             (
-                Path.Combine
-                (
-                    Path.Combine
-                    (
-                        KSPUtil.ApplicationRootPath, "GameData"
-                    ),
-                    "ksp-advanced-flybywire"
-                ), "advanced_flybywire_config_v" + versionMajor + versionMinor + ".xml"
+                addonFolder,
+                "advanced_flybywire_config_v" + versionMajor + versionMinor + ".xml"
             );
         }
 
@@ -104,31 +99,14 @@ namespace KSPAdvancedFlyByWire
 
         private void LoadState(ConfigNode configNode)
         {
-            if (configNode != null)
+            KSP.IO.PluginConfiguration pluginConfig = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
+            if (pluginConfig != null)
             {
-                if (configNode.HasValue("useStockSkin"))
-                {
-                    if (configNode.GetValue("useStockSkin") == "true")
-                    {
-                        configNode.SetValue("useStockSkin", "true");
-                    }
-                }
-
-                if (configNode.HasValue("useOldPresetEditor"))
-                {
-                    if (configNode.GetValue("useOldPresetEditor") == "true")
-                    {
-                        configNode.SetValue("useOldPresetEditor", "true");
-                    }
-                }
-
-                if (configNode.HasValue("usePrecisionModeFactor"))
-                {
-                    if (configNode.GetValue("usePrecisionModeFactor") == "true")
-                    {
-                        configNode.SetValue("usePrecisionModeFactor", "true");
-                    }
-                }
+                pluginConfig.load();
+                this.m_UseKSPSkin = pluginConfig.GetValue<bool>("useStockSkin", true);
+                this.m_UseOldPresetsWindow = pluginConfig.GetValue<bool>("useOldPresetEditor", false);
+                this.m_UsePrecisionModeFactor = pluginConfig.GetValue<bool>("usePrecisionModeFactor", false);
+                this.m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue<string>("precisionModeFactor", "0.5"));
             }
             
             m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
@@ -143,11 +121,14 @@ namespace KSPAdvancedFlyByWire
 
         public void SaveState(ConfigNode configNode)
         {
-            if (configNode != null)
+            KSP.IO.PluginConfiguration pluginConfig = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
+            if (pluginConfig != null)
             {
-                configNode.SetValue("useStockSkin", m_UseKSPSkin ? "true" : "false");
-                configNode.SetValue("useOldPresetEditor", m_UseOldPresetsWindow ? "true" : "false");
-                configNode.SetValue("usePrecisionModeFactor", m_UsePrecisionModeFactor ? "true" : "false");
+                pluginConfig["useStockSkin"] = m_UseKSPSkin;
+                pluginConfig["useOldPresetEditor"] = m_UseOldPresetsWindow;
+                pluginConfig["usePrecisionModeFactor"] = m_UsePrecisionModeFactor;
+                pluginConfig["precisionModeFactor"] = m_PrecisionModeFactor.ToString();
+                pluginConfig.save();
             }
 
             Configuration.Serialize(GetAbsoluteConfigurationPath(), m_Configuration);
