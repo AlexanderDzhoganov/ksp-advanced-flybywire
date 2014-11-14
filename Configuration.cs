@@ -12,8 +12,9 @@ namespace KSPAdvancedFlyByWire
     public class ControllerConfiguration
     {
         public InputWrapper wrapper = InputWrapper.SDL;
-     
+        
         public int controllerIndex = 0;
+        public bool isEnabled = true;
         public List<ControllerPreset> presets = new List<ControllerPreset>();
         public int currentPreset = 0;
         public CurveType analogInputCurve = CurveType.XSquared;
@@ -97,6 +98,7 @@ namespace KSPAdvancedFlyByWire
             {
                 if (config.wrapper == wrapper && config.controllerIndex == controllerIndex)
                 {
+                    config.isEnabled = true;
                     return;
                 }
             }
@@ -148,8 +150,9 @@ namespace KSPAdvancedFlyByWire
 
                 if (config.wrapper == wrapper && config.controllerIndex == controllerIndex)
                 {
-                    controllers[i].iface = null;
-                    controllers.RemoveAt(i);
+                    config.isEnabled = false;
+                    //controllers[i].iface = null;
+                    //controllers.RemoveAt(i);
                     return;
                 }
             }

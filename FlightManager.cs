@@ -37,9 +37,12 @@ namespace KSPAdvancedFlyByWire
 
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
-                config.iface.Update(state);
-                UpdateAxes(config, state);
-                UpdateFlightProperties(config, state);                
+                if (config.isEnabled)
+                {
+                    config.iface.Update(state);
+                    UpdateAxes(config, state);
+                    UpdateFlightProperties(config, state);
+                }              
             }
 
             ZeroOutFlightProperties();

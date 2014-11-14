@@ -386,7 +386,7 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.BeginHorizontal();
                 ControllerConfiguration config = m_Configuration.GetConfigurationByControllerType(controller.Key,
                     controller.Value.Key);
-                bool isEnabled = config != null && config.iface != null;
+                bool isEnabled = config != null && config.iface != null && config.isEnabled;
                 bool newIsEnabled = GUILayout.Toggle(isEnabled, "");
 
                 GUILayout.Label(controller.Value.Value);
