@@ -330,17 +330,9 @@ namespace KSPAdvancedFlyByWire
 
             if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
-                if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
+                if (TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
                 {
                     m_FlightManager.OnFlyByWire(new FlightCtrlState());
-                }
-                // If camera is updated within OnFlyByWire, KSP seems to overwrite out rotations.
-                if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
-                {
-                    InternalCamera cam = InternalCamera.Instance;
-                    cam.transform.localRotation *= Quaternion.Euler(-m_FlightManager.m_ivaPitch, m_FlightManager.m_ivaYaw, 0);
-                    FlightCamera.fetch.transform.rotation = InternalSpace.InternalToWorld(cam.transform.rotation);
-                    //Debug.Log("Cam rotation: " + cam.transform.localRotation.ToString());
                 }
             }
 

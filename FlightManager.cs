@@ -27,9 +27,6 @@ namespace KSPAdvancedFlyByWire
         public FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
         public FlightProperty m_CameraZoom = new FlightProperty(-1.0f, 1.0f);
 
-        public float m_ivaPitch = 1.0f;
-        public float m_ivaYaw = 1.0f;
-
         public void OnFlyByWire(FlightCtrlState state)
         {
             m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
@@ -42,6 +39,9 @@ namespace KSPAdvancedFlyByWire
                     config.iface.Update(state);
                     UpdateAxes(config, state);
                     UpdateFlightProperties(config, state);
+                    CameraController.Instance.UpdateCameraProperties(
+                        m_CameraPitch.Update(), m_CameraHeading.Update(),
+                        m_CameraZoom.Update(), config.cameraSensitivity);
                 }              
             }
 
@@ -95,53 +95,6 @@ namespace KSPAdvancedFlyByWire
             state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
             state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
             state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), -1.0f, 1.0f);
-
-            // Change pitch/yaw for each camera mode
-            switch (CameraManager.Instance.currentCameraMode)
-            {
-                case CameraManager.CameraMode.Flight:
-                    {
-                        FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
-                        FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
-                        FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
-                        break;
-                    }
-                case CameraManager.CameraMode.Map:
-                    {
-                        PlanetariumCamera cam = PlanetariumCamera.fetch;
-                        cam.camHdg += m_CameraHeading.Update() * config.cameraSensitivity;
-                        cam.camPitch += m_CameraPitch.Update() * config.cameraSensitivity;
-
-                        cam.SetDistance(Utility.Clamp(cam.Distance + (cam.Distance * m_CameraZoom.Update() * config.cameraSensitivity), cam.minDistance, cam.maxDistance));
-                        break;
-                    }
-                case CameraManager.CameraMode.IVA:
-                    {
-                        //Trying to imitate example in KerbTrack: https://github.com/pizzaoverhead/KerbTrack/blob/master/KerbTrack/KerbTrack.cs#L402-459
-                        //Still experimental. TODO: reset fov/pitch/yaw on camera deactivate
-
-                        float fovMaxIVA = 90f;
-                        float fovMinIVA = 7.5f;
-                        float pitchMaxIVA = 85f;
-                        float pitchMinIVA = -60f;
-                        float yawMaxIVA = 110f;
-                        float yawMinIVA = -110f;
-                        float IVAscale = 5.0f;
-
-                        float pitchChange = m_CameraPitch.Update() * IVAscale;
-                        float yawChange = m_CameraHeading.Update() * IVAscale;
-
-                        this.m_ivaPitch = Mathf.Clamp(m_ivaPitch + pitchChange, pitchMinIVA, pitchMaxIVA);
-                        this.m_ivaYaw = Mathf.Clamp(m_ivaYaw + yawChange, yawMinIVA, yawMaxIVA);
-                        //Debug.LogWarning("Pitch: " + m_ivaPitch + ", Yaw: " + m_ivaYaw);
-
-                        float camChange = m_CameraZoom.Update();
-                        if (camChange != 0)
-                            InternalCamera.Instance.SetFOV(Utility.Clamp(InternalCamera.Instance.camera.fieldOfView + camChange * IVAscale, fovMinIVA, fovMaxIVA));
-
-                        break;
-                    }
-            }
         }
 
         private void ZeroOutFlightProperties()
