@@ -56,12 +56,21 @@ namespace KSPAdvancedFlyByWire
             GUILayout.Label("Use old presets editor");
             AdvancedFlyByWire.Instance.m_UseOldPresetsWindow = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseOldPresetsWindow, "");
             GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("PrecisionMode Factor");
+            AdvancedFlyByWire.Instance.m_UsePrecisionModeFactor = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UsePrecisionModeFactor, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.Label(AdvancedFlyByWire.Instance.m_PrecisionModeFactor.ToString("0.000"));
+            AdvancedFlyByWire.Instance.m_PrecisionModeFactor = GUILayout.HorizontalSlider(AdvancedFlyByWire.Instance.m_PrecisionModeFactor, 0.0f, 1.0f, GUILayout.Width(150));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("Save configuration"))
             {
                 AdvancedFlyByWire.Instance.SaveState(null);
             }
-
             GUILayout.EndHorizontal();
         }
 

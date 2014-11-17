@@ -34,9 +34,15 @@ namespace KSPAdvancedFlyByWire
 
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
-                config.iface.Update(state);
-                UpdateAxes(config, state);
-                UpdateFlightProperties(config, state);                
+                if (config.isEnabled)
+                {
+                    config.iface.Update(state);
+                    UpdateAxes(config, state);
+                    UpdateFlightProperties(config, state);
+                    CameraController.Instance.UpdateCameraProperties(
+                        m_CameraPitch.Update(), m_CameraHeading.Update(),
+                        m_CameraZoom.Update(), config.cameraSensitivity);
+                }              
             }
 
             ZeroOutFlightProperties();
@@ -74,9 +80,10 @@ namespace KSPAdvancedFlyByWire
             state.pitchTrim = m_Pitch.GetTrim();
             state.rollTrim = m_Roll.GetTrim();
 
-            state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update(), -1.0f, 1.0f);
-            state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update(), -1.0f, 1.0f);
-            state.roll = Utility.Clamp(state.roll + m_Roll.Update(), -1.0f, 1.0f);
+            float precisionModeFactor = AdvancedFlyByWire.Instance.GetPrecisionModeFactor();
+            state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update() * precisionModeFactor, -1.0f, 1.0f);
+            state.pitch = Utility.Clamp(state.pitch + m_Pitch.Update() * precisionModeFactor, -1.0f, 1.0f);
+            state.roll = Utility.Clamp(state.roll + m_Roll.Update() * precisionModeFactor, -1.0f, 1.0f);
 
             state.X = Utility.Clamp(state.X + m_X.Update(), -1.0f, 1.0f);
             state.Y = Utility.Clamp(state.Y + m_Y.Update(), -1.0f, 1.0f);
@@ -88,13 +95,6 @@ namespace KSPAdvancedFlyByWire
             state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
             state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
             state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), -1.0f, 1.0f);
-
-            FlightCamera.CamHdg += m_CameraHeading.Update() * config.cameraSensitivity;
-            FlightCamera.CamPitch += m_CameraPitch.Update() * config.cameraSensitivity;
-            if (FlightCamera.fetch != null)
-            {
-                FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + m_CameraZoom.Update());
-            }
         }
 
         private void ZeroOutFlightProperties()
@@ -398,6 +398,14 @@ namespace KSPAdvancedFlyByWire
                     if (FlightInputHandler.fetch != null)
                     {
                         FlightInputHandler.fetch.precisionMode = !FlightInputHandler.fetch.precisionMode;
+                        //Change color on flight input gauges manually. Hardcoded colors, but unlikely to change.
+                        foreach (var r in FlightInputHandler.fetch.inputGaugeRenderers)
+                        {
+                            if (FlightInputHandler.fetch.precisionMode)
+                                r.material.color = new Color(0.255f, 0.992f, 0.996f);
+                            else
+                                r.material.color = new Color(0.976f, 0.451f, 0.024f);
+                        }
                     }
                     return;
                 case DiscreteAction.ResetTrim:
@@ -405,6 +413,9 @@ namespace KSPAdvancedFlyByWire
                     m_Pitch.SetTrim(0.0f);
                     m_Roll.SetTrim(0.0f);
                     state.ResetTrim();
+                    return;
+                case DiscreteAction.IVANextCamera:
+                    CameraManager.Instance.NextCameraIVA();
                     return;
             }
         }

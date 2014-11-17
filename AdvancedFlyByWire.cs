@@ -21,7 +21,11 @@ namespace KSPAdvancedFlyByWire
         public bool m_UseKSPSkin = true;
         public bool m_UseOldPresetsWindow = false;
 
+        public bool m_UsePrecisionModeFactor = false;
+        public float m_PrecisionModeFactor = 0.5f;
+
         // Configuration
+        private static readonly string addonFolder = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
         private Configuration m_Configuration = null;
 
         private ModSettingsWindow m_ModSettings = null;
@@ -41,18 +45,18 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
+        public float GetPrecisionModeFactor()
+        {
+            bool precisionModeEnabled = FlightInputHandler.fetch != null && FlightInputHandler.fetch.precisionMode;
+            return (precisionModeEnabled && m_UsePrecisionModeFactor) ? m_PrecisionModeFactor : 1;
+        }
+
         public string GetAbsoluteConfigurationPath()
         {
             return Path.Combine
             (
-                Path.Combine
-                (
-                    Path.Combine
-                    (
-                        KSPUtil.ApplicationRootPath, "GameData"
-                    ),
-                    "ksp-advanced-flybywire"
-                ), "advanced_flybywire_config_v" + versionMajor + versionMinor + ".xml"
+                addonFolder,
+                "advanced_flybywire_config_v" + versionMajor + versionMinor + ".xml"
             );
         }
 
@@ -95,23 +99,14 @@ namespace KSPAdvancedFlyByWire
 
         private void LoadState(ConfigNode configNode)
         {
-            if (configNode != null)
+            KSP.IO.PluginConfiguration pluginConfig = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
+            if (pluginConfig != null)
             {
-                if (configNode.HasValue("useStockSkin"))
-                {
-                    if (configNode.GetValue("useStockSkin") == "true")
-                    {
-                        configNode.SetValue("useStockSkin", "true");
-                    }
-                }
-
-                if (configNode.HasValue("useOldPresetEditor"))
-                {
-                    if (configNode.GetValue("useOldPresetEditor") == "true")
-                    {
-                        configNode.SetValue("useOldPresetEditor", "true");
-                    }
-                }
+                pluginConfig.load();
+                this.m_UseKSPSkin = pluginConfig.GetValue<bool>("useStockSkin", true);
+                this.m_UseOldPresetsWindow = pluginConfig.GetValue<bool>("useOldPresetEditor", false);
+                this.m_UsePrecisionModeFactor = pluginConfig.GetValue<bool>("usePrecisionModeFactor", false);
+                this.m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue<string>("precisionModeFactor", "0.5"));
             }
             
             m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
@@ -126,10 +121,14 @@ namespace KSPAdvancedFlyByWire
 
         public void SaveState(ConfigNode configNode)
         {
-            if (configNode != null)
+            KSP.IO.PluginConfiguration pluginConfig = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
+            if (pluginConfig != null)
             {
-                configNode.SetValue("useStockSkin", m_UseKSPSkin ? "true" : "false");
-                configNode.SetValue("useOldPresetEditor", m_UseOldPresetsWindow ? "true" : "false");
+                pluginConfig["useStockSkin"] = m_UseKSPSkin;
+                pluginConfig["useOldPresetEditor"] = m_UseOldPresetsWindow;
+                pluginConfig["usePrecisionModeFactor"] = m_UsePrecisionModeFactor;
+                pluginConfig["precisionModeFactor"] = m_PrecisionModeFactor.ToString();
+                pluginConfig.save();
             }
 
             Configuration.Serialize(GetAbsoluteConfigurationPath(), m_Configuration);
@@ -331,7 +330,7 @@ namespace KSPAdvancedFlyByWire
 
             if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
-                if(TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
+                if (TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
                 {
                     m_FlightManager.OnFlyByWire(new FlightCtrlState());
                 }
@@ -379,7 +378,7 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.BeginHorizontal();
                 ControllerConfiguration config = m_Configuration.GetConfigurationByControllerType(controller.Key,
                     controller.Value.Key);
-                bool isEnabled = config != null && config.iface != null;
+                bool isEnabled = config != null && config.iface != null && config.isEnabled;
                 bool newIsEnabled = GUILayout.Toggle(isEnabled, "");
 
                 GUILayout.Label(controller.Value.Value);
