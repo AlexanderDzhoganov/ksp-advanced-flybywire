@@ -63,7 +63,10 @@ namespace KSPAdvancedFlyByWire
 
         // EVA
         EVAToggleJetpack,
-        EVAToggleHeadlamps,
+        EVAInteract,
+        EVAJump,
+        EVAPlantFlag,
+        EVAAutoRunToggle,
 
         // Various
         CutThrottle,

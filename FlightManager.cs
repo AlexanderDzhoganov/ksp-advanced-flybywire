@@ -39,10 +39,14 @@ namespace KSPAdvancedFlyByWire
                     config.iface.Update(state);
                     UpdateAxes(config, state);
                     UpdateFlightProperties(config, state);
+
+                    if (FlightGlobals.ActiveVessel.isEVA)
+                        EVAController.Instance.UpdateEVAFlightProperties(config, state);
+
                     CameraController.Instance.UpdateCameraProperties(
                         m_CameraPitch.Update(), m_CameraHeading.Update(),
                         m_CameraZoom.Update(), config.cameraSensitivity);
-                }              
+                }
             }
 
             ZeroOutFlightProperties();
@@ -171,14 +175,20 @@ namespace KSPAdvancedFlyByWire
 
         public void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
         {
-            KerbalEVA eva = null;
-            if (FlightGlobals.ActiveVessel.isEVA)
-            {
-                eva = FlightGlobals.ActiveVessel.GetComponent<KerbalEVA>();
-            }
-
             switch (action)
             {
+                case DiscreteAction.EVAInteract:
+                    EVAController.Instance.DoInteract();
+                    return;
+                case DiscreteAction.EVAJump:
+                    EVAController.Instance.DoJump();
+                    return;
+                case DiscreteAction.EVAToggleJetpack:
+                    EVAController.Instance.ToggleJetpack();
+                    return;
+                case DiscreteAction.EVAAutoRunToggle:
+                    EVAController.Instance.ToggleAutorun();
+                    return;
                 case DiscreteAction.None:
                     return;
                 case DiscreteAction.YawPlus:
@@ -236,6 +246,7 @@ namespace KSPAdvancedFlyByWire
                     FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
                     return;
                 case DiscreteAction.Light:
+                    EVAController.Instance.ToggleHeadlamp();
                     FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Light);
                     return;
                 case DiscreteAction.RCS:
@@ -282,18 +293,6 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case DiscreteAction.Custom10:
                     FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom10);
-                    return;
-                case DiscreteAction.EVAToggleJetpack:
-                    if (eva != null)
-                    {
-                        eva.JetpackDeployed = !eva.JetpackDeployed;
-                    }
-                    return;
-                case DiscreteAction.EVAToggleHeadlamps:
-                    if (eva != null)
-                    {
-                        eva.lampOn = !eva.lampOn;
-                    }
                     return;
                 case DiscreteAction.CutThrottle:
                     m_Throttle.SetValue(-state.mainThrottle);

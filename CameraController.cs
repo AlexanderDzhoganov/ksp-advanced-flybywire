@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -10,6 +12,7 @@ namespace KSPAdvancedFlyByWire
         private const float ivaFovMin = 7.5f;
         private const float ivaFovStep = 5f;
         private const float ivaPanStep = 100.0f;
+        private const float flightZoomStep = 0.5f;
         private const float mapZoomStep = 0.05f;
 
         private bool ivaCamFieldsLoaded = true;
@@ -31,7 +34,7 @@ namespace KSPAdvancedFlyByWire
 
         public CameraController()
         {
-            LoadIVAFields();
+            LoadReflectionFields();
         }
 
         public void UpdateCameraProperties(float camPitch, float camYaw, float camZoom, float camSensitivity)
@@ -42,7 +45,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     FlightCamera.CamHdg += camYaw * camSensitivity;
                     FlightCamera.CamPitch += -camPitch * camSensitivity;
-                    FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + camZoom);
+                    FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + camZoom * flightZoomStep);
                     break;
                 }
                 case CameraManager.CameraMode.Map:
@@ -74,10 +77,11 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void LoadIVAFields()
+        private void LoadReflectionFields()
         {
-            FieldInfo[] fields = typeof(InternalCamera).GetFields(
-                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            List<FieldInfo> fields = new List<FieldInfo>(typeof(InternalCamera).GetFields(
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
+            fields = new List<FieldInfo>(fields.Where(f => f.FieldType.Equals(typeof(float))));
             this.ivaPitchField = fields[3];
             this.ivaYawField = fields[4];
             if (ivaPitchField == null || ivaYawField == null)
