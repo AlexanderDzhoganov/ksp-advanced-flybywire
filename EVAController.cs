@@ -12,7 +12,6 @@ namespace KSPAdvancedFlyByWire
     {
         /**
          * Current EVA Bugs:
-         * Jetpack toggle leaves Kerbal in wrong animation state
          * Interact on ladder gives NullReference if not near a hatch
          */
 
@@ -197,12 +196,9 @@ namespace KSPAdvancedFlyByWire
                 return;
 
             KerbalEVA eva = GetKerbalEVA();
-            eva.JetpackDeployed = !eva.JetpackDeployed;
-            
-            // Possible solutions to animation problem:
-            //MethodInfo method = typeof(KerbalEVA).GetMethod("ToggleJetpack", BindingFlags.Instance | BindingFlags.NonPublic);
-            //method.Invoke(eva, new object[] { !eva.JetpackDeployed });
-            //eva.fsm.RunEvent((KFSMEvent)eventFields[17].GetValue(eva));
+            KFSMEvent togglePackEvent = (KFSMEvent)eventFields[17].GetValue(eva);
+            togglePackEvent.GoToStateOnEvent = eva.fsm.CurrentState;
+            eva.fsm.RunEvent(togglePackEvent);
         }
 
         public void SetMoveSpeed(float runSpeed)
