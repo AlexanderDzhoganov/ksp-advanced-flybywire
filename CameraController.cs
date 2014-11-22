@@ -57,6 +57,7 @@ namespace KSPAdvancedFlyByWire
                     break;
                 }
                 case CameraManager.CameraMode.IVA:
+                case CameraManager.CameraMode.Internal:
                 {
                     //Hack: access private field that holds pitch/yaw in degrees before being applied to the camera.
                     if (this.ivaCamFieldsLoaded)
@@ -74,6 +75,43 @@ namespace KSPAdvancedFlyByWire
                 default:
                     Debug.LogWarning("AFBW - Unsupported CameraMode: "+ CameraManager.Instance.currentCameraMode.ToString());
                     break;
+            }
+        }
+
+        public void NextIVACamera()
+        {
+            if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
+                && FlightGlobals.ActiveVessel.GetCrewCount() > 1)
+            {
+                CameraManager.Instance.NextCameraIVA();
+            }
+        }
+
+        public void FocusIVAWindow()
+        {
+            switch (CameraManager.Instance.currentCameraMode)
+            {
+                case CameraManager.CameraMode.IVA:
+                case CameraManager.CameraMode.Internal:
+                {
+                    InternalModel intModel = FlightGlobals.ActiveVessel.rootPart.internalModel;
+                    Transform camTransform = InternalCamera.Instance.transform;
+                    Ray ray = new Ray(camTransform.position, camTransform.forward);
+                    RaycastHit hit;
+                    // Use RayCastAll to catch far-away windows.
+                    if (Physics.Raycast(ray, out hit, 5f))
+                    {
+                        Debug.Log("RaycastHit: " + hit.collider.name + " (dist: " + hit.distance + ")");
+                        foreach (InternalCameraSwitch intCam in intModel.FindModelComponents<InternalCameraSwitch>())
+                        {
+                            if (hit.collider.name.Equals(intCam.colliderTransformName))
+                            {
+                                intCam.Button_OnDoubleTap();
+                            }
+                        }
+                    }
+                    break;
+                }
             }
         }
 

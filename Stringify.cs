@@ -136,6 +136,8 @@
                     return "Reset Trim";
                 case DiscreteAction.IVANextCamera:
                     return "IVA Next Kerbal";
+                case DiscreteAction.IVALookWindow:
+                    return "IVA Focus Window";
                 default:
                     return "Unknown Action";
             }

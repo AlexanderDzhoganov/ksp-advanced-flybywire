@@ -414,7 +414,10 @@ namespace KSPAdvancedFlyByWire
                     state.ResetTrim();
                     return;
                 case DiscreteAction.IVANextCamera:
-                    CameraManager.Instance.NextCameraIVA();
+                    CameraController.Instance.NextIVACamera();
+                    return;
+                case DiscreteAction.IVALookWindow:
+                    CameraController.Instance.FocusIVAWindow();
                     return;
             }
         }
