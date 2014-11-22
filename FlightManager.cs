@@ -177,18 +177,6 @@ namespace KSPAdvancedFlyByWire
         {
             switch (action)
             {
-                case DiscreteAction.EVAInteract:
-                    EVAController.Instance.DoInteract();
-                    return;
-                case DiscreteAction.EVAJump:
-                    EVAController.Instance.DoJump();
-                    return;
-                case DiscreteAction.EVAToggleJetpack:
-                    EVAController.Instance.ToggleJetpack();
-                    return;
-                case DiscreteAction.EVAAutoRunToggle:
-                    EVAController.Instance.ToggleAutorun();
-                    return;
                 case DiscreteAction.None:
                     return;
                 case DiscreteAction.YawPlus:
@@ -418,6 +406,21 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case DiscreteAction.IVALookWindow:
                     CameraController.Instance.FocusIVAWindow();
+                    return;
+                case DiscreteAction.EVAInteract:
+                    EVAController.Instance.DoInteract();
+                    return;
+                case DiscreteAction.EVAJump:
+                    EVAController.Instance.DoJump();
+                    return;
+                case DiscreteAction.EVAToggleJetpack:
+                    EVAController.Instance.ToggleJetpack();
+                    return;
+                case DiscreteAction.EVAAutoRunToggle:
+                    EVAController.Instance.ToggleAutorun();
+                    return;
+                case DiscreteAction.EVAPlantFlag:
+                    EVAController.Instance.DoPlantFlag();
                     return;
             }
         }

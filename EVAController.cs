@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +15,6 @@ namespace KSPAdvancedFlyByWire
          * Jetpack toggle leaves Kerbal in wrong animation state
          * Interact on ladder gives NullReference if not near a hatch
          */
-
 
         private const float EVARotationStep = 57.29578f; // From KerbalEVA.UpdateHeading()
 
@@ -65,7 +65,7 @@ namespace KSPAdvancedFlyByWire
 
                 //Debug.Log("State: " + eva.fsm.currentStateName + " (< " + eva.fsm.lastEventName + ")");
                 //Debug.Log("MovementMode: " + eva.CharacterFrameMode);
-                //Debug.Log("Landed? "+ eva.part.GroundContact +", "+ eva.vessel.LandedOrSplashed +", "+ eva.vessel.Landed);
+                //Debug.Log("Landed? " + eva.part.GroundContact + ", " + eva.vessel.LandedOrSplashed + ", " + eva.vessel.Landed);
 
                 if (state.Y != 0)
                 {
@@ -104,7 +104,8 @@ namespace KSPAdvancedFlyByWire
 
                 //Debug.LogWarning("Runspeed: " + moveDirection.magnitude);
                 moveDirection.Normalize();
-                //Debug.LogWarning("MoveDirection: "+ moveDirection);
+                //Debug.LogWarning("MoveDirection: " + moveDirection);
+                //Debug.LogWarning("LadderDirection: "+ ladderDirection);
                 this.vectorFields[0].SetValue(eva, moveDirection);              //vector3_0 = MoveDirection
                 this.vectorFields[2].SetValue(eva, moveDirection);              //vector3_2 = JetpackDirection
                 this.vectorFields[6].SetValue(eva, ladderDirection);            //vector3_6 = LadderDirection
@@ -139,64 +140,27 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        // We disable "Ladder Stop" check because it triggers on ladderDirection.isZero, which is zeroed by Squad.
-        private void DisableLadderStopCondition(KerbalEVA eva)
-        {
-            KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva); // Ladder Stop
-            if (this.ladderStopConditionDelegate == null)
-            {
-                this.ladderStopConditionDelegate = eLadderStop.OnCheckCondition;
-            }
-            //Debug.LogWarning("Disabling LadderStop");
-            eLadderStop.OnCheckCondition = this.eventConditionDisabled;
-        }
-
-        private void DisableSwimStopCondition(KerbalEVA eva)
-        {
-            KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva); // Swim Stop
-            if (this.swimStopConditionDelegate == null)
-            {
-                this.swimStopConditionDelegate = eSwimStop.OnCheckCondition;
-            }
-            //Debug.LogWarning("Disabling SwimStop");
-            eSwimStop.OnCheckCondition = this.eventConditionDisabled;
-        }
-
-        private void ReEnableStopConditions(KerbalEVA eva)
-        {
-            if (this.ladderStopConditionDelegate != null)
-            {
-                //Debug.LogWarning("Re-enable LadderStop");
-                KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva);
-                eLadderStop.OnCheckCondition = this.ladderStopConditionDelegate;
-                this.ladderStopConditionDelegate = null;
-            }
-            if (this.swimStopConditionDelegate != null)
-            {
-                //Debug.LogWarning("Re-enable SwimStop");
-                KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva);
-                eSwimStop.OnCheckCondition = this.swimStopConditionDelegate;
-                this.swimStopConditionDelegate = null;
-            }
-        }
-
         public void DoInteract()
         {
-            if (!FlightGlobals.ActiveVessel.isEVA)
-                return;
-
-            KerbalEVA eva = GetKerbalEVA();
-            if (this.GetEVAColliders(eva).Count > 0)
+            if (FlightGlobals.ActiveVessel.isEVA)
             {
-                if (eva.OnALadder)
+
+                KerbalEVA eva = GetKerbalEVA();
+                if (this.GetEVAColliders(eva).Count > 0)
                 {
-                    //TODO NullReference when not close to a hatch
-                    eva.fsm.RunEvent((KFSMEvent)this.eventFields[34].GetValue(eva)); // Board Vessel
+                    if (eva.OnALadder)
+                    {
+                        eva.fsm.RunEvent((KFSMEvent)this.eventFields[34].GetValue(eva)); // Board Vessel
+                    }
+                    else
+                    {
+                        eva.fsm.RunEvent((KFSMEvent)this.eventFields[22].GetValue(eva)); // Grab Ladder
+                    }
                 }
-                else
-                {
-                    eva.fsm.RunEvent((KFSMEvent)this.eventFields[22].GetValue(eva)); // Grab Ladder
-                }
+            }
+            else
+            {
+                GoEVA();
             }
         }
 
@@ -222,7 +186,8 @@ namespace KSPAdvancedFlyByWire
                 return;
 
             KerbalEVA eva = GetKerbalEVA();
-            eva.PlantFlag();
+            if (eva.part.GroundContact)
+                eva.PlantFlag();
         }
 
         // Animation is bugged
@@ -269,10 +234,76 @@ namespace KSPAdvancedFlyByWire
         public void ToggleAutorun()
         {
             this.m_autoRunning = !this.m_autoRunning;
-            Debug.Log("EVA AutoRun: "+ this.m_autoRunning);
+            ScreenMessages.PostScreenMessage("AutoRun: " + (this.m_autoRunning ? "ON" : "OFF"), 2f, ScreenMessageStyle.LOWER_CENTER);
         }
 
+        public void GoEVA()
+        {
+            if (HighLogic.CurrentGame.Parameters.Flight.CanEVA && 
+                CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
+            {
+                foreach (ProtoCrewMember pcm in FlightGlobals.ActiveVessel.GetVesselCrew())
+                {
+                    if (pcm.KerbalRef.eyeTransform == InternalCamera.Instance.transform.parent)
+                    {
+                        CameraManager.Instance.SetCameraFlight();
+                        //Delay EVA spawn until next FixedUpdate. Prevents push to vessel.
+                        FlightEVA.fetch.StartCoroutine(GoEVADelayed(pcm.KerbalRef));
+                        break;
+                    }
+                }
+            }
+        }
+
+
         // PRIVATE FIELDS //
+
+        private IEnumerator GoEVADelayed(Kerbal kerbal)
+        {
+            yield return new WaitForFixedUpdate();
+            FlightEVA.SpawnEVA(kerbal);
+        }
+
+        // We disable "Ladder Stop" check because it triggers on ladderDirection.isZero, which is zeroed by Squad.
+        private void DisableLadderStopCondition(KerbalEVA eva)
+        {
+            KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva); // Ladder Stop
+            if (this.ladderStopConditionDelegate == null)
+            {
+                Debug.LogWarning("Disabling LadderStop");
+                this.ladderStopConditionDelegate = eLadderStop.OnCheckCondition;
+                eLadderStop.OnCheckCondition = this.eventConditionDisabled;
+            }
+        }
+
+        private void DisableSwimStopCondition(KerbalEVA eva)
+        {
+            KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva); // Swim Stop
+            if (this.swimStopConditionDelegate == null)
+            {
+                Debug.LogWarning("Disabling SwimStop");
+                this.swimStopConditionDelegate = eSwimStop.OnCheckCondition;
+                eSwimStop.OnCheckCondition = this.eventConditionDisabled;
+            }
+        }
+
+        private void ReEnableStopConditions(KerbalEVA eva)
+        {
+            if (this.ladderStopConditionDelegate != null)
+            {
+                Debug.LogWarning("Re-enable LadderStop");
+                KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva);
+                eLadderStop.OnCheckCondition = this.ladderStopConditionDelegate;
+                this.ladderStopConditionDelegate = null;
+            }
+            if (this.swimStopConditionDelegate != null)
+            {
+                Debug.LogWarning("Re-enable SwimStop");
+                KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva);
+                eSwimStop.OnCheckCondition = this.swimStopConditionDelegate;
+                this.swimStopConditionDelegate = null;
+            }
+        }
 
         private KerbalAnimationState GetAnimationForVelocity(KerbalEVA eva)
         {
