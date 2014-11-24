@@ -21,6 +21,7 @@ namespace KSPAdvancedFlyByWire
         private List<FieldInfo> floatFields;
         private List<FieldInfo> eventFields;
         private FieldInfo colliderListField;
+        private KFSMEventCondition runStopConditionDelegate;
         private KFSMEventCondition ladderStopConditionDelegate;
         private KFSMEventCondition swimStopConditionDelegate;
         private KFSMEventCondition eventConditionDisabled = ((KFSMState s) => false);
@@ -101,18 +102,18 @@ namespace KSPAdvancedFlyByWire
                     DisableSwimStopCondition(eva);
                 }
 
-                //Debug.LogWarning("Runspeed: " + moveDirection.magnitude);
+                //Debug.Log("Runspeed: " + moveDirection.magnitude);
                 moveDirection.Normalize();
-                //Debug.LogWarning("MoveDirection: " + moveDirection);
-                //Debug.LogWarning("LadderDirection: "+ ladderDirection);
+                //Debug.Log("MoveDirection: " + moveDirection);
+                //Debug.Log("LadderDirection: "+ ladderDirection);
                 this.vectorFields[0].SetValue(eva, moveDirection);              //vector3_0 = MoveDirection
                 this.vectorFields[2].SetValue(eva, moveDirection);              //vector3_2 = JetpackDirection
                 this.vectorFields[6].SetValue(eva, ladderDirection);            //vector3_6 = LadderDirection
 
                 Quaternion rotation = Quaternion.identity;
-                rotation *= Quaternion.AngleAxis(eva.turnRate * state.pitch * 57.29578f * Time.deltaTime, -eva.transform.right);
-                rotation *= Quaternion.AngleAxis(eva.turnRate * state.yaw * 57.29578f * Time.deltaTime, eva.transform.up);
-                rotation *= Quaternion.AngleAxis(eva.turnRate * state.roll * 57.29578f * Time.deltaTime, -eva.transform.forward);
+                rotation *= Quaternion.AngleAxis(eva.turnRate * state.pitch * EVARotationStep * Time.deltaTime, -eva.transform.right);
+                rotation *= Quaternion.AngleAxis(eva.turnRate * state.yaw * EVARotationStep * Time.deltaTime, eva.transform.up);
+                rotation *= Quaternion.AngleAxis(eva.turnRate * state.roll * EVARotationStep * Time.deltaTime, -eva.transform.forward);
                 if (rotation != Quaternion.identity)
                 {
                     this.vectorFields[8].SetValue(eva, rotation * (Vector3)this.vectorFields[8].GetValue(eva));
@@ -143,9 +144,10 @@ namespace KSPAdvancedFlyByWire
         {
             if (FlightGlobals.ActiveVessel.isEVA)
             {
-
                 KerbalEVA eva = GetKerbalEVA();
-                if (this.GetEVAColliders(eva).Count > 0)
+
+                List<Collider> colliders = this.GetEVAColliders(eva);
+                if (colliders.Count > 0)
                 {
                     if (eva.OnALadder)
                     {
@@ -210,10 +212,17 @@ namespace KSPAdvancedFlyByWire
             if (IsVesselActive(eva.vessel) 
                 && !eva.JetpackDeployed && !eva.OnALadder && !eva.isRagdoll)
             {
-                eva.animation.CrossFade( GetAnimationForVelocity(eva), 0.2f );
-                eva.animation.Blend(eva.Animations.walkLowGee, Mathf.InverseLerp(1f, eva.minWalkingGee, (float)eva.vessel.mainBody.GeeASL));
-                eva.Animations.walkLowGee.State.speed = 2.7f;
-                floatFields[6].SetValue(eva, eva.runSpeed * runSpeed);
+                //Debug.Log("RunSpeed is: " + runSpeed);
+                if (runSpeed > 0.75f)
+                {
+                    eva.fsm.RunEvent((KFSMEvent)eventFields[2].GetValue(eva)); // Start Run
+                    DisableRunStopCondition(eva);
+                }
+                else
+                {
+                    eva.fsm.RunEvent((KFSMEvent)eventFields[3].GetValue(eva)); // Stop Run
+                }
+                floatFields[6].SetValue(eva, runSpeed * eva.runSpeed);
             }
         }
 
@@ -260,13 +269,24 @@ namespace KSPAdvancedFlyByWire
             FlightEVA.SpawnEVA(kerbal);
         }
 
+        private void DisableRunStopCondition(KerbalEVA eva)
+        {
+            KFSMEvent eRunStop = (KFSMEvent)eventFields[3].GetValue(eva); // End Run
+            if (this.runStopConditionDelegate == null)
+            {
+                //Debug.Log("Disabling RunStop");
+                this.runStopConditionDelegate = eRunStop.OnCheckCondition;
+                eRunStop.OnCheckCondition = this.eventConditionDisabled;
+            }
+        }
+
         // We disable "Ladder Stop" check because it triggers on ladderDirection.isZero, which is zeroed by Squad.
         private void DisableLadderStopCondition(KerbalEVA eva)
         {
             KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva); // Ladder Stop
             if (this.ladderStopConditionDelegate == null)
             {
-                Debug.LogWarning("Disabling LadderStop");
+                //Debug.Log("Disabling LadderStop");
                 this.ladderStopConditionDelegate = eLadderStop.OnCheckCondition;
                 eLadderStop.OnCheckCondition = this.eventConditionDisabled;
             }
@@ -277,7 +297,7 @@ namespace KSPAdvancedFlyByWire
             KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva); // Swim Stop
             if (this.swimStopConditionDelegate == null)
             {
-                Debug.LogWarning("Disabling SwimStop");
+                //Debug.Log("Disabling SwimStop");
                 this.swimStopConditionDelegate = eSwimStop.OnCheckCondition;
                 eSwimStop.OnCheckCondition = this.eventConditionDisabled;
             }
@@ -287,17 +307,24 @@ namespace KSPAdvancedFlyByWire
         {
             if (this.ladderStopConditionDelegate != null)
             {
-                Debug.LogWarning("Re-enable LadderStop");
+                //Debug.Log("Re-enable LadderStop");
                 KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva);
                 eLadderStop.OnCheckCondition = this.ladderStopConditionDelegate;
                 this.ladderStopConditionDelegate = null;
             }
             if (this.swimStopConditionDelegate != null)
             {
-                Debug.LogWarning("Re-enable SwimStop");
+                //Debug.Log("Re-enable SwimStop");
                 KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva);
                 eSwimStop.OnCheckCondition = this.swimStopConditionDelegate;
                 this.swimStopConditionDelegate = null;
+            }
+            if (this.runStopConditionDelegate != null)
+            {
+                //Debug.Log("Re-enable RunStop");
+                KFSMEvent eRunStop = (KFSMEvent)eventFields[3].GetValue(eva);
+                eRunStop.OnCheckCondition = this.runStopConditionDelegate;
+                this.runStopConditionDelegate = null;
             }
         }
 
