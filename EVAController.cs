@@ -21,9 +21,9 @@ namespace KSPAdvancedFlyByWire
         private List<FieldInfo> floatFields;
         private List<FieldInfo> eventFields;
         private FieldInfo colliderListField;
-        private KFSMEventCondition runStopConditionDelegate;
-        private KFSMEventCondition ladderStopConditionDelegate;
-        private KFSMEventCondition swimStopConditionDelegate;
+        private KFSMEventCondition runStopCondition;
+        private KFSMEventCondition ladderStopCondition;
+        private KFSMEventCondition swimStopCondition;
         private KFSMEventCondition eventConditionDisabled = ((KFSMState s) => false);
         private bool m_autoRunning = false;
 
@@ -48,7 +48,7 @@ namespace KSPAdvancedFlyByWire
 
         public void UpdateEVAFlightProperties(ControllerConfiguration config, FlightCtrlState state)
         {
-            if ( !FlightGlobals.ActiveVessel.isEVA )
+            if (!FlightGlobals.ActiveVessel.isEVA)
                 return;
 
             KerbalEVA eva = GetKerbalEVA();
@@ -79,20 +79,22 @@ namespace KSPAdvancedFlyByWire
                 }
                 if (state.Z != 0)
                 {
-                    moveDirection += (!eva.CharacterFrameMode ? eva.fFwd : eva.transform.forward) *state.Z;
+                    moveDirection += (!eva.CharacterFrameMode ? eva.fFwd : eva.transform.forward) * state.Z;
                     ladderDirection += (state.Z > 0 ? eva.transform.up : -eva.transform.up);
                 }
 
                 if (eva.vessel.LandedOrSplashed && !eva.JetpackDeployed && !eva.OnALadder && !eva.isRagdoll)
                 {
                     float moveSpeed = moveDirection.magnitude;
+                    // Decrease max moveSpeed when not moving in a forwards direction.
                     if (Vector3.Angle(moveDirection, eva.transform.forward) > 45)
                     {
-                        // Decrease max moveSpeed when not moving in a forwards direction
                         moveSpeed = Mathf.Clamp(moveSpeed, 0, 0.25f);
                     }
                     this.SetMoveSpeed(moveSpeed);
                 }
+
+                // We disable "Run/Ladder/Swim Stop" check while moving.
                 if (eva.OnALadder && (state.Y != 0 || state.Z != 0))
                 {
                     DisableLadderStopCondition(eva);
@@ -191,7 +193,6 @@ namespace KSPAdvancedFlyByWire
                 eva.PlantFlag();
         }
 
-        // Animation is bugged
         public void ToggleJetpack()
         {
             if (!FlightGlobals.ActiveVessel.isEVA)
@@ -209,8 +210,8 @@ namespace KSPAdvancedFlyByWire
                 return;
 
             KerbalEVA eva = GetKerbalEVA();
-            if (IsVesselActive(eva.vessel) 
-                && !eva.JetpackDeployed && !eva.OnALadder && !eva.isRagdoll)
+            if (IsVesselActive(eva.vessel)
+                && !eva.JetpackDeployed && !eva.OnALadder && !eva.isRagdoll && !eva.vessel.Splashed)
             {
                 //Debug.Log("RunSpeed is: " + runSpeed);
                 if (runSpeed > 0.75f)
@@ -244,7 +245,7 @@ namespace KSPAdvancedFlyByWire
 
         public void GoEVA()
         {
-            if (HighLogic.CurrentGame.Parameters.Flight.CanEVA && 
+            if (HighLogic.CurrentGame.Parameters.Flight.CanEVA &&
                 CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
             {
                 foreach (ProtoCrewMember pcm in FlightGlobals.ActiveVessel.GetVesselCrew())
@@ -261,7 +262,7 @@ namespace KSPAdvancedFlyByWire
         }
 
 
-        // PRIVATE FIELDS //
+        // PRIVATE METHODS //
 
         private IEnumerator GoEVADelayed(Kerbal kerbal)
         {
@@ -271,69 +272,59 @@ namespace KSPAdvancedFlyByWire
 
         private void DisableRunStopCondition(KerbalEVA eva)
         {
-            KFSMEvent eRunStop = (KFSMEvent)eventFields[3].GetValue(eva); // End Run
-            if (this.runStopConditionDelegate == null)
+            if (this.runStopCondition == null)
             {
                 //Debug.Log("Disabling RunStop");
-                this.runStopConditionDelegate = eRunStop.OnCheckCondition;
+                KFSMEvent eRunStop = (KFSMEvent)eventFields[3].GetValue(eva); // End Run
+                this.runStopCondition = eRunStop.OnCheckCondition;
                 eRunStop.OnCheckCondition = this.eventConditionDisabled;
             }
         }
-
-        // We disable "Ladder Stop" check because it triggers on ladderDirection.isZero, which is zeroed by Squad.
         private void DisableLadderStopCondition(KerbalEVA eva)
         {
-            KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva); // Ladder Stop
-            if (this.ladderStopConditionDelegate == null)
+            if (this.ladderStopCondition == null)
             {
                 //Debug.Log("Disabling LadderStop");
-                this.ladderStopConditionDelegate = eLadderStop.OnCheckCondition;
+                KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva); // Ladder Stop
+                this.ladderStopCondition = eLadderStop.OnCheckCondition;
                 eLadderStop.OnCheckCondition = this.eventConditionDisabled;
             }
         }
 
         private void DisableSwimStopCondition(KerbalEVA eva)
         {
-            KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva); // Swim Stop
-            if (this.swimStopConditionDelegate == null)
+            if (this.swimStopCondition == null)
             {
                 //Debug.Log("Disabling SwimStop");
-                this.swimStopConditionDelegate = eSwimStop.OnCheckCondition;
+                KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva); // Swim Stop
+                this.swimStopCondition = eSwimStop.OnCheckCondition;
                 eSwimStop.OnCheckCondition = this.eventConditionDisabled;
             }
         }
 
         private void ReEnableStopConditions(KerbalEVA eva)
         {
-            if (this.ladderStopConditionDelegate != null)
+            if (this.ladderStopCondition != null)
             {
                 //Debug.Log("Re-enable LadderStop");
                 KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva);
-                eLadderStop.OnCheckCondition = this.ladderStopConditionDelegate;
-                this.ladderStopConditionDelegate = null;
+                eLadderStop.OnCheckCondition = this.ladderStopCondition;
+                this.ladderStopCondition = null;
             }
-            if (this.swimStopConditionDelegate != null)
+            if (this.swimStopCondition != null)
             {
                 //Debug.Log("Re-enable SwimStop");
                 KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva);
-                eSwimStop.OnCheckCondition = this.swimStopConditionDelegate;
-                this.swimStopConditionDelegate = null;
+                eSwimStop.OnCheckCondition = this.swimStopCondition;
+                this.swimStopCondition = null;
             }
-            if (this.runStopConditionDelegate != null)
+            if (this.runStopCondition != null)
             {
                 //Debug.Log("Re-enable RunStop");
                 KFSMEvent eRunStop = (KFSMEvent)eventFields[3].GetValue(eva);
-                eRunStop.OnCheckCondition = this.runStopConditionDelegate;
-                this.runStopConditionDelegate = null;
+                eRunStop.OnCheckCondition = this.runStopCondition;
+                this.runStopCondition = null;
             }
-        }
-
-        private KerbalAnimationState GetAnimationForVelocity(KerbalEVA eva)
-        {
-            float srfVelocity = eva.vessel.GetSrfVelocity().magnitude;
-            if (srfVelocity > 1.75f) return eva.Animations.run;
-            else if (srfVelocity < 0.05) return eva.Animations.turnRight;
-            else return eva.Animations.walkFwd;
         }
 
         private List<Collider> GetEVAColliders(KerbalEVA eva)
