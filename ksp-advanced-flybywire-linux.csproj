@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1C84F0AB-CF76-4C5A-A330-4436C323707E}</ProjectGuid>
+    <ProjectGuid>{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KSPAdvancedFlyByWire</RootNamespace>
@@ -35,17 +35,17 @@
     <DefineConstants>LINUX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,23 +57,26 @@
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>builds\x64\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
+      <HintPath>builds\x86\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AxisConfiguration.cs" />
     <Compile Include="Bitset.cs" />
+    <Compile Include="CameraController.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="ControllerConfigurationWindow.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
+    <Compile Include="EVAController.cs" />
     <Compile Include="FlightManager.cs" />
     <Compile Include="FlightProperty.cs" />
     <Compile Include="KeyboardMouseController.cs" />
+    <Compile Include="ModSettingsWindow.cs" />
     <Compile Include="PresetEditorWindow.cs" />
     <Compile Include="PresetEditorWindowNG.cs" />
     <Compile Include="SDL2.cs" />
@@ -89,9 +92,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\linux\x64\GameData\ksp-advanced-flybywire\
-xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\alpha\linux\x64\
-rmdir /S /q ..\..\obj\</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\linux\GameData\ksp-advanced-flybywire\
+xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\alpha\linux\
+rmdir /S /q ..\..\obj\
+xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)GameData\ksp-advanced-flybywire\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
