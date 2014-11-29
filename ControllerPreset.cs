@@ -91,7 +91,7 @@ namespace KSPAdvancedFlyByWire
         NavballToggle,
 
         IVANextCamera,
-        IVALookWindow,
+       // IVALookWindow, // has issues, disabled for now
         TogglePrecisionControls,
         ResetTrim,
     }

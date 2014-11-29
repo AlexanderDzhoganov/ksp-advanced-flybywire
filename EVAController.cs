@@ -153,11 +153,25 @@ namespace KSPAdvancedFlyByWire
                 {
                     if (eva.OnALadder)
                     {
-                        eva.fsm.RunEvent((KFSMEvent)this.eventFields[34].GetValue(eva)); // Board Vessel
+                        try
+                        {
+                            eva.fsm.RunEvent((KFSMEvent) this.eventFields[34].GetValue(eva)); // Board Vessel
+                        }
+                        catch (Exception)
+                        {
+                            return;
+                        }
                     }
                     else
                     {
-                        eva.fsm.RunEvent((KFSMEvent)this.eventFields[22].GetValue(eva)); // Grab Ladder
+                        try
+                        {
+                            eva.fsm.RunEvent((KFSMEvent) this.eventFields[22].GetValue(eva)); // Grab Ladder
+                        }
+                        catch (Exception)
+                        {
+                            return;
+                        }
                     }
                 }
             }

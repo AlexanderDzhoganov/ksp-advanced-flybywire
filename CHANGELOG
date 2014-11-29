@@ -1,3 +1,13 @@
+v1.3
+- EVA!
+- "EVA Jetpack", "EVA Interact", "EVA Jump", "EVA Plant Flag", "EVA AutoRun" have been added
+- Translation controls now work in EVA
+- Camera rotation now works in Map mode and IVA mode
+- Precision mode now works properly
+
+Everything in this update was generously contributed by ddaf (https://github.com/ddaf)
+I am very impressed by the work you did on this, thank you so much!
+
 v1.2.3
 - Fixed the wheel throttle bugs
 - Added a new "Brakes (Hold)" binding, renamed "Brakes" to "Brakes (Toggle)"

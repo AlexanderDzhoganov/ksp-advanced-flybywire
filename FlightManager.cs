@@ -404,9 +404,9 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.IVANextCamera:
                     CameraController.Instance.NextIVACamera();
                     return;
-                case DiscreteAction.IVALookWindow:
+             /*   case DiscreteAction.IVALookWindow:
                     CameraController.Instance.FocusIVAWindow();
-                    return;
+                    return;*/
                 case DiscreteAction.EVAInteract:
                     EVAController.Instance.DoInteract();
                     return;
