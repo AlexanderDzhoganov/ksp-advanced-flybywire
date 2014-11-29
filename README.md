@@ -7,7 +7,7 @@ Latest version - 1.3
 
 [Download v1.3 (Windows, KSP x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.3_x64.zip)
 
-[Download v1.2.3 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.2.3_linux.zip) (Requires libsdl2)
+[Download v1.3 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.3_linux.zip) (Requires libsdl2)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
