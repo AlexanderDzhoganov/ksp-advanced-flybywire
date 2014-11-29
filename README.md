@@ -16,8 +16,6 @@ You can also find the mod on:
 - [Curse.com](http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire)
 - [KerbalStuff](https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire)
 
-## [[Poll] What should future development focus on?](https://docs.google.com/forms/d/1ao4iKmPQX0pbt0O6CqKFn-FbSyEkO6qPJCH64mp0pNg/viewform?c=0&w=1)
-
 ### What is this?
 This is a mod for [Kerbal Space Program](http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
 It dramatically enhances the stock input system with a bunch of fixes and many new features.
@@ -62,9 +60,6 @@ XInput support unavailable on Linux and MacOSX.
 The mod is extremely lightweight both on performance and memory. It only does a bit of arithmetic and remapping of incoming inputs which should have
 no noticeable effect on CPU usage. Memory usage is in the order of a few megabytes.
 
-### Limitations
-There is only one known limitation so far - most EVA controls are unavailable, you should continue using the stock input system for EVA.
-
 ### Compatibility with other mods
 The mod has been tested to work with over 50 of the most popular mods.
 
@@ -85,12 +80,6 @@ Here is a (non-exhaustive) list of mods that have been tested to be compatible, 
 - Chatterer
 - Environmental Visual Enhancements
 - TAC Life Support .. and more
-
-### Roadmap
-
-- Linux/ MacOSX support
-- Support for controller hats and trackballs
-- EVA actions
 
 ### Bug reports
 Please report any bugs using [GitHub's issue tracker](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/issues).
