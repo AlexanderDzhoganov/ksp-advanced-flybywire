@@ -19,9 +19,9 @@
                 case DiscreteAction.PitchMinus:
                     return "Pitch-";
                 case DiscreteAction.PitchTrimPlus:
-                    return "Pitch(Trim)+";
+                    return "Pitch Trim+";
                 case DiscreteAction.PitchTrimMinus:
-                    return "Pitch(Trim)-";
+                    return "Pitch Trim-";
                 case DiscreteAction.RollPlus:
                     return "Roll+";
                 case DiscreteAction.RollMinus:
@@ -79,23 +79,29 @@
                 case DiscreteAction.Custom10:
                     return "Custom 10";
                 case DiscreteAction.EVAToggleJetpack:
-                    return "Toggle jetpack (EVA)";
-                case DiscreteAction.EVAToggleHeadlamps:
-                    return "Headlamps (EVA) [Toggle]";
+                    return "EVA Jetpack [Toggle]";
+                case DiscreteAction.EVAInteract:
+                    return "EVA Interact";
+                case DiscreteAction.EVAJump:
+                    return "EVA Jump";
+                case DiscreteAction.EVAPlantFlag:
+                    return "EVA Plant Flag";
+                case DiscreteAction.EVAAutoRunToggle:
+                    return "EVA AutoRun [Toggle]";
                 case DiscreteAction.CutThrottle:
-                    return "Cut throttle";
+                    return "Cut Throttle";
                 case DiscreteAction.FullThrottle:
-                    return "Full throttle";
+                    return "Full Throttle";
                 case DiscreteAction.NextPreset:
-                    return "Next preset";
+                    return "Next Preset";
                 case DiscreteAction.PreviousPreset:
-                    return "Previous preset";
+                    return "Previous Preset";
                 case DiscreteAction.CyclePresets:
-                    return "Cycle presets";
+                    return "Cycle Presets";
                 case DiscreteAction.CameraZoomPlus:
-                    return "Camera zoom+";
+                    return "Camera Zoom+";
                 case DiscreteAction.CameraZoomMinus:
-                    return "Camera zoom-";
+                    return "Camera Zoom-";
                 case DiscreteAction.CameraXPlus:
                     return "Camera X+";
                 case DiscreteAction.CameraXMinus:
@@ -105,7 +111,7 @@
                 case DiscreteAction.CameraYMinus:
                     return "Camera Y-";
                 case DiscreteAction.OrbitMapToggle:
-                    return "Orbit map [Toggle]";
+                    return "Orbit Map [Toggle]";
                 case DiscreteAction.TimeWarpPlus:
                     return "TimeWarp+";
                 case DiscreteAction.TimeWarpMinus:
@@ -117,21 +123,23 @@
                 case DiscreteAction.NavballToggle:
                     return "Navball [Toggle]";
                 case DiscreteAction.IVAViewToggle:
-                    return "IVA view [Toggle]";
+                    return "IVA View [Toggle]";
                 case DiscreteAction.CameraViewToggle:
-                    return "Camera view [Toggle]";
+                    return "Camera View [Toggle]";
                 case DiscreteAction.SASHold:
                     return "SAS (Hold)";
                 case DiscreteAction.LockStage:
-                    return "Lock staging";
+                    return "Lock Staging";
                 case DiscreteAction.TogglePrecisionControls:
-                    return "Precision controls [Toggle]";
+                    return "Precision Controls [Toggle]";
                 case DiscreteAction.ResetTrim:
-                    return "Reset trim";
+                    return "Reset Trim";
                 case DiscreteAction.IVANextCamera:
                     return "IVA Next Kerbal";
+                case DiscreteAction.IVALookWindow:
+                    return "IVA Focus Window";
                 default:
-                    return "Unknown action";
+                    return "Unknown Action";
             }
         }
 
@@ -178,21 +186,21 @@
                 case ContinuousAction.ThrottleDecrement:
                     return "Throttle (Decrement)";
                 case ContinuousAction.WheelSteer:
-                    return "Wheel steer";
+                    return "Wheel Steer";
                 case ContinuousAction.WheelSteerTrim:
-                    return "Wheel steer (Trim)";
+                    return "Wheel Steer (Trim)";
                 case ContinuousAction.WheelThrottle:
-                    return "Wheel throttle";
+                    return "Wheel Throttle";
                 case ContinuousAction.WheelThrottleTrim:
-                    return "Wheel throttle (Trim)";
+                    return "Wheel Throttle (Trim)";
                 case ContinuousAction.CameraX:
                     return "Camera X";
                 case ContinuousAction.CameraY:
                     return "Camera Y";
                 case ContinuousAction.CameraZoom:
-                    return "Camera zoom";
+                    return "Camera Zoom";
                 default:
-                    return "Unknown action";
+                    return "Unknown Action";
             }
         }
         

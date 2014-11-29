@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -10,6 +12,7 @@ namespace KSPAdvancedFlyByWire
         private const float ivaFovMin = 7.5f;
         private const float ivaFovStep = 5f;
         private const float ivaPanStep = 100.0f;
+        private const float flightZoomStep = 0.5f;
         private const float mapZoomStep = 0.05f;
 
         private bool ivaCamFieldsLoaded = true;
@@ -31,7 +34,7 @@ namespace KSPAdvancedFlyByWire
 
         public CameraController()
         {
-            LoadIVAFields();
+            LoadReflectionFields();
         }
 
         public void UpdateCameraProperties(float camPitch, float camYaw, float camZoom, float camSensitivity)
@@ -42,7 +45,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     FlightCamera.CamHdg += camYaw * camSensitivity;
                     FlightCamera.CamPitch += -camPitch * camSensitivity;
-                    FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + camZoom);
+                    FlightCamera.fetch.SetDistance(FlightCamera.fetch.Distance + camZoom * flightZoomStep);
                     break;
                 }
                 case CameraManager.CameraMode.Map:
@@ -54,6 +57,7 @@ namespace KSPAdvancedFlyByWire
                     break;
                 }
                 case CameraManager.CameraMode.IVA:
+                case CameraManager.CameraMode.Internal:
                 {
                     //Hack: access private field that holds pitch/yaw in degrees before being applied to the camera.
                     if (this.ivaCamFieldsLoaded)
@@ -74,10 +78,48 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void LoadIVAFields()
+        public void NextIVACamera()
         {
-            FieldInfo[] fields = typeof(InternalCamera).GetFields(
-                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
+                && FlightGlobals.ActiveVessel.GetCrewCount() > 1)
+            {
+                CameraManager.Instance.NextCameraIVA();
+            }
+        }
+
+        public void FocusIVAWindow()
+        {
+            switch (CameraManager.Instance.currentCameraMode)
+            {
+                case CameraManager.CameraMode.IVA:
+                case CameraManager.CameraMode.Internal:
+                {
+                    InternalModel intModel = FlightGlobals.ActiveVessel.rootPart.internalModel;
+                    Transform camTransform = InternalCamera.Instance.transform;
+                    Ray ray = new Ray(camTransform.position, camTransform.forward);
+                    RaycastHit hit;
+                    // Use RayCastAll to catch far-away windows.
+                    if (Physics.Raycast(ray, out hit, 5f))
+                    {
+                        Debug.Log("RaycastHit: " + hit.collider.name + " (dist: " + hit.distance + ")");
+                        foreach (InternalCameraSwitch intCam in intModel.FindModelComponents<InternalCameraSwitch>())
+                        {
+                            if (hit.collider.name.Equals(intCam.colliderTransformName))
+                            {
+                                intCam.Button_OnDoubleTap();
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        private void LoadReflectionFields()
+        {
+            List<FieldInfo> fields = new List<FieldInfo>(typeof(InternalCamera).GetFields(
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
+            fields = new List<FieldInfo>(fields.Where(f => f.FieldType.Equals(typeof(float))));
             this.ivaPitchField = fields[3];
             this.ivaYawField = fields[4];
             if (ivaPitchField == null || ivaYawField == null)

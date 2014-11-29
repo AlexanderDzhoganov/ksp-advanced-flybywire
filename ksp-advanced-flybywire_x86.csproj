@@ -68,10 +68,12 @@
   <ItemGroup>
     <Compile Include="AxisConfiguration.cs" />
     <Compile Include="Bitset.cs" />
+    <Compile Include="CameraController.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ControllerPreset.cs" />
     <Compile Include="ControllerConfigurationWindow.cs" />
     <Compile Include="DefaultControllerPresets.cs" />
+    <Compile Include="EVAController.cs" />
     <Compile Include="FlightManager.cs" />
     <Compile Include="FlightProperty.cs" />
     <Compile Include="KeyboardMouseController.cs" />

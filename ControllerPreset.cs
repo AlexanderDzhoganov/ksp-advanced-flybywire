@@ -63,7 +63,10 @@ namespace KSPAdvancedFlyByWire
 
         // EVA
         EVAToggleJetpack,
-        EVAToggleHeadlamps,
+        EVAInteract,
+        EVAJump,
+        EVAPlantFlag,
+        EVAAutoRunToggle,
 
         // Various
         CutThrottle,
@@ -88,6 +91,7 @@ namespace KSPAdvancedFlyByWire
         NavballToggle,
 
         IVANextCamera,
+        IVALookWindow,
         TogglePrecisionControls,
         ResetTrim,
     }
