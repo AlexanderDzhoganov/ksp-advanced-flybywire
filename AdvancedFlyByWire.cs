@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -400,7 +401,7 @@ namespace KSPAdvancedFlyByWire
                     m_Configuration.DeactivateController(controller.Key, controller.Value.Key);
                 }
 
-                if (!isEnabled || config.presetEditorOpen)
+                if (!isEnabled || config == null || config.presetEditorOpen)
                 {
                     GUI.enabled = false;
                 }
@@ -424,7 +425,7 @@ namespace KSPAdvancedFlyByWire
                     GUI.enabled = true;
                 }
 
-                if (!isEnabled || config.controllerConfigurationOpen)
+                if (!isEnabled || config == null || config.controllerConfigurationOpen)
                 {
                     GUI.enabled = false;
                 }
@@ -442,7 +443,7 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.EndHorizontal();
 
-                if (isEnabled)
+                if (isEnabled && config != null)
                 {
                     GUILayout.Space(4);
 
