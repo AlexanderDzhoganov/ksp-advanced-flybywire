@@ -92,27 +92,49 @@ namespace KSPAdvancedFlyByWire
             switch (CameraManager.Instance.currentCameraMode)
             {
                 case CameraManager.CameraMode.IVA:
-                case CameraManager.CameraMode.Internal:
                 {
-                    InternalModel intModel = FlightGlobals.ActiveVessel.rootPart.internalModel;
-                    Transform camTransform = InternalCamera.Instance.transform;
-                    Ray ray = new Ray(camTransform.position, camTransform.forward);
-                    RaycastHit hit;
-                    // Use RayCastAll to catch far-away windows.
-                    if (Physics.Raycast(ray, out hit, 5f))
+                    Kerbal kerbal = GetActiveIVAKerbal();
+
+                    if (kerbal != null && kerbal.InPart != null && kerbal.InPart.internalModel != null)
                     {
-                        Debug.Log("RaycastHit: " + hit.collider.name + " (dist: " + hit.distance + ")");
-                        foreach (InternalCameraSwitch intCam in intModel.FindModelComponents<InternalCameraSwitch>())
+                        //Debug.Log("Kerbal: " + kerbal.crewMemberName + " inside "+ kerbal.InPart.internalModel.internalName);
+                        InternalModel intModel = kerbal.InPart.internalModel;
+                        Transform camTransform = InternalCamera.Instance.transform;
+                        Ray ray = new Ray(camTransform.position, camTransform.forward);
+                        RaycastHit hit;
+                        if (Physics.Raycast(ray, out hit, 5f))
                         {
-                            if (hit.collider.name.Equals(intCam.colliderTransformName))
+                            //Debug.Log("RaycastHit: " + hit.collider.name + " (dist: " + hit.distance + ")");
+                            foreach (InternalCameraSwitch intCam in intModel.FindModelComponents<InternalCameraSwitch>())
                             {
-                                intCam.Button_OnDoubleTap();
+                                if (hit.collider.name.Equals(intCam.colliderTransformName))
+                                {
+                                    intCam.Button_OnDoubleTap();
+                                }
                             }
                         }
                     }
                     break;
                 }
+                case CameraManager.CameraMode.Internal:
+                {
+                    CameraManager.Instance.SetCameraIVA();
+                    break;
+                }
             }
+        }
+
+        private Kerbal GetActiveIVAKerbal()
+        {
+            List<ProtoCrewMember> vesselCrew = FlightGlobals.fetch.activeVessel.GetVesselCrew();
+            foreach (ProtoCrewMember pcm in vesselCrew)
+            {
+                if (pcm.KerbalRef.eyeTransform == InternalCamera.Instance.transform.parent)
+                {
+                    return pcm.KerbalRef;
+                }
+            }
+            return null;
         }
 
         private void LoadReflectionFields()
