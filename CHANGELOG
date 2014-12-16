@@ -4,6 +4,7 @@ v1.4
 - New feature 'IVA Look Window' (again, thanks to ddaf)
 - Fixed a rare NRE in the GUI
 - KSP-AVC support for the Linux release
+- Due to the config file changes, you will have to re- create your configuration
 
 v1.3
 - EVA!
