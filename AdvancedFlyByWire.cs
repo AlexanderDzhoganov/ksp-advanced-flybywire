@@ -9,7 +9,7 @@ namespace KSPAdvancedFlyByWire
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
-        public const int versionMajor = 1;
+        public const int versionMajor = 2;
         public const int versionMinor = 1;
 
         // UI stuff

@@ -12,7 +12,7 @@ namespace KSPAdvancedFlyByWire
         public ControllerConfiguration m_Controller;
         public int m_EditorId;
 
-        public Rect windowRect = new Rect(448, 128, 512, 512);
+        public Rect windowRect = new Rect(448, 128, 600, 512);
 
         public Bitset m_CurrentMask = null;
 
@@ -157,9 +157,7 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.BeginHorizontal();
-                String continuousActionStr = Stringify.ContinuousActionToString(action);
-                if (currentPreset.IsContinuousBindingInverted(action)) continuousActionStr += " (Inverted)";
-                GUILayout.Label(continuousActionStr);
+                GUILayout.Label(Stringify.ContinuousActionToString(action));
                 GUILayout.FlexibleSpace();
 
                 string label = "";
@@ -194,7 +192,7 @@ namespace KSPAdvancedFlyByWire
                     }
                 }
 
-                if (GUILayout.Button(label, GUILayout.Width(256)))
+                if (GUILayout.Button(label, GUILayout.Width(220)))
                 {
                     if (m_CurrentlyEditingContinuousAction != action)
                     {
@@ -211,9 +209,13 @@ namespace KSPAdvancedFlyByWire
                     m_CurrentMask = null;
                 }
 
-                GUILayout.Label("Invert");
+                GUILayout.Space(8);
+
                 var inverted = GUILayout.Toggle(currentPreset.IsContinuousBindingInverted(action), "");
                 currentPreset.SetContinuousBindingInverted(action, inverted);
+                GUILayout.Label("Invert");
+
+                GUILayout.Space(8);
 
                 if (GUILayout.Button("X"))
                 {

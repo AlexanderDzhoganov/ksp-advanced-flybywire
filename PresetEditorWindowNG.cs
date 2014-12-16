@@ -322,9 +322,7 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.BeginHorizontal();
-                String continuousActionStr = Stringify.ContinuousActionToString(action);
-                if (currentPreset.IsContinuousBindingInverted(action)) continuousActionStr += " (Inverted)";
-                GUILayout.Label(continuousActionStr);
+                GUILayout.Label(Stringify.ContinuousActionToString(action));
                 GUILayout.FlexibleSpace();
 
                 string label = "";
@@ -357,7 +355,7 @@ namespace KSPAdvancedFlyByWire
                     }
                 }
 
-                if (GUILayout.Button(label, GUILayout.Width(256)))
+                if (GUILayout.Button(label, GUILayout.Width(220)))
                 {
                     if (m_CurrentlyEditingContinuousAction != action)
                     {
@@ -374,9 +372,13 @@ namespace KSPAdvancedFlyByWire
                     m_CurrentMask = null;
                 }
 
-                GUILayout.Label("Invert");
-                var inverted = GUILayout.Toggle(currentPreset.IsContinuousBindingInverted(action), "");
+                GUILayout.Space(8);
+
+                var inverted = GUILayout.Toggle(currentPreset.IsContinuousBindingInverted(action), "", GUILayout.Width(32));
                 currentPreset.SetContinuousBindingInverted(action, inverted);
+                GUILayout.Label("Invert", GUILayout.Width(40));
+
+                GUILayout.Space(8);
 
                 if (GUILayout.Button("X"))
                 {
@@ -386,6 +388,8 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.EndHorizontal();
+
+                GUILayout.Space(4);
             }
 
             foreach (var action in (DiscreteAction[])Enum.GetValues(typeof(DiscreteAction)))
@@ -431,7 +435,7 @@ namespace KSPAdvancedFlyByWire
                     }
                 }
 
-                if (GUILayout.Button(label, GUILayout.Width(256)))
+                if (GUILayout.Button(label, GUILayout.Width(220)))
                 {
                     if (m_CurrentlyEditingDiscreteAction != action)
                     {
@@ -443,6 +447,8 @@ namespace KSPAdvancedFlyByWire
                     m_CurrentMask = null;
                 }
 
+                GUILayout.Space(96);
+
                 if (GUILayout.Button("X"))
                 {
                     currentPreset.UnsetDiscreteBinding(action);
@@ -451,6 +457,8 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.EndHorizontal();
+
+                GUILayout.Space(0);
             }
 
             GUILayout.EndScrollView();

@@ -41,11 +41,15 @@ namespace KSPAdvancedFlyByWire
                     UpdateFlightProperties(config, state);
 
                     if (FlightGlobals.ActiveVessel.isEVA)
+                    {
                         EVAController.Instance.UpdateEVAFlightProperties(config, state);
+                    }
 
-                    CameraController.Instance.UpdateCameraProperties(
+                    CameraController.Instance.UpdateCameraProperties
+                    (
                         m_CameraPitch.Update(), m_CameraHeading.Update(),
-                        m_CameraZoom.Update(), config.cameraSensitivity);
+                        m_CameraZoom.Update(), config.cameraSensitivity
+                    );
                 }
             }
 
@@ -73,6 +77,7 @@ namespace KSPAdvancedFlyByWire
                     {
                         axisState *= -1.0f;
                     }
+
                     if (axisState != 0.0f || action == ContinuousAction.Throttle || action == ContinuousAction.WheelThrottle)
                     {
                         EvaluateContinuousAction(config, action, axisState, state);
@@ -171,9 +176,9 @@ namespace KSPAdvancedFlyByWire
 
         private void OverrideSAS(FlightCtrlState state)
         {
-            float t = FlightGlobals.ActiveVessel.vesselSAS.controlDetectionThreshold;
+            float t = FlightGlobals.ActiveVessel.Autopilot.SAS.controlDetectionThreshold;
             bool mustOverride = (Math.Abs(state.pitch) > t) || (Math.Abs(state.yaw) > t) || (Math.Abs(state.roll) > t);
-            FlightGlobals.ActiveVessel.vesselSAS.ManualOverride(mustOverride);
+            FlightGlobals.ActiveVessel.Autopilot.SAS.ManualOverride(mustOverride);
         }
 
         public void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)

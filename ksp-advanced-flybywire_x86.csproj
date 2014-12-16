@@ -97,6 +97,7 @@
     <PostBuildEvent>xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\x86\GameData\ksp-advanced-flybywire\
 xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\alpha\x86\
 rmdir /S /q ..\..\obj\
+xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)\GameData\ksp-advanced-flybywire\"
 xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)GameData\ksp-advanced-flybywire\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
