@@ -50,7 +50,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             ZeroOutFlightProperties();
-            OverrideSAS(state);
+            //OverrideSAS(state);
         }
 
         private void UpdateAxes(ControllerConfiguration config, FlightCtrlState state)
@@ -166,12 +166,12 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void OverrideSAS(FlightCtrlState state)
+     /*   private void OverrideSAS(FlightCtrlState state)
         {
             float t = FlightGlobals.ActiveVessel.vesselSAS.controlDetectionThreshold;
             bool mustOverride = (Math.Abs(state.pitch) > t) || (Math.Abs(state.yaw) > t) || (Math.Abs(state.roll) > t);
             FlightGlobals.ActiveVessel.vesselSAS.ManualOverride(mustOverride);
-        }
+        }*/
 
         public void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
         {

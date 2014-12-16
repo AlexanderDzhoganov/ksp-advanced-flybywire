@@ -13,7 +13,7 @@ namespace KSPAdvancedFlyByWire
         public const int versionMinor = 1;
 
         // UI stuff
-        private Toolbar.IButton m_ToolbarButton = null;
+      //  private Toolbar.IButton m_ToolbarButton = null;
         private bool m_UIActive = true;
         private bool m_UIHidden = false;
         private Rect m_WindowRect = new Rect(0, 64, 432, 576);
@@ -85,11 +85,11 @@ namespace KSPAdvancedFlyByWire
         {
             m_Instance = null;
 
-            if (m_ToolbarButton != null)
+/*            if (m_ToolbarButton != null)
             {
                 m_ToolbarButton.Destroy();
             }
-
+*/
             SaveState(null);
             UnregisterCallbacks();
 
@@ -196,7 +196,7 @@ namespace KSPAdvancedFlyByWire
 
         private void InitializeToolbarButton()
         {
-            if(Toolbar.ToolbarManager.Instance == null)
+/*            if(Toolbar.ToolbarManager.Instance == null)
             {
                 print("Advanced Fly-By-Wire: toolbar instance not available");
                 return;
@@ -211,15 +211,15 @@ namespace KSPAdvancedFlyByWire
                 GameScenes.FLIGHT
             );
 
-            m_ToolbarButton.OnClick += OnToolbarButtonClick;
+            m_ToolbarButton.OnClick += OnToolbarButtonClick;*/
         }
 
-        void OnToolbarButtonClick(Toolbar.ClickEvent ev)
+      /*  void OnToolbarButtonClick(Toolbar.ClickEvent ev)
         {
             this.gameObject.SetActive(true);
             m_UIActive = !m_UIActive;
             m_UIHidden = false;
-        }
+        }*/
 
         void OnGUIRecoveryDialogSpawn(MissionRecoveryDialog dialog)
         {

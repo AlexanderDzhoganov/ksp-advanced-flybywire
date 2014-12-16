@@ -53,9 +53,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
-    <Reference Include="Toolbar">
-      <HintPath>builds\x64\GameData\000_Toolbar\Toolbar.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
