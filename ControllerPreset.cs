@@ -9,9 +9,11 @@ namespace KSPAdvancedFlyByWire
 
     using DiscreteActionsMap = Dictionary<DiscreteAction, Bitset>;
     using ContinuousActionsMap = Dictionary<ContinuousAction, KeyValuePair<Bitset, int>>;
+    using ContinuousActionsInversionMap = Dictionary<ContinuousAction, bool>;
 
     using SerializableDiscreteActionsMap = List<KeyValuePair<DiscreteAction, Bitset>>;
     using SerializableContinuousActionsMap = List<KeyValuePair<ContinuousAction, KeyValuePair<Bitset, int>>>;
+    using SerializableContinuousActionsInvMap = List<KeyValuePair<ContinuousAction, bool>>;
 
     public enum DiscreteAction
     {
@@ -100,20 +102,14 @@ namespace KSPAdvancedFlyByWire
     {
         None,
         Yaw,
-        NegativeYaw,
         YawTrim,
         Pitch,
-        NegativePitch,
         PitchTrim,
         Roll,
-        NegativeRoll,
         RollTrim,
         X,
-        NegativeX,
         Y,
-        NegativeY,
         Z,
-        NegativeZ,
         Throttle,
         ThrottleIncrement,
         ThrottleDecrement,
@@ -135,12 +131,14 @@ namespace KSPAdvancedFlyByWire
 
         [XmlIgnore()]
         public DiscreteActionsMap discreteActionsMap = new DiscreteActionsMap();
-
         [XmlIgnore()]
         public ContinuousActionsMap continuousActionsMap = new ContinuousActionsMap();
+        [XmlIgnore()]
+        public ContinuousActionsInversionMap continuousActionsInvMap = new ContinuousActionsInversionMap();
 
         public SerializableDiscreteActionsMap serializableDiscreteActionMap = new SerializableDiscreteActionsMap();
         public SerializableContinuousActionsMap serialiazableContinuousActionMap = new SerializableContinuousActionsMap();
+        public SerializableContinuousActionsInvMap serializableContinuousActionInvMap = new SerializableContinuousActionsInvMap();
 
         public void OnPreSerialize()
         {
@@ -148,6 +146,12 @@ namespace KSPAdvancedFlyByWire
             foreach(var keyValue in continuousActionsMap)
             {
                 serialiazableContinuousActionMap.Add(keyValue);
+            }
+
+            serializableContinuousActionInvMap.Clear();
+            foreach (var keyValue in continuousActionsInvMap)
+            {
+                serializableContinuousActionInvMap.Add(keyValue);
             }
 
             serializableDiscreteActionMap.Clear();
@@ -163,6 +167,12 @@ namespace KSPAdvancedFlyByWire
             foreach(var keyValue in serialiazableContinuousActionMap)
             {
                 continuousActionsMap.Add(keyValue.Key, keyValue.Value);
+            }
+
+            continuousActionsInvMap.Clear();
+            foreach (var keyValue in serializableContinuousActionInvMap)
+            {
+                continuousActionsInvMap.Add(keyValue.Key, keyValue.Value);
             }
 
             discreteActionsMap.Clear();
@@ -266,14 +276,21 @@ namespace KSPAdvancedFlyByWire
             return discreteActionsMap[action];
         }
 
-        public void SetContinuousBinding(int axis, Bitset state, ContinuousAction action)
+        public void SetContinuousBinding(int axis, Bitset state, ContinuousAction action, bool isInverted)
         {
+            //Debug.Log("SetContBind: " + action.ToString() + " to axis " + axis + " and bitset " + state.ToString());
             continuousActionsMap[action] = new KeyValuePair<Bitset, int>(state, axis);
+            if (isInverted)
+            {
+                continuousActionsInvMap[action] = true;
+            }
+            //TODO: Remove from map if false and containsKey? Saves a little space when serializing.
         }
 
         public void UnsetContinuousBinding(ContinuousAction action)
         {
             continuousActionsMap.Remove(action);
+            continuousActionsInvMap.Remove(action);
         }
 
         public List<ContinuousAction> GetContinuousBinding(int axis, Bitset state)
@@ -353,6 +370,16 @@ namespace KSPAdvancedFlyByWire
             }
 
             return new KeyValuePair<int,Bitset>(continuousActionsMap[action].Value, continuousActionsMap[action].Key);
+        }
+
+        public bool IsContinuousBindingInverted(ContinuousAction action)
+        {
+            return continuousActionsInvMap.ContainsKey(action) ? continuousActionsInvMap[action] : false;
+        }
+
+        public void SetContinuousBindingInverted(ContinuousAction action, bool isInverted)
+        {
+            continuousActionsInvMap[action] = isInverted;
         }
 
         private static int CompareKeys(KeyValuePair<int, ContinuousAction> a, KeyValuePair<int, ContinuousAction> b)

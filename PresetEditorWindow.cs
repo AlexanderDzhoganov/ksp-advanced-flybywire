@@ -157,7 +157,9 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(Stringify.ContinuousActionToString(action));
+                String continuousActionStr = Stringify.ContinuousActionToString(action);
+                if (currentPreset.IsContinuousBindingInverted(action)) continuousActionStr += " (Inverted)";
+                GUILayout.Label(continuousActionStr);
                 GUILayout.FlexibleSpace();
 
                 string label = "";
@@ -173,7 +175,7 @@ namespace KSPAdvancedFlyByWire
                     {
                         if (Math.Abs(m_Controller.iface.GetAxisState(i) - axisSnapshot[i]) > 0.1 && m_ClickSleepTimer == 0.0f)
                         {
-                            currentPreset.SetContinuousBinding(i, buttonsMask, action);
+                            currentPreset.SetContinuousBinding(i, buttonsMask, action, false);
                             m_CurrentlyEditingContinuousAction = ContinuousAction.None;
                         }
                     }
@@ -208,6 +210,10 @@ namespace KSPAdvancedFlyByWire
 
                     m_CurrentMask = null;
                 }
+
+                GUILayout.Label("Invert");
+                var inverted = GUILayout.Toggle(currentPreset.IsContinuousBindingInverted(action), "");
+                currentPreset.SetContinuousBindingInverted(action, inverted);
 
                 if (GUILayout.Button("X"))
                 {
