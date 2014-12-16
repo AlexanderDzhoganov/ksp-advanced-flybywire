@@ -35,7 +35,7 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 - Works alongside the stock input system. The mod will not override or break your current setup.
 
 ### How to use
-![screenshot](http://i.imgur.com/hrbVE7H.png)
+![screenshot](http://i.imgur.com/NgIVDIQ.png)
 
 The mod adds a new button to the mod toolbar.
 
