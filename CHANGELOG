@@ -1,3 +1,10 @@
+v1.4
+- Support for KSP 0.90
+- Invert option is now per binding instead of per axis (thanks to ddaf!)
+- New feature 'IVA Look Window' (again, thanks to ddaf)
+- Fixed a rare NRE in the GUI
+- KSP-AVC support for the Linux release
+
 v1.3
 - EVA!
 - "EVA Jetpack", "EVA Interact", "EVA Jump", "EVA Plant Flag", "EVA AutoRun" have been added
