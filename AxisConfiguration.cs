@@ -14,7 +14,6 @@ namespace KSPAdvancedFlyByWire
         public float m_Left;
         public float m_Identity;
         public float m_Right;
-        public bool m_Invert;
 
         public float Rescale(float value, Curve analogEvaluationCurve, bool manualDeadZones)
         {
@@ -80,7 +79,7 @@ namespace KSPAdvancedFlyByWire
                 value = Mathf.Clamp(value, -1.0f, 0.0f);
             }
 
-            return (m_Invert ? -1.0f : 1.0f) * Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
+            return 1.0f * Math.Sign(value) * analogEvaluationCurve.Evaluate(Math.Abs(value));
         }
 
     }

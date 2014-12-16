@@ -47,20 +47,20 @@ namespace KSPAdvancedFlyByWire
 
             preset.SetDiscreteBinding(new Bitset(buttonsCount, (int)XInput.Button.Guide), DiscreteAction.OrbitMapToggle);
 
-            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickX, new Bitset(buttonsCount), ContinuousAction.CameraX);
-            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickY, new Bitset(buttonsCount), ContinuousAction.CameraY);
-            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickY, new Bitset(buttonsCount, (int)XInput.Button.LB), ContinuousAction.CameraZoom);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickX, new Bitset(buttonsCount), ContinuousAction.CameraX, false);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickY, new Bitset(buttonsCount), ContinuousAction.CameraY, false);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftStickY, new Bitset(buttonsCount, (int)XInput.Button.LB), ContinuousAction.CameraZoom, false);
 
-            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount), ContinuousAction.Yaw);
-            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickY, new Bitset(buttonsCount), ContinuousAction.Pitch);
-            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount, (int)XInput.Button.LB), ContinuousAction.Roll);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount), ContinuousAction.Yaw, false);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickY, new Bitset(buttonsCount), ContinuousAction.Pitch, false);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount, (int)XInput.Button.LB), ContinuousAction.Roll, false);
 
-            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount, (int)XInput.Button.RB), ContinuousAction.X);
-            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickY, new Bitset(buttonsCount, (int)XInput.Button.RB), ContinuousAction.Y);
-            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount, (int)XInput.Button.LB | (int)XInput.Button.RB), ContinuousAction.Z);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount, (int)XInput.Button.RB), ContinuousAction.X, false);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickY, new Bitset(buttonsCount, (int)XInput.Button.RB), ContinuousAction.Y, false);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.RightStickX, new Bitset(buttonsCount, (int)XInput.Button.LB | (int)XInput.Button.RB), ContinuousAction.Z, false);
 
-            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftTrigger, new Bitset(buttonsCount), ContinuousAction.ThrottleDecrement);
-            preset.SetContinuousBinding((int)XInput.AnalogInput.RightTrigger, new Bitset(buttonsCount), ContinuousAction.ThrottleIncrement);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.LeftTrigger, new Bitset(buttonsCount), ContinuousAction.ThrottleDecrement, false);
+            preset.SetContinuousBinding((int)XInput.AnalogInput.RightTrigger, new Bitset(buttonsCount), ContinuousAction.ThrottleIncrement, false);
 
 #endif
 

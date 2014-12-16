@@ -201,9 +201,6 @@ namespace KSPAdvancedFlyByWire
                 GUILayout.HorizontalSlider(value, -1.0f, 1.0f, GUILayout.Width(150));
                 GUI.enabled = true;
 
-                GUILayout.Label("Invert");
-                m_Controller.iface.axisStates[i].m_Invert = GUILayout.Toggle(m_Controller.iface.axisStates[i].m_Invert, "");
-
                 GUILayout.EndHorizontal();
 
                 if (m_ShowOptions)
