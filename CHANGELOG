@@ -1,3 +1,6 @@
+v1.4.1
+- Fixed an issue with the mod breaking SAS
+
 v1.4
 - Support for KSP 0.90
 - Invert option is now per binding instead of per axis (thanks to ddaf!)

@@ -54,7 +54,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             ZeroOutFlightProperties();
-            OverrideSAS(state);
+           // OverrideSAS(state);
         }
 
         private void UpdateAxes(ControllerConfiguration config, FlightCtrlState state)
