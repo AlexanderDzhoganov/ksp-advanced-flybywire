@@ -1,3 +1,8 @@
+v1.4.2
+- Hopefully fully adapted to 0.90 changes
+- SAS should work fine in all cases now
+- Negative versions of Yaw, Pitch, Roll, X, Y, Z are back
+
 v1.4.1
 - Fixed an issue with the mod breaking SAS
 
