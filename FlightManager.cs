@@ -54,7 +54,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             ZeroOutFlightProperties();
-           // OverrideSAS(state);
+            //OverrideSAS(state);
         }
 
         private void UpdateAxes(ControllerConfiguration config, FlightCtrlState state)
@@ -172,13 +172,6 @@ namespace KSPAdvancedFlyByWire
             {
                 m_CameraZoom.SetValue(0.0f);
             }
-        }
-
-        private void OverrideSAS(FlightCtrlState state)
-        {
-            float t = FlightGlobals.ActiveVessel.Autopilot.SAS.controlDetectionThreshold;
-            bool mustOverride = (Math.Abs(state.pitch) > t) || (Math.Abs(state.yaw) > t) || (Math.Abs(state.roll) > t);
-            FlightGlobals.ActiveVessel.Autopilot.SAS.ManualOverride(mustOverride);
         }
 
         public void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
