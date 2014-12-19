@@ -518,19 +518,19 @@ namespace KSPAdvancedFlyByWire
                     m_Yaw.SetValue(value);
                     return;
                 case ContinuousAction.YawTrim:
-                    m_Yaw.SetTrim(Utility.Clamp(m_Yaw.GetTrim() + value, -1.0f, 1.0f));
+                    m_Yaw.SetTrim(Utility.Clamp(m_Yaw.GetTrim() + controller.incrementalActionSensitivity * value * Time.deltaTime, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.Pitch:
                     m_Pitch.SetValue(value);
                     return;
                 case ContinuousAction.PitchTrim:
-                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() + value, -1.0f, 1.0f));
+                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() + controller.incrementalActionSensitivity * value * Time.deltaTime, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.Roll:
                     m_Roll.SetValue(value);
                     return;
                 case ContinuousAction.RollTrim:
-                    m_Roll.SetTrim(Utility.Clamp(m_Roll.GetTrim() + value, -1.0f, 1.0f));
+                    m_Roll.SetTrim(Utility.Clamp(m_Roll.GetTrim() + controller.incrementalActionSensitivity * value * Time.deltaTime, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.X:
                     m_X.SetValue(value);
@@ -546,10 +546,10 @@ namespace KSPAdvancedFlyByWire
                     m_Throttle.SetValue(value - state.mainThrottle);
                     return;
                 case ContinuousAction.ThrottleIncrement:
-                    m_Throttle.Increment(value * controller.incrementalActionSensitivity);
+                    m_Throttle.Increment(value * controller.incrementalActionSensitivity * Time.deltaTime);
                     return;
                 case ContinuousAction.ThrottleDecrement:
-                    m_Throttle.Increment(-value * controller.incrementalActionSensitivity);
+                    m_Throttle.Increment(-value * controller.incrementalActionSensitivity * Time.deltaTime);
                     return;
                 case ContinuousAction.WheelThrottle:
                     m_WheelThrottle.SetMinMaxValues(-1.0f - state.wheelThrottle, 1.0f - state.wheelThrottle);
@@ -559,10 +559,10 @@ namespace KSPAdvancedFlyByWire
                     m_WheelSteer.SetValue(value);
                     return;
                 case ContinuousAction.WheelThrottleTrim:
-                    m_WheelThrottle.SetTrim(Utility.Clamp(m_WheelThrottle.GetTrim() + value, -1.0f, 1.0f));
+                    m_WheelThrottle.SetTrim(Utility.Clamp(m_WheelThrottle.GetTrim() + value * controller.incrementalActionSensitivity * Time.deltaTime, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.WheelSteerTrim:
-                    m_WheelSteer.SetTrim(Utility.Clamp(m_WheelSteer.GetTrim() + value, -1.0f, 1.0f));
+                    m_WheelSteer.SetTrim(Utility.Clamp(m_WheelSteer.GetTrim() + value * controller.incrementalActionSensitivity * Time.deltaTime, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.CameraX:
                     m_CameraHeading.Increment(value);
