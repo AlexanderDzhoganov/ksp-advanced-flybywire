@@ -510,11 +510,17 @@ namespace KSPAdvancedFlyByWire
                 case ContinuousAction.Yaw:
                     m_Yaw.SetValue(value);
                     return;
+                case ContinuousAction.NegativeYaw:
+                    m_Yaw.SetValue(-value);
+                    return;
                 case ContinuousAction.YawTrim:
                     m_Yaw.SetTrim(Utility.Clamp(m_Yaw.GetTrim() + controller.incrementalActionSensitivity * value * Time.deltaTime, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.Pitch:
                     m_Pitch.SetValue(value);
+                    return;
+                case ContinuousAction.NegativePitch:
+                    m_Pitch.SetValue(-value);
                     return;
                 case ContinuousAction.PitchTrim:
                     m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() + controller.incrementalActionSensitivity * value * Time.deltaTime, -1.0f, 1.0f));
@@ -522,17 +528,29 @@ namespace KSPAdvancedFlyByWire
                 case ContinuousAction.Roll:
                     m_Roll.SetValue(value);
                     return;
+                case ContinuousAction.NegativeRoll:
+                    m_Roll.SetValue(-value);
+                    return;
                 case ContinuousAction.RollTrim:
                     m_Roll.SetTrim(Utility.Clamp(m_Roll.GetTrim() + controller.incrementalActionSensitivity * value * Time.deltaTime, -1.0f, 1.0f));
                     return;
                 case ContinuousAction.X:
                     m_X.SetValue(value);
                     return;
+                case ContinuousAction.NegativeX:
+                    m_X.SetValue(-value);
+                    return;
                 case ContinuousAction.Y:
                     m_Y.SetValue(value);
                     return;
+                case ContinuousAction.NegativeY:
+                    m_Y.SetValue(-value);
+                    return;
                 case ContinuousAction.Z:
                     m_Z.SetValue(value);
+                    return;
+                case ContinuousAction.NegativeZ:
+                    m_Z.SetValue(-value);
                     return;
                 case ContinuousAction.Throttle:
                     m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
