@@ -19,8 +19,8 @@ namespace KSPAdvancedFlyByWire
         public int currentPreset = 0;
         public CurveType analogInputCurve = CurveType.XSquared;
         public bool treatHatsAsButtons = false;
-        public float discreteActionStep = 0.15f;
-        public float incrementalActionSensitivity = 0.05f;
+        public float discreteActionStep = 1.00f;
+        public float incrementalActionSensitivity = 1.50f;
         public float cameraSensitivity = 0.05f;
         public bool manualDeadZones = false;
 

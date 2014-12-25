@@ -49,7 +49,7 @@ namespace KSPAdvancedFlyByWire
         public float GetPrecisionModeFactor()
         {
             bool precisionModeEnabled = FlightInputHandler.fetch != null && FlightInputHandler.fetch.precisionMode;
-            return (precisionModeEnabled && m_UsePrecisionModeFactor) ? m_PrecisionModeFactor : 1;
+            return (precisionModeEnabled && m_UsePrecisionModeFactor) ? m_PrecisionModeFactor : 1.0f;
         }
 
         public string GetAbsoluteConfigurationPath()
@@ -77,8 +77,8 @@ namespace KSPAdvancedFlyByWire
 
         public void Start()
         {
-            AddFlyByWireCallbackToActiveVessel();
-            m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
+           // AddFlyByWireCallbackToActiveVessel();
+            m_LastChangedActiveVessel = null;//FlightGlobals.ActiveVessel;
         }
          
         public void OnDestroy()
@@ -179,12 +179,12 @@ namespace KSPAdvancedFlyByWire
 
         void AddFlyByWireCallbackToActiveVessel()
         {
-            if(FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null)
+            FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
+
+            if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null)
             {
                 FlightGlobals.ActiveVessel.Autopilot.SAS.ConnectFlyByWire();
             }
-            
-            FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
         }
 
         private Vessel m_LastChangedActiveVessel = null;

@@ -1,3 +1,8 @@
+v1.4.3
+- Fixed the throttle cut/ max throttle issue
+- As a consequence fixed a bunch of other bugs
+- Now bundling blizzy's Toolbar 1.7.8
+
 v1.4.2
 - Hopefully fully adapted to 0.90 changes
 - SAS should work fine in all cases now

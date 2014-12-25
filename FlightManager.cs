@@ -105,6 +105,7 @@ namespace KSPAdvancedFlyByWire
             state.wheelThrottleTrim = m_WheelThrottle.GetTrim();
 
             state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
+
             state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
             state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), -1.0f, 1.0f);
         }
