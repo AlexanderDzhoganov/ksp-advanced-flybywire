@@ -27,8 +27,13 @@ namespace KSPAdvancedFlyByWire
         public FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
         public FlightProperty m_CameraZoom = new FlightProperty(-1.0f, 1.0f);
 
+        private bool m_DisableVesselControls = false;
+
         public void OnFlyByWire(FlightCtrlState state)
         {
+            // skill vessel input if we're in time-warp
+            m_DisableVesselControls = TimeWarp.fetch != null && TimeWarp.fetch.current_rate_index != 0 && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH;
+
             m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
             m_WheelThrottle.SetMinMaxValues(-state.wheelThrottle, 1.0f - state.wheelThrottle);
 
@@ -54,7 +59,6 @@ namespace KSPAdvancedFlyByWire
             }
 
             ZeroOutFlightProperties();
-            //OverrideSAS(state);
         }
 
         private void UpdateAxes(ControllerConfiguration config, FlightCtrlState state)
@@ -229,61 +233,6 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.ThrottleMinus:
                     m_Throttle.SetIncrement(-1, controller.discreteActionStep);
                     return;
-                case DiscreteAction.Stage:
-                    Staging.ActivateNextStage();
-                    return;
-                case DiscreteAction.Gear:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
-                    return;
-                case DiscreteAction.Light:
-                    EVAController.Instance.ToggleHeadlamp();
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Light);
-                    return;
-                case DiscreteAction.RCS:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.RCS);
-                    return;
-                case DiscreteAction.SAS:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.SAS);
-                    return;
-                case DiscreteAction.Brakes:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Brakes);
-                    return;
-                case DiscreteAction.BrakesHold:
-                    FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Brakes, true);
-                    return;
-                case DiscreteAction.Abort:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Abort);
-                    return;
-                case DiscreteAction.Custom01:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom01);
-                    return;
-                case DiscreteAction.Custom02:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom02);
-                    return;
-                case DiscreteAction.Custom03:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom03);
-                    return;
-                case DiscreteAction.Custom04:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom04);
-                    return;
-                case DiscreteAction.Custom05:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom05);
-                    return;
-                case DiscreteAction.Custom06:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom06);
-                    return;
-                case DiscreteAction.Custom07:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom07);
-                    return;
-                case DiscreteAction.Custom08:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom08);
-                    return;
-                case DiscreteAction.Custom09:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom09);
-                    return;
-                case DiscreteAction.Custom10:
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom10);
-                    return;
                 case DiscreteAction.CutThrottle:
                     m_Throttle.SetValue(-state.mainThrottle);
                     return;
@@ -377,12 +326,6 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.SASHold:
                     FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
                     return;
-                case DiscreteAction.LockStage:
-                    if (FlightInputHandler.fetch != null)
-                    {
-                        FlightInputHandler.fetch.stageLock = !FlightInputHandler.fetch.stageLock;
-                    }
-                    return;
                 case DiscreteAction.TogglePrecisionControls:
                     if (FlightInputHandler.fetch != null)
                     {
@@ -408,6 +351,80 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case DiscreteAction.IVALookWindow:
                     CameraController.Instance.FocusIVAWindow();
+                    return;
+            }
+
+            if (m_DisableVesselControls)
+            {
+                return;
+            }
+
+            // all other actions
+            switch (action)
+            {
+                case DiscreteAction.Stage:
+                    Staging.ActivateNextStage();
+                    return;
+                case DiscreteAction.Gear:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
+                    return;
+                case DiscreteAction.Light:
+                    EVAController.Instance.ToggleHeadlamp();
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Light);
+                    return;
+                case DiscreteAction.RCS:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.RCS);
+                    return;
+                case DiscreteAction.SAS:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.SAS);
+                    return;
+                case DiscreteAction.Brakes:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Brakes);
+                    return;
+                case DiscreteAction.BrakesHold:
+                    FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Brakes, true);
+                    return;
+                case DiscreteAction.Abort:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Abort);
+                    return;
+                case DiscreteAction.Custom01:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom01);
+                    return;
+                case DiscreteAction.Custom02:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom02);
+                    return;
+                case DiscreteAction.Custom03:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom03);
+                    return;
+                case DiscreteAction.Custom04:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom04);
+                    return;
+                case DiscreteAction.Custom05:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom05);
+                    return;
+                case DiscreteAction.Custom06:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom06);
+                    return;
+                case DiscreteAction.Custom07:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom07);
+                    return;
+                case DiscreteAction.Custom08:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom08);
+                    return;
+                case DiscreteAction.Custom09:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom09);
+                    return;
+                case DiscreteAction.Custom10:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Custom10);
+                    return;
+                case DiscreteAction.SASHold:
+                    FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
+                    return;
+                case DiscreteAction.LockStage:
+                    if (FlightInputHandler.fetch != null)
+                    {
+                        FlightInputHandler.fetch.stageLock = !FlightInputHandler.fetch.stageLock;
+                    }
                     return;
                 case DiscreteAction.EVAInteract:
                     EVAController.Instance.DoInteract();
@@ -493,6 +510,15 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.CameraYMinus:
                     m_CameraPitch.SetIncrement(0);
                     return;
+            }
+
+            if (m_DisableVesselControls)
+            {
+                return;
+            }
+
+            switch (action)
+            {
                 case DiscreteAction.SASHold:
                     FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
                     return;

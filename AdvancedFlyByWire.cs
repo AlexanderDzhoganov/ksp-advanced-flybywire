@@ -75,12 +75,6 @@ namespace KSPAdvancedFlyByWire
             print("Advanced Fly-By-Wire: Initialized");
         }
 
-        public void Start()
-        {
-           // AddFlyByWireCallbackToActiveVessel();
-            m_LastChangedActiveVessel = null;//FlightGlobals.ActiveVessel;
-        }
-         
         public void OnDestroy()
         {
             m_Instance = null;
@@ -105,10 +99,10 @@ namespace KSPAdvancedFlyByWire
             if (pluginConfig != null)
             {
                 pluginConfig.load();
-                m_UseKSPSkin = pluginConfig.GetValue<bool>("useStockSkin", true);
-                m_UseOldPresetsWindow = pluginConfig.GetValue<bool>("useOldPresetEditor", false);
-                m_UsePrecisionModeFactor = pluginConfig.GetValue<bool>("usePrecisionModeFactor", false);
-                m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue<string>("precisionModeFactor", "0.5"));
+                m_UseKSPSkin = pluginConfig.GetValue("useStockSkin", true);
+                m_UseOldPresetsWindow = pluginConfig.GetValue("useOldPresetEditor", false);
+                m_UsePrecisionModeFactor = pluginConfig.GetValue("usePrecisionModeFactor", false);
+                m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue("precisionModeFactor", "0.5"));
             }
             
             m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
@@ -180,6 +174,7 @@ namespace KSPAdvancedFlyByWire
         void AddFlyByWireCallbackToActiveVessel()
         {
             FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
+            m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
 
             if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null)
             {
@@ -238,7 +233,7 @@ namespace KSPAdvancedFlyByWire
 
         void OnToolbarButtonClick(Toolbar.ClickEvent ev)
         {
-            this.gameObject.SetActive(true);
+            gameObject.SetActive(true);
             m_UIActive = !m_UIActive;
             m_UIHidden = false;
         }

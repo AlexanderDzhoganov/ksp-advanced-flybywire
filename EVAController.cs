@@ -359,7 +359,7 @@ namespace KSPAdvancedFlyByWire
         private void LoadReflectionFields()
         {
             List<FieldInfo> fields = new List<FieldInfo>(typeof(KerbalEVA).GetFields(
-                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
             this.vectorFields = new List<FieldInfo>(fields.Where<FieldInfo>(f => f.FieldType.Equals(typeof(Vector3))));
             this.floatFields = new List<FieldInfo>(fields.Where<FieldInfo>(f => f.FieldType.Equals(typeof(float))));
             this.eventFields = new List<FieldInfo>(fields.Where<FieldInfo>(f => f.FieldType.Equals(typeof(KFSMEvent))));
