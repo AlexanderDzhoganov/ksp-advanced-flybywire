@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using LibNoise.Unity.Operator;
-using UnityEngine;
 using SharpDX.DirectInput;
 
 namespace KSPAdvancedFlyByWire
