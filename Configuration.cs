@@ -76,15 +76,6 @@ namespace KSPAdvancedFlyByWire
                 iface.manualDeadZones = state;
             }
         }
-
-        public void SetTreatHatsAsButtons(bool state)
-        {
-            treatHatsAsButtons = state;
-            if (iface != null)
-            {
-                iface.treatHatsAsButtons = treatHatsAsButtons;
-            }
-        }
     }
 
     public class Configuration
@@ -118,6 +109,12 @@ namespace KSPAdvancedFlyByWire
             {
                 controller.iface = new SDLController(controller.controllerIndex);
             }
+            else if (Utility.CheckSharpDXSupport() && wrapper == InputWrapper.DirectInput)
+            {
+#if !LINUX
+                controller.iface = new DirectXController(controller.controllerIndex);
+#endif
+            }
             else  if (wrapper == InputWrapper.KeyboardMouse)
             {
                 controller.iface = new KeyboardMouseController();
@@ -128,7 +125,6 @@ namespace KSPAdvancedFlyByWire
                 return;
             }
 
-            controller.SetTreatHatsAsButtons(controller.treatHatsAsButtons);
             controller.SetManualDeadZones(controller.manualDeadZones);
             controller.iface.analogEvaluationCurve = CurveFactory.Instantiate(controller.analogInputCurve);
             controller.iface.buttonPressedCallback = pressedCallback;
@@ -175,7 +171,6 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 config.manualDeadZones = config.iface.manualDeadZones;
-                config.treatHatsAsButtons = config.iface.treatHatsAsButtons;
             }
         }
 
@@ -192,6 +187,12 @@ namespace KSPAdvancedFlyByWire
                 else if (Utility.CheckSDLSupport() && config.wrapper == InputWrapper.SDL)
                 {
                     config.iface = new SDLController(config.controllerIndex);
+                }
+                else if (Utility.CheckSharpDXSupport() && config.wrapper == InputWrapper.DirectInput)
+                {
+#if !LINUX
+                    config.iface = new DirectXController(config.controllerIndex);
+#endif
                 }
                 else if (config.wrapper == InputWrapper.KeyboardMouse)
                 {
@@ -216,7 +217,6 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 config.iface.manualDeadZones = config.manualDeadZones;
-                config.iface.treatHatsAsButtons = config.treatHatsAsButtons;
             }
         }
 

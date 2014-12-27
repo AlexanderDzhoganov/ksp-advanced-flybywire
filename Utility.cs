@@ -71,6 +71,15 @@ namespace KSPAdvancedFlyByWire
             return true;
         }
 
+        public static bool CheckSharpDXSupport()
+        {
+#if LINUX
+            return false;
+#endif
+
+            return true;
+        }
+
     }
 
 }

@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerTestTool", "contr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire-linux", "ksp-advanced-flybywire-linux.csproj", "{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire_x64", "ksp-advanced-flybywire_x64.csproj", "{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,16 +50,6 @@ Global
 		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Release|BuildConfig.ActiveCfg = Release|Any CPU
 		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Debug|BuildConfig.ActiveCfg = Debug|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Release|BuildConfig.ActiveCfg = Release|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{32E769CC-F89C-4AE9-B030-4ABF1EFC1D97}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

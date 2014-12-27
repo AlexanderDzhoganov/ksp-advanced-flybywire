@@ -49,17 +49,8 @@ namespace KSPAdvancedFlyByWire
             m_ButtonsCount = SDL.SDL_JoystickNumButtons(m_Joystick);
             m_HatsCount = SDL.SDL_JoystickNumHats(m_Joystick);
 
-            int buttonsCount = m_ButtonsCount;
+            int buttonsCount = m_ButtonsCount + m_HatsCount * 8;
             int axesCount = m_AxesCount;
-
-            if (treatHatsAsButtons)
-            {
-                buttonsCount += m_HatsCount * 8;
-            }
-            else
-            {
-                axesCount += m_HatsCount * 2;
-            }
 
             InitializeStateArrays(buttonsCount, axesCount);
 
@@ -169,12 +160,7 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetButtonsCount()
         {
-            if (treatHatsAsButtons)
-            {
-                return m_ButtonsCount + m_HatsCount * 8;
-            }
-
-            return m_ButtonsCount;
+            return m_ButtonsCount + m_HatsCount * 8;
         }
 
         public override string GetButtonName(int id)
@@ -183,10 +169,11 @@ namespace KSPAdvancedFlyByWire
             {
                 return String.Format("Button #{0}", id);
             }
-            
-            if (treatHatsAsButtons)
+
+            int hatId = (id - m_ButtonsCount) / 8;
+
+            if (hatId < m_HatsCount)
             {
-                int hatId = (id - m_ButtonsCount) / 8;
                 int buttonId = (id - m_ButtonsCount) % 8;
                 return String.Format("Hat #{0} Button {1}", hatId, buttonId);
             }
@@ -196,12 +183,7 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetAxesCount()
         {
-            if (treatHatsAsButtons)
-            {
-                return m_AxesCount;
-            }
-
-            return m_AxesCount + m_HatsCount * 2;
+            return m_AxesCount;
         }
 
         public override string GetAxisName(int id)
@@ -210,13 +192,7 @@ namespace KSPAdvancedFlyByWire
             {
                 return String.Format("Axis #{0}", id);
             }
-            
-            if (!treatHatsAsButtons)
-            {
-                bool xOrY = ((id - m_AxesCount) % 2) == 0;
-                return String.Format("Hat #{0} {1}", id - m_AxesCount, xOrY ? "X" : "Y");
-            }
-
+         
             return "unknown";
         }
 
@@ -226,10 +202,11 @@ namespace KSPAdvancedFlyByWire
             {
                 return SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
             }
-            
-            if (treatHatsAsButtons)
+
+            int hatId = (button - m_ButtonsCount) / 8;
+
+            if (hatId < m_HatsCount)
             {
-                int hatId = (button - m_ButtonsCount) / 8;
                 int buttonId = (button - m_ButtonsCount) % 8;
                 return SDL.SDL_JoystickGetHat(m_Joystick, hatId) == buttonId;
             }
@@ -243,53 +220,7 @@ namespace KSPAdvancedFlyByWire
             {
                 return SDL.SDL_JoystickGetAxis(m_Joystick, analogInput);
             }
-            
-            if (!treatHatsAsButtons)
-            {
-                int hatId = (analogInput - m_AxesCount) / 2;
-                int axisId = (analogInput - m_AxesCount) % 2;
-                HatAxes state = (HatAxes) SDL.SDL_JoystickGetHat(m_Joystick, hatId);
-
-                if (axisId == 0)
-                {
-                    switch (state)
-                    {
-                        case HatAxes.Left:
-                            return -1.0f;
-                        case HatAxes.LeftDown:
-                            return -1.0f;
-                        case HatAxes.LeftUp:
-                            return -1.0f;
-                        case HatAxes.Right:
-                            return 1.0f;
-                        case HatAxes.RightDown:
-                            return 1.0f;
-                        case HatAxes.RightUp:
-                            return 1.0f;
-                        default:
-                            return 0.0f;
-                    }
-                }
-               
-                switch (state)
-                {
-                    case HatAxes.Up:
-                        return 1.0f;
-                    case HatAxes.LeftDown:
-                        return -1.0f;
-                    case HatAxes.LeftUp:
-                        return 1.0f;
-                    case HatAxes.Down:
-                        return -1.0f;
-                    case HatAxes.RightDown:
-                        return -1.0f;
-                    case HatAxes.RightUp:
-                        return 1.0f;
-                    default:
-                        return 0.0f;
-                }
-            }
-
+     
             return 0.0f;
         }
 

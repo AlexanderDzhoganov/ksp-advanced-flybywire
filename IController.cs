@@ -32,6 +32,16 @@ namespace KSPAdvancedFlyByWire
 #endif
             }
 
+            if (Utility.CheckSharpDXSupport())
+            {
+#if !LINUX
+                foreach (var controllerName in DirectXController.EnumerateControllers())
+                {
+                    controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.DirectInput, controllerName));
+                }
+#endif
+            }
+
             if (Utility.CheckSDLSupport())
             {
                 foreach (var controllerName in SDLController.EnumerateControllers())
@@ -48,7 +58,6 @@ namespace KSPAdvancedFlyByWire
         public ButtonReleasedCallback buttonReleasedCallback = null;
 
         public Curve analogEvaluationCurve = new Curve();
-        public bool treatHatsAsButtons = false;
         public bool manualDeadZones = false;
 
         public bool[] buttonStates;
