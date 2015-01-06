@@ -176,7 +176,9 @@ namespace KSPAdvancedFlyByWire
             FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
             m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
 
-            if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null)
+            if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null
+                && FlightGlobals.ActiveVessel.Autopilot.SAS.CanEngageSAS() && FlightGlobals.ActiveVessel.HasControlSources()
+                && !FlightGlobals.ActiveVessel.isEVA)
             {
                 FlightGlobals.ActiveVessel.Autopilot.SAS.ConnectFlyByWire();
             }
