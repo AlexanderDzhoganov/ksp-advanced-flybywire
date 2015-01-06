@@ -1,13 +1,11 @@
-## Advanced Fly-By-Wire v1.3
+## Advanced Fly-By-Wire v1.4
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.3
+Latest version - 1.4.4
 
-[Download v1.3 (Windows, KSP x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.3_x86.zip)
+[Download v1.4.4 (Windows, KSP x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.4.4_x86.zip)
 
-[Download v1.3 (Windows, KSP x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.3_x64.zip)
-
-[Download v1.3 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.3_linux.zip) (Requires libsdl2)
+[Download v1.4.4 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.4.4_linux.zip) (Requires libsdl2)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -37,7 +35,7 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 - Works alongside the stock input system. The mod will not override or break your current setup.
 
 ### How to use
-![screenshot](http://i.imgur.com/hrbVE7H.png)
+![screenshot](http://i.imgur.com/NgIVDIQ.png)
 
 The mod adds a new button to the mod toolbar.
 

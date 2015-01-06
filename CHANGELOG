@@ -1,3 +1,33 @@
+v1.4.5
+- (Windows) Added support for DirectX11, should fix all missing controller issues
+
+v1.4.4
+- Fixed the EVA/ vessel change bug
+- Fixed a bug where staging during time-warp caused vessel parts to disappear
+- Fixed other time-warp related bugs
+
+v1.4.3
+- Fixed the throttle cut/ max throttle issue
+- Better default sensitivity settings
+- Fixed several other bugs
+- Now bundling blizzy's Toolbar 1.7.8
+
+v1.4.2
+- Hopefully fully adapted to 0.90 changes
+- SAS should work fine in all cases now
+- Negative versions of Yaw, Pitch, Roll, X, Y, Z are back
+
+v1.4.1
+- Fixed an issue with the mod breaking SAS
+
+v1.4
+- Support for KSP 0.90
+- Invert option is now per binding instead of per axis (thanks to ddaf!)
+- New feature 'IVA Look Window' (again, thanks to ddaf)
+- Fixed a rare NRE in the GUI
+- KSP-AVC support for the Linux release
+- Due to the config file changes, you will have to re- create your configuration
+
 v1.3
 - EVA!
 - "EVA Jetpack", "EVA Interact", "EVA Jump", "EVA Plant Flag", "EVA AutoRun" have been added

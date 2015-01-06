@@ -9,15 +9,15 @@ namespace KSPAdvancedFlyByWire
 
     enum HatAxes
     {
-        Centered = SDL2.SDL.SDL_HAT_CENTERED,
-        Up = SDL2.SDL.SDL_HAT_UP,
-        Right = SDL2.SDL.SDL_HAT_RIGHT,
-        Down = SDL2.SDL.SDL_HAT_DOWN,
-        Left = SDL2.SDL.SDL_HAT_LEFT,
-        RightUp = SDL2.SDL.SDL_HAT_RIGHTUP, 
-        RightDown = SDL2.SDL.SDL_HAT_RIGHTDOWN,
-        LeftUp = SDL2.SDL.SDL_HAT_LEFTUP,
-        LeftDown = SDL2.SDL.SDL_HAT_LEFTDOWN
+        Centered = SDL.SDL_HAT_CENTERED,
+        Up = SDL.SDL_HAT_UP,
+        Right = SDL.SDL_HAT_RIGHT,
+        Down = SDL.SDL_HAT_DOWN,
+        Left = SDL.SDL_HAT_LEFT,
+        RightUp = SDL.SDL_HAT_RIGHTUP, 
+        RightDown = SDL.SDL_HAT_RIGHTDOWN,
+        LeftUp = SDL.SDL_HAT_LEFTUP,
+        LeftDown = SDL.SDL_HAT_LEFTDOWN
     }
 
     public class SDLController : IController
@@ -38,28 +38,19 @@ namespace KSPAdvancedFlyByWire
 
             m_ControllerIndex = controllerIndex;
             
-            m_Joystick = SDL2.SDL.SDL_JoystickOpen(controllerIndex);
+            m_Joystick = SDL.SDL_JoystickOpen(controllerIndex);
 
             if (m_Joystick == IntPtr.Zero)
             {
                 return;
             }
 
-            m_AxesCount = SDL2.SDL.SDL_JoystickNumAxes(m_Joystick);
-            m_ButtonsCount = SDL2.SDL.SDL_JoystickNumButtons(m_Joystick);
-            m_HatsCount = SDL2.SDL.SDL_JoystickNumHats(m_Joystick);
+            m_AxesCount = SDL.SDL_JoystickNumAxes(m_Joystick);
+            m_ButtonsCount = SDL.SDL_JoystickNumButtons(m_Joystick);
+            m_HatsCount = SDL.SDL_JoystickNumHats(m_Joystick);
 
-            int buttonsCount = m_ButtonsCount;
+            int buttonsCount = m_ButtonsCount + m_HatsCount * 8;
             int axesCount = m_AxesCount;
-
-            if (treatHatsAsButtons)
-            {
-                buttonsCount += m_HatsCount * 8;
-            }
-            else
-            {
-                axesCount += m_HatsCount * 2;
-            }
 
             InitializeStateArrays(buttonsCount, axesCount);
 
@@ -82,8 +73,8 @@ namespace KSPAdvancedFlyByWire
         {
             if (!SDLInitialized)
             {
-                SDL2.SDL.SDL_Init(SDL2.SDL.SDL_INIT_JOYSTICK);
-                SDL2.SDL.SDL_JoystickEventState(SDL2.SDL.SDL_ENABLE);
+                SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
+                SDL.SDL_JoystickEventState(SDL.SDL_ENABLE);
                 SDLInitialized = true;
             }
         }
@@ -91,9 +82,9 @@ namespace KSPAdvancedFlyByWire
         public static void SDLUpdateState()
         {
             InitializeSDL();
-            SDL2.SDL.SDL_JoystickUpdate();
-            SDL2.SDL.SDL_Event ev;
-            SDL2.SDL.SDL_PollEvent(out ev);
+            SDL.SDL_JoystickUpdate();
+            SDL.SDL_Event ev;
+            SDL.SDL_PollEvent(out ev);
         }
 
         public override string GetControllerName()
@@ -103,12 +94,12 @@ namespace KSPAdvancedFlyByWire
                 return "Uninitialized";
             }
 
-            return SDL2.SDL.SDL_JoystickName(m_Joystick);
+            return SDL.SDL_JoystickName(m_Joystick);
         }
 
         bool IsConnected()
         {
-            return SDL2.SDL.SDL_JoystickGetAttached(m_Joystick) == SDL.SDL_bool.SDL_TRUE;
+            return SDL.SDL_JoystickGetAttached(m_Joystick) == SDL.SDL_bool.SDL_TRUE;
         }
 
         public static List<KeyValuePair<int, string>> EnumerateControllers()
@@ -117,12 +108,12 @@ namespace KSPAdvancedFlyByWire
 
             List<KeyValuePair<int, string>> controllers = new List<KeyValuePair<int, string>>();
 
-            int numControllers = SDL2.SDL.SDL_NumJoysticks();
+            int numControllers = SDL.SDL_NumJoysticks();
             for (int i = 0; i < numControllers; i++)
             {
                 if(IsControllerConnected(i))
                 {
-                    controllers.Add(new KeyValuePair<int, string>(i, SDL2.SDL.SDL_JoystickNameForIndex(i)));
+                    controllers.Add(new KeyValuePair<int, string>(i, SDL.SDL_JoystickNameForIndex(i)));
                 }
             }
 
@@ -133,18 +124,18 @@ namespace KSPAdvancedFlyByWire
         {
             if (!SDLInitialized)
             {
-                SDL2.SDL.SDL_Init(SDL2.SDL.SDL_INIT_JOYSTICK);
+                SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK);
                 SDLInitialized = true;
             }
 
-            var joystick = SDL2.SDL.SDL_JoystickOpen(id);
+            var joystick = SDL.SDL_JoystickOpen(id);
 
             if (joystick == IntPtr.Zero)
             {
                 return false;
             }
 
-            SDL2.SDL.SDL_JoystickClose(joystick);
+            SDL.SDL_JoystickClose(joystick);
             return true;
         }
 
@@ -154,27 +145,22 @@ namespace KSPAdvancedFlyByWire
             {
                 if (m_Joystick != IntPtr.Zero)
                 {
-                    SDL2.SDL.SDL_JoystickClose(m_Joystick);
+                    SDL.SDL_JoystickClose(m_Joystick);
                 }
 
-                SDL2.SDL.SDL_Quit();
+                SDL.SDL_Quit();
             }
         }
 
         public override void Update(FlightCtrlState state)
         {
-            SDL2.SDL.SDL_JoystickUpdate();
+            SDL.SDL_JoystickUpdate();
             base.Update(state);
         }
 
         public override int GetButtonsCount()
         {
-            if (treatHatsAsButtons)
-            {
-                return m_ButtonsCount + m_HatsCount * 8;
-            }
-
-            return m_ButtonsCount;
+            return m_ButtonsCount + m_HatsCount * 8;
         }
 
         public override string GetButtonName(int id)
@@ -183,9 +169,11 @@ namespace KSPAdvancedFlyByWire
             {
                 return String.Format("Button #{0}", id);
             }
-            else if(treatHatsAsButtons)
+
+            int hatId = (id - m_ButtonsCount) / 8;
+
+            if (hatId < m_HatsCount)
             {
-                int hatId = (id - m_ButtonsCount) / 8;
                 int buttonId = (id - m_ButtonsCount) % 8;
                 return String.Format("Hat #{0} Button {1}", hatId, buttonId);
             }
@@ -195,12 +183,7 @@ namespace KSPAdvancedFlyByWire
 
         public override int GetAxesCount()
         {
-            if (treatHatsAsButtons)
-            {
-                return m_AxesCount;
-            }
-
-            return m_AxesCount + m_HatsCount * 2;
+            return m_AxesCount;
         }
 
         public override string GetAxisName(int id)
@@ -209,12 +192,7 @@ namespace KSPAdvancedFlyByWire
             {
                 return String.Format("Axis #{0}", id);
             }
-            else if(!treatHatsAsButtons)
-            {
-                bool xOrY = ((id - m_AxesCount) % 2) == 0;
-                return String.Format("Hat #{0} {1}", id - m_AxesCount, xOrY ? "X" : "Y");
-            }
-
+         
             return "unknown";
         }
 
@@ -222,13 +200,15 @@ namespace KSPAdvancedFlyByWire
         {
             if (button < m_ButtonsCount)
             {
-                return SDL2.SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
+                return SDL.SDL_JoystickGetButton(m_Joystick, button) != 0;
             }
-            else if(treatHatsAsButtons)
+
+            int hatId = (button - m_ButtonsCount) / 8;
+
+            if (hatId < m_HatsCount)
             {
-                int hatId = (button - m_ButtonsCount) / 8;
                 int buttonId = (button - m_ButtonsCount) % 8;
-                return SDL2.SDL.SDL_JoystickGetHat(m_Joystick, hatId) == buttonId;
+                return SDL.SDL_JoystickGetHat(m_Joystick, hatId) == buttonId;
             }
 
             return false;
@@ -238,56 +218,9 @@ namespace KSPAdvancedFlyByWire
         {
             if (analogInput < m_AxesCount)
             {
-                return SDL2.SDL.SDL_JoystickGetAxis(m_Joystick, analogInput);
+                return SDL.SDL_JoystickGetAxis(m_Joystick, analogInput);
             }
-            else if(!treatHatsAsButtons)
-            {
-                int hatId = (analogInput - m_AxesCount) / 2;
-                int axisId = (analogInput - m_AxesCount) % 2;
-                HatAxes state = (HatAxes) SDL2.SDL.SDL_JoystickGetHat(m_Joystick, hatId);
-
-                if (axisId == 0)
-                {
-                    switch (state)
-                    {
-                        case HatAxes.Left:
-                            return -1.0f;
-                        case HatAxes.LeftDown:
-                            return -1.0f;
-                        case HatAxes.LeftUp:
-                            return -1.0f;
-                        case HatAxes.Right:
-                            return 1.0f;
-                        case HatAxes.RightDown:
-                            return 1.0f;
-                        case HatAxes.RightUp:
-                            return 1.0f;
-                        default:
-                            return 0.0f;
-                    }
-                }
-                else
-                {
-                    switch (state)
-                    {
-                        case HatAxes.Up:
-                            return 1.0f;
-                        case HatAxes.LeftDown:
-                            return -1.0f;
-                        case HatAxes.LeftUp:
-                            return 1.0f;
-                        case HatAxes.Down:
-                            return -1.0f;
-                        case HatAxes.RightDown:
-                            return -1.0f;
-                        case HatAxes.RightUp:
-                            return 1.0f;
-                        default:
-                            return 0.0f;
-                    }
-                }
-            }
-
+     
             return 0.0f;
         }
 

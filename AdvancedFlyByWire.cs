@@ -9,7 +9,7 @@ namespace KSPAdvancedFlyByWire
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
-        public const int versionMajor = 1;
+        public const int versionMajor = 2;
         public const int versionMinor = 1;
 
         // UI stuff
@@ -49,7 +49,7 @@ namespace KSPAdvancedFlyByWire
         public float GetPrecisionModeFactor()
         {
             bool precisionModeEnabled = FlightInputHandler.fetch != null && FlightInputHandler.fetch.precisionMode;
-            return (precisionModeEnabled && m_UsePrecisionModeFactor) ? m_PrecisionModeFactor : 1;
+            return (precisionModeEnabled && m_UsePrecisionModeFactor) ? m_PrecisionModeFactor : 1.0f;
         }
 
         public string GetAbsoluteConfigurationPath()
@@ -75,12 +75,6 @@ namespace KSPAdvancedFlyByWire
             print("Advanced Fly-By-Wire: Initialized");
         }
 
-        public void Start()
-        {
-            AddFlyByWireCallbackToActiveVessel();
-            m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
-        }
-         
         public void OnDestroy()
         {
             m_Instance = null;
@@ -101,13 +95,14 @@ namespace KSPAdvancedFlyByWire
         private void LoadState(ConfigNode configNode)
         {
             KSP.IO.PluginConfiguration pluginConfig = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
+
             if (pluginConfig != null)
             {
                 pluginConfig.load();
-                this.m_UseKSPSkin = pluginConfig.GetValue<bool>("useStockSkin", true);
-                this.m_UseOldPresetsWindow = pluginConfig.GetValue<bool>("useOldPresetEditor", false);
-                this.m_UsePrecisionModeFactor = pluginConfig.GetValue<bool>("usePrecisionModeFactor", false);
-                this.m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue<string>("precisionModeFactor", "0.5"));
+                m_UseKSPSkin = pluginConfig.GetValue("useStockSkin", true);
+                m_UseOldPresetsWindow = pluginConfig.GetValue("useOldPresetEditor", false);
+                m_UsePrecisionModeFactor = pluginConfig.GetValue("usePrecisionModeFactor", false);
+                m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue("precisionModeFactor", "0.5"));
             }
             
             m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
@@ -123,6 +118,7 @@ namespace KSPAdvancedFlyByWire
         public void SaveState(ConfigNode configNode)
         {
             KSP.IO.PluginConfiguration pluginConfig = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
+
             if (pluginConfig != null)
             {
                 pluginConfig["useStockSkin"] = m_UseKSPSkin;
@@ -139,11 +135,17 @@ namespace KSPAdvancedFlyByWire
         {
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onHideUI.Add(OnHideUI);
+            GameEvents.onGUILock.Add(OnHideUI);
+            GameEvents.onGUIUnlock.Add(OnShowUI);
+            GameEvents.onGamePause.Add(OnHideUI);
+            GameEvents.onGameUnpause.Add(OnShowUI);
+
             GameEvents.onGameStateSave.Add(SaveState);
             GameEvents.onGameStateLoad.Add(LoadState);
+
             GameEvents.onGUIRecoveryDialogSpawn.Add(OnGUIRecoveryDialogSpawn);
-            GameEvents.onGamePause.Add(OnGamePause);
-            GameEvents.onGameUnpause.Add(OnGameUnpause);
+            GameEvents.onGUIRecoveryDialogDespawn.Add(OnGUIRecoveryDialogDespawn);
+
             GameEvents.onVesselChange.Add(OnVesselChange);
         }
 
@@ -151,11 +153,16 @@ namespace KSPAdvancedFlyByWire
         {
             GameEvents.onShowUI.Remove(OnShowUI);
             GameEvents.onHideUI.Remove(OnHideUI);
+            GameEvents.onGUILock.Remove(OnHideUI);
+            GameEvents.onGUIUnlock.Remove(OnShowUI);
+            GameEvents.onGamePause.Remove(OnHideUI);
+            GameEvents.onGameUnpause.Remove(OnShowUI);
+
             GameEvents.onGameStateSave.Remove(SaveState);
             GameEvents.onGameStateLoad.Remove(LoadState);
             GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogSpawn);
-            GameEvents.onGamePause.Remove(OnGamePause);
-            GameEvents.onGameUnpause.Remove(OnGameUnpause);
+            GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogDespawn);
+           
             GameEvents.onVesselChange.Remove(OnVesselChange);
 
             if (FlightGlobals.ActiveVessel != null)
@@ -166,8 +173,13 @@ namespace KSPAdvancedFlyByWire
 
         void AddFlyByWireCallbackToActiveVessel()
         {
-            FlightGlobals.ActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
             FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
+            m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
+
+            if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null)
+            {
+                FlightGlobals.ActiveVessel.Autopilot.SAS.ConnectFlyByWire();
+            }
         }
 
         private Vessel m_LastChangedActiveVessel = null;
@@ -181,6 +193,11 @@ namespace KSPAdvancedFlyByWire
 
             if (m_LastChangedActiveVessel != null)
             {
+                if (m_LastChangedActiveVessel.Autopilot != null && m_LastChangedActiveVessel.Autopilot.SAS != null)
+                {
+                    FlightGlobals.ActiveVessel.Autopilot.SAS.DisconnectFlyByWire();
+                }
+
                 m_LastChangedActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
                 m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
             }
@@ -216,7 +233,7 @@ namespace KSPAdvancedFlyByWire
 
         void OnToolbarButtonClick(Toolbar.ClickEvent ev)
         {
-            this.gameObject.SetActive(true);
+            gameObject.SetActive(true);
             m_UIActive = !m_UIActive;
             m_UIHidden = false;
         }
@@ -225,17 +242,10 @@ namespace KSPAdvancedFlyByWire
         {
             m_UIHidden = true;
         }
-
-        void OnGamePause()
-        {
-            m_UIHidden = true;
-        }
-
-        void OnGameUnpause()
+        void OnGUIRecoveryDialogDespawn(MissionRecoveryDialog dialog)
         {
             m_UIHidden = false;
         }
-
         private void OnShowUI()
         {
             m_UIHidden = false;

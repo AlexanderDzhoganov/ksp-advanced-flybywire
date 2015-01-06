@@ -23,7 +23,7 @@ namespace KSPAdvancedFlyByWire
         public static float ApplyChangeAndClamp(float x, float change, float clampMin = -1.0f, float clampMax = 1.0f)
         {
             x += change;
-            x = Utility.Clamp(x, clampMin, clampMax);
+            x = Clamp(x, clampMin, clampMax);
             return x;
         }
 
@@ -68,6 +68,15 @@ namespace KSPAdvancedFlyByWire
 
         public static bool CheckSDLSupport()
         {
+            return true;
+        }
+
+        public static bool CheckSharpDXSupport()
+        {
+#if LINUX
+            return false;
+#endif
+
             return true;
         }
 

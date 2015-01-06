@@ -203,7 +203,7 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.EndHorizontal();
 
-                if (m_ShowOptions)
+                if (m_ShowOptions || m_Controller.manualDeadZones)
                 {
                     if (!m_Controller.manualDeadZones)
                     {

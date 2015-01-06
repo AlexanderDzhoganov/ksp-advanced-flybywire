@@ -66,6 +66,7 @@ namespace KSPAdvancedFlyByWire
             {
                 return false; //make sure we are in regular warp
             }
+
             //do a bunch of checks to see if we can increase the warp rate:
             if (TimeWarp.CurrentRateIndex + 1 == TimeWarp.fetch.warpRates.Length)
             {
