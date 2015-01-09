@@ -1,3 +1,9 @@
+v1.4.6
+- This patch brought to you by ddaf
+- Fixed SAS being enabled when it shouldn't
+- The above change also fixed EVA movement related bugs 
+- DirectX11- support has temporarily been disabled until the lag issues are solved
+
 v1.4.5
 - (Windows) Added support for DirectX11, should fix all missing controller issues
 

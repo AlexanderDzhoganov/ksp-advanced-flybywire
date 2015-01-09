@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SharpDX.DirectInput;
+//using SharpDX.DirectInput;
 
 namespace KSPAdvancedFlyByWire
 {
@@ -37,7 +37,7 @@ namespace KSPAdvancedFlyByWire
         LeftDown = 22500
     }
 
-    public class DirectXController : IController
+ /*   public class DirectXController : IController
     {
 
         private int m_AxesCount = 0;
@@ -268,5 +268,5 @@ namespace KSPAdvancedFlyByWire
         }
 
     }
-
+    */
 }

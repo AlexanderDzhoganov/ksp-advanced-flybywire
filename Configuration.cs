@@ -109,12 +109,12 @@ namespace KSPAdvancedFlyByWire
             {
                 controller.iface = new SDLController(controller.controllerIndex);
             }
-            else if (Utility.CheckSharpDXSupport() && wrapper == InputWrapper.DirectInput)
+           /*else if (Utility.CheckSharpDXSupport() && wrapper == InputWrapper.DirectInput)
             {
 #if !LINUX
                 controller.iface = new DirectXController(controller.controllerIndex);
 #endif
-            }
+            }*/
             else  if (wrapper == InputWrapper.KeyboardMouse)
             {
                 controller.iface = new KeyboardMouseController();
@@ -188,12 +188,12 @@ namespace KSPAdvancedFlyByWire
                 {
                     config.iface = new SDLController(config.controllerIndex);
                 }
-                else if (Utility.CheckSharpDXSupport() && config.wrapper == InputWrapper.DirectInput)
+               /* else if (Utility.CheckSharpDXSupport() && config.wrapper == InputWrapper.DirectInput)
                 {
 #if !LINUX
                     config.iface = new DirectXController(config.controllerIndex);
 #endif
-                }
+                }*/
                 else if (config.wrapper == InputWrapper.KeyboardMouse)
                 {
                     config.iface = new KeyboardMouseController();

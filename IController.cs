@@ -31,7 +31,7 @@ namespace KSPAdvancedFlyByWire
                 }
 #endif
             }
-
+            /*
             if (Utility.CheckSharpDXSupport())
             {
 #if !LINUX
@@ -41,7 +41,7 @@ namespace KSPAdvancedFlyByWire
                 }
 #endif
             }
-
+            */
             if (Utility.CheckSDLSupport())
             {
                 foreach (var controllerName in SDLController.EnumerateControllers())
