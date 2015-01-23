@@ -31,6 +31,9 @@ namespace KSPAdvancedFlyByWire
 
         public void OnFlyByWire(FlightCtrlState state)
         {
+            FlightCtrlState sasState = new FlightCtrlState();
+            sasState.CopyFrom(state);
+
             // skill vessel input if we're in time-warp
             m_DisableVesselControls = TimeWarp.fetch != null && TimeWarp.fetch.current_rate_index != 0 && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH;
 
@@ -59,6 +62,19 @@ namespace KSPAdvancedFlyByWire
             }
 
             ZeroOutFlightProperties();
+
+            // Override SAS
+            if (!sasState.isNeutral)
+            {
+                float t = FlightGlobals.ActiveVessel.Autopilot.SAS.controlDetectionThreshold;
+                float pDelta = state.pitch - sasState.pitch, yDelta = state.yaw - sasState.yaw, rDelta = state.roll - sasState.roll;
+                if ((Math.Abs(pDelta) > t) || (Math.Abs(yDelta) > t) || (Math.Abs(rDelta) > t))
+                {
+                    state.pitch -= sasState.pitch;
+                    state.yaw -= sasState.yaw;
+                    state.roll -= sasState.roll;
+                }
+            }
         }
 
         private void UpdateAxes(ControllerConfiguration config, FlightCtrlState state)
