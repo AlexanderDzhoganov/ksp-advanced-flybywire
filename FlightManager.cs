@@ -31,8 +31,10 @@ namespace KSPAdvancedFlyByWire
 
         public void OnFlyByWire(FlightCtrlState state)
         {
+            // State may arrive with SAS applied. Save it and reset pitch/yaw/roll so that it doesn't mess with input.
             FlightCtrlState sasState = new FlightCtrlState();
             sasState.CopyFrom(state);
+            state.pitch = 0; state.yaw = 0; state.roll = 0;
 
             // skill vessel input if we're in time-warp
             m_DisableVesselControls = TimeWarp.fetch != null && TimeWarp.fetch.current_rate_index != 0 && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH;
@@ -63,16 +65,16 @@ namespace KSPAdvancedFlyByWire
 
             ZeroOutFlightProperties();
 
-            // Override SAS
-            if (!sasState.isNeutral)
+            // Apply SAS if no input
+            if (!sasState.isNeutral && FlightGlobals.ActiveVessel.Autopilot.Enabled)
             {
                 float t = FlightGlobals.ActiveVessel.Autopilot.SAS.controlDetectionThreshold;
-                float pDelta = state.pitch - sasState.pitch, yDelta = state.yaw - sasState.yaw, rDelta = state.roll - sasState.roll;
-                if ((Math.Abs(pDelta) > t) || (Math.Abs(yDelta) > t) || (Math.Abs(rDelta) > t))
+                bool hasInput = Math.Abs(state.pitch) > t || Math.Abs(state.yaw) > t || Math.Abs(state.roll) > t;
+                if (!hasInput)
                 {
-                    state.pitch -= sasState.pitch;
-                    state.yaw -= sasState.yaw;
-                    state.roll -= sasState.roll;
+                    state.pitch = sasState.pitch;
+                    state.yaw = sasState.yaw;
+                    state.roll = sasState.roll;
                 }
             }
         }
