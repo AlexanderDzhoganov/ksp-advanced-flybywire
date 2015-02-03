@@ -178,6 +178,10 @@ namespace KSPAdvancedFlyByWire
         {
             foreach (ControllerConfiguration config in controllers)
             {
+              /// Catch exceptions from any one controller to prevent overwrite 
+              /// of presets for all controllers.
+              try
+              {
                 if (Utility.CheckXInputSupport() && config.wrapper == InputWrapper.XInput)
                 {
 #if !LINUX
@@ -206,7 +210,16 @@ namespace KSPAdvancedFlyByWire
 
                 for (int i = 0; i < config.iface.GetAxesCount(); i++)
                 {
-                    config.iface.axisStates[i] = config.axisConfigurations[i];
+                    /// Protection from flaky SDL behaviour. SDL may report more axis
+                    /// than was previously accounted for in the configuration file.
+                    if (i < config.axisConfigurations.Count)
+                    {
+                        config.iface.axisStates[i] = config.axisConfigurations[i];
+                    }
+                    else
+                    {
+                        config.iface.axisStates[i] = new AxisConfiguration();
+                    }
                 }
 
                 config.axisConfigurations = null;
@@ -217,6 +230,10 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 config.iface.manualDeadZones = config.manualDeadZones;
+              }
+
+              catch { }
+
             }
         }
 
