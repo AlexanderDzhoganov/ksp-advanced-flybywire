@@ -207,7 +207,9 @@ namespace KSPAdvancedFlyByWire
 
             if (hatId < m_HatsCount)
             {
-                int buttonId = (button - m_ButtonsCount) % 8;
+                // Button Ids are 0-7, but SDL returns 0-8 where 0 is centered
+                // Add one to button id to prevent identifying "centered" as a button
+                int buttonId = ((button - m_ButtonsCount) % 8) + 1;
                 return SDL.SDL_JoystickGetHat(m_Joystick, hatId) == buttonId;
             }
 
