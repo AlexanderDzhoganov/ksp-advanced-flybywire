@@ -1,3 +1,9 @@
+v1.5
+- Re-implemented SAS override (by ddaf)
+- Fixed the disappearing SDL controller config (by DeamonSix)
+- Fixed a bug where SDL would identify the "centered" position as a button (by badpandabear)
+- A big thank you to all contributors and thanks to all users for waiting so long for this update \o/
+
 v1.4.6
 - This patch brought to you by ddaf
 - Fixed SAS being enabled when it shouldn't
