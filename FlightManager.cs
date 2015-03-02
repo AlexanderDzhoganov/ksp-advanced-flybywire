@@ -27,13 +27,16 @@ namespace KSPAdvancedFlyByWire
         public FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
         public FlightProperty m_CameraZoom = new FlightProperty(-1.0f, 1.0f);
 
+        // VesselAutopilot.VesselSAS
+        public static float controlDetectionThreshold = 0.05f;
+
         private bool m_DisableVesselControls = false;
 
         public void OnFlyByWire(FlightCtrlState state)
         {
-            // State may arrive with SAS applied. Save it and reset pitch/yaw/roll so that it doesn't mess with input.
-            FlightCtrlState sasState = new FlightCtrlState();
-            sasState.CopyFrom(state);
+            // State may arrive with SAS or WASD controls pre-applied. Save it and reset pitch/yaw/roll so that it doesn't mess with input.
+            FlightCtrlState preState = new FlightCtrlState();
+            preState.CopyFrom(state);
             state.pitch = 0; state.yaw = 0; state.roll = 0;
 
             // skill vessel input if we're in time-warp
@@ -65,16 +68,16 @@ namespace KSPAdvancedFlyByWire
 
             ZeroOutFlightProperties();
 
-            // Apply SAS if no input
-            if (!sasState.isNeutral && FlightGlobals.ActiveVessel.Autopilot.Enabled)
+            // Apply pre-state if not neutral and no AFBW input.
+            if (!preState.isNeutral)
             {
-                float t = FlightGlobals.ActiveVessel.Autopilot.SAS.controlDetectionThreshold;
+                float t = controlDetectionThreshold;
                 bool hasInput = Math.Abs(state.pitch) > t || Math.Abs(state.yaw) > t || Math.Abs(state.roll) > t;
                 if (!hasInput)
                 {
-                    state.pitch = sasState.pitch;
-                    state.yaw = sasState.yaw;
-                    state.roll = sasState.roll;
+                    state.pitch = preState.pitch;
+                    state.yaw = preState.yaw;
+                    state.roll = preState.roll;
                 }
             }
         }
