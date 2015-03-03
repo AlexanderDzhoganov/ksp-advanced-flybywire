@@ -1,17 +1,16 @@
 ## Advanced Fly-By-Wire v1.5
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.5.0
+Latest version - 1.5.1
 
-[Download v1.5 (Windows, KSP x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.5_x86.zip)
+[Download v1.5.1 (Windows, KSP x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.5.1_x86.zip)
 
-[Download v1.5 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.5-linux.zip) (Requires libsdl2)
+[Download v1.5 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.5.1_linux.zip) (Requires libsdl2)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
 You can also find the mod on:
 - [Official forums](http://forum.kerbalspaceprogram.com/threads/95022-0-24-2-Advanced-Fly-by-wire-v1-0-%28Better-controller-support%29)
-- [Curse.com](http://www.curse.com/ksp-mods/kerbal/224592-advanced-fly-by-wire)
 - [KerbalStuff](https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire)
 
 ### What is this?
