@@ -1,3 +1,7 @@
+v1.5.1
+- Fixed WSAD controls not working with SAS off (fix by ddaf)
+- Updated bundled Toolbar mod
+
 v1.5
 - Re-implemented SAS override (by ddaf)
 - Fixed the disappearing SDL controller config (by DeamonSix)
