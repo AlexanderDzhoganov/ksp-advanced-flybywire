@@ -67,6 +67,12 @@ namespace KSPAdvancedFlyByWire
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
+            GUILayout.Label("AFBW input overrides SAS and other control inputs");
+            AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("Save configuration"))
             {
                 AdvancedFlyByWire.Instance.SaveState(null);

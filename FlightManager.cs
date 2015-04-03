@@ -37,8 +37,10 @@ namespace KSPAdvancedFlyByWire
             // State may arrive with SAS or WASD controls pre-applied. Save it and reset pitch/yaw/roll so that it doesn't mess with input.
             FlightCtrlState preState = new FlightCtrlState();
             preState.CopyFrom(state);
-            state.pitch = 0; state.yaw = 0; state.roll = 0;
-
+            if (AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState)
+            {
+                state.pitch = 0; state.yaw = 0; state.roll = 0;
+            }
             // skill vessel input if we're in time-warp
             m_DisableVesselControls = TimeWarp.fetch != null && TimeWarp.fetch.current_rate_index != 0 && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH;
 
@@ -69,11 +71,12 @@ namespace KSPAdvancedFlyByWire
 
             ZeroOutFlightProperties();
 
-            // Apply pre-state if not neutral and no AFBW input.
-            if (!preState.isNeutral)
+            // Apply pre-state if not neutral and no AFBW input (including trim).
+            if (!preState.isNeutral && AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState)
             {
                 float t = controlDetectionThreshold;
                 bool hasInput = Math.Abs(state.pitch) > t || Math.Abs(state.yaw) > t || Math.Abs(state.roll) > t;
+                // hasInput will always be true if trim is active on any axis
                 if (!hasInput)
                 {
                     state.pitch = preState.pitch;
