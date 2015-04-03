@@ -114,9 +114,10 @@ namespace KSPAdvancedFlyByWire
 
         private void UpdateFlightProperties(FlightCtrlState state)
         {
-            state.yawTrim = m_Yaw.GetTrim();
+            // As of 0.90, setting these trim values seems to have no effect.
+            /*state.yawTrim = m_Yaw.GetTrim();
             state.pitchTrim = m_Pitch.GetTrim();
-            state.rollTrim = m_Roll.GetTrim();
+            state.rollTrim = m_Roll.GetTrim();*/
 
             float precisionModeFactor = AdvancedFlyByWire.Instance.GetPrecisionModeFactor();
             state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update() * precisionModeFactor, -1.0f, 1.0f);
@@ -366,7 +367,6 @@ namespace KSPAdvancedFlyByWire
                     m_Yaw.SetTrim(0.0f);
                     m_Pitch.SetTrim(0.0f);
                     m_Roll.SetTrim(0.0f);
-                    state.ResetTrim();
                     return;
                 case DiscreteAction.IVANextCamera:
                     CameraController.Instance.NextIVACamera();
