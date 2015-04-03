@@ -51,8 +51,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     config.iface.Update(state);
                     UpdateAxes(config, state);
-                    UpdateFlightProperties(config, state);
-
+                    
                     if (FlightGlobals.ActiveVessel.isEVA)
                     {
                         EVAController.Instance.UpdateEVAFlightProperties(config, state);
@@ -65,6 +64,8 @@ namespace KSPAdvancedFlyByWire
                     );
                 }
             }
+
+            UpdateFlightProperties(state);
 
             ZeroOutFlightProperties();
 
@@ -111,7 +112,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void UpdateFlightProperties(ControllerConfiguration config, FlightCtrlState state)
+        private void UpdateFlightProperties(FlightCtrlState state)
         {
             state.yawTrim = m_Yaw.GetTrim();
             state.pitchTrim = m_Pitch.GetTrim();
