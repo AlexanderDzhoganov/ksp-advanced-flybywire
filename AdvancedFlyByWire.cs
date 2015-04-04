@@ -25,6 +25,8 @@ namespace KSPAdvancedFlyByWire
         public bool m_UsePrecisionModeFactor = false;
         public float m_PrecisionModeFactor = 0.5f;
 
+        public bool m_IgnoreFlightCtrlState = true;
+
         // Configuration
         private static readonly string addonFolder = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
         private Configuration m_Configuration = null;
@@ -103,6 +105,7 @@ namespace KSPAdvancedFlyByWire
                 m_UseOldPresetsWindow = pluginConfig.GetValue("useOldPresetEditor", false);
                 m_UsePrecisionModeFactor = pluginConfig.GetValue("usePrecisionModeFactor", false);
                 m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue("precisionModeFactor", "0.5"));
+                m_IgnoreFlightCtrlState = pluginConfig.GetValue("ignoreFlightCtrlState", true);
             }
             
             m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
@@ -125,6 +128,7 @@ namespace KSPAdvancedFlyByWire
                 pluginConfig["useOldPresetEditor"] = m_UseOldPresetsWindow;
                 pluginConfig["usePrecisionModeFactor"] = m_UsePrecisionModeFactor;
                 pluginConfig["precisionModeFactor"] = m_PrecisionModeFactor.ToString();
+                pluginConfig["ignoreFlightCtrlState"] = m_IgnoreFlightCtrlState;
                 pluginConfig.save();
             }
 

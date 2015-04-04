@@ -37,8 +37,10 @@ namespace KSPAdvancedFlyByWire
             // State may arrive with SAS or WASD controls pre-applied. Save it and reset pitch/yaw/roll so that it doesn't mess with input.
             FlightCtrlState preState = new FlightCtrlState();
             preState.CopyFrom(state);
-            state.pitch = 0; state.yaw = 0; state.roll = 0;
-
+            if (AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState)
+            {
+                state.pitch = 0; state.yaw = 0; state.roll = 0;
+            }
             // skill vessel input if we're in time-warp
             m_DisableVesselControls = TimeWarp.fetch != null && TimeWarp.fetch.current_rate_index != 0 && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH;
 
@@ -51,8 +53,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     config.iface.Update(state);
                     UpdateAxes(config, state);
-                    UpdateFlightProperties(config, state);
-
+                    
                     if (FlightGlobals.ActiveVessel.isEVA)
                     {
                         EVAController.Instance.UpdateEVAFlightProperties(config, state);
@@ -66,13 +67,16 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
+            UpdateFlightProperties(state);
+
             ZeroOutFlightProperties();
 
-            // Apply pre-state if not neutral and no AFBW input.
-            if (!preState.isNeutral)
+            // Apply pre-state if not neutral and no AFBW input (including trim).
+            if (!preState.isNeutral && AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState)
             {
                 float t = controlDetectionThreshold;
                 bool hasInput = Math.Abs(state.pitch) > t || Math.Abs(state.yaw) > t || Math.Abs(state.roll) > t;
+                // hasInput will always be true if trim is active on any axis
                 if (!hasInput)
                 {
                     state.pitch = preState.pitch;
@@ -111,11 +115,12 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private void UpdateFlightProperties(ControllerConfiguration config, FlightCtrlState state)
+        private void UpdateFlightProperties(FlightCtrlState state)
         {
-            state.yawTrim = m_Yaw.GetTrim();
+            // As of 0.90, setting these trim values seems to have no effect.
+            /*state.yawTrim = m_Yaw.GetTrim();
             state.pitchTrim = m_Pitch.GetTrim();
-            state.rollTrim = m_Roll.GetTrim();
+            state.rollTrim = m_Roll.GetTrim();*/
 
             float precisionModeFactor = AdvancedFlyByWire.Instance.GetPrecisionModeFactor();
             state.yaw = Utility.Clamp(state.yaw + m_Yaw.Update() * precisionModeFactor, -1.0f, 1.0f);
@@ -365,7 +370,6 @@ namespace KSPAdvancedFlyByWire
                     m_Yaw.SetTrim(0.0f);
                     m_Pitch.SetTrim(0.0f);
                     m_Roll.SetTrim(0.0f);
-                    state.ResetTrim();
                     return;
                 case DiscreteAction.IVANextCamera:
                     CameraController.Instance.NextIVACamera();
