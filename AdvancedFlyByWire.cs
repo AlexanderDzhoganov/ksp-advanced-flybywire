@@ -190,6 +190,12 @@ namespace KSPAdvancedFlyByWire
 
         private Vessel m_LastChangedActiveVessel = null;
 
+		IEnumerator<YieldInstruction> WaitAndAddFlyByWireCallbackToActiveVessel ()
+		{
+			yield return null;
+			AddFlyByWireCallbackToActiveVessel ();
+		}
+
         private void OnVesselChange(Vessel vessel)
         {
             if (vessel == null)
@@ -214,7 +220,7 @@ namespace KSPAdvancedFlyByWire
             m_FlightManager.m_Pitch.SetZero();
             m_FlightManager.m_Roll.SetZero();
 
-            AddFlyByWireCallbackToActiveVessel();
+            StartCoroutine (WaitAndAddFlyByWireCallbackToActiveVessel());
         }
 
         private void InitializeToolbarButton()
