@@ -45,7 +45,7 @@ namespace KSPAdvancedFlyByWire
             m_DisableVesselControls = TimeWarp.fetch != null && TimeWarp.fetch.current_rate_index != 0 && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH;
 
             m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
-            m_WheelThrottle.SetMinMaxValues(-state.wheelThrottle, 1.0f - state.wheelThrottle);
+            m_WheelThrottle.SetMinMaxValues(-1.0f, 1.0f);
 
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
@@ -135,7 +135,6 @@ namespace KSPAdvancedFlyByWire
             state.wheelThrottleTrim = m_WheelThrottle.GetTrim();
 
             state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
-
             state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
             state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), -1.0f, 1.0f);
         }
@@ -615,7 +614,7 @@ namespace KSPAdvancedFlyByWire
                     m_Throttle.Increment(-value * controller.incrementalActionSensitivity * Time.deltaTime);
                     return;
                 case ContinuousAction.WheelThrottle:
-                    m_WheelThrottle.SetMinMaxValues(-1.0f - state.wheelThrottle, 1.0f - state.wheelThrottle);
+                    m_WheelThrottle.SetMinMaxValues(-1.0f, 1.0f);
                     m_WheelThrottle.SetValue(value);
                     return;
                 case ContinuousAction.WheelSteer:
