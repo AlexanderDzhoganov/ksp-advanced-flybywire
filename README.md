@@ -1,11 +1,11 @@
 ## Advanced Fly-By-Wire v1.5
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.5.1
+Latest version - 1.6
 
-[Download v1.5.1 (Windows, KSP x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.5.1_x86.zip)
+[Download v1.6 (Windows, KSP x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.6_x86.zip)
 
-[Download v1.5 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.5.1_linux.zip) (Requires libsdl2)
+[Download v1.6 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.6-linux.zip) (Requires libsdl2)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
