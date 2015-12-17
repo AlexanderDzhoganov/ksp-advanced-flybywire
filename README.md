@@ -1,7 +1,7 @@
 ## Advanced Fly-By-Wire v1.6.1
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.6.1
+Latest version - 1.6.1 for KSP 1.0.5 and later
 
 [Download v1.6.1 (Windows, KSP x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.6.1_x86.zip)
 
