@@ -250,11 +250,11 @@ namespace KSPAdvancedFlyByWire
             m_UIHidden = false;
         }
 
-        void OnGUIRecoveryDialogSpawn(MissionRecoveryDialog dialog)
+        void OnGUIRecoveryDialogSpawn(KSP.UI.Screens.MissionRecoveryDialog dialog)
         {
             m_UIHidden = true;
         }
-        void OnGUIRecoveryDialogDespawn(MissionRecoveryDialog dialog)
+        void OnGUIRecoveryDialogDespawn(KSP.UI.Screens.MissionRecoveryDialog dialog)
         {
             m_UIHidden = false;
         }

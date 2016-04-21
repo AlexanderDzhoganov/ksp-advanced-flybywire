@@ -1,11 +1,11 @@
-## Advanced Fly-By-Wire v1.6.1
+## Advanced Fly-By-Wire v1.7-beta
 ### Kerbal Space Program input system overhaul mod
 
-Latest version - 1.6.1 for KSP 1.0.5 and later
+Latest version - 1.7-beta for KSP 1.1 and later
 
-[Download v1.6.1 (Windows, KSP x86)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.6.1_x86.zip)
+[Download v1.7-beta (Windows, KSP x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.7_x64.zip)
 
-[Download v1.6.1 (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.6.1-linux.zip) (Requires libsdl2)
+[Download v1.7-beta (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.7-linux.zip) (Requires libsdl2)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -49,34 +49,12 @@ From there you will see a list of detected controllers. You can click on "Enable
 After setting up your controller you should save your game (by using quicksave or exiting to space center), which will automatically save your controller configuration as well.
 
 ### Operating system compatibility
-Fully tested and compatible with KSP x32 and x64 on Windows operating systems.
-Linux/ MacOSX support available but still in early testing.
-XInput support unavailable on Linux and MacOSX.
+Fully tested and compatible with KSP x64 on Windows and Linux operating systems.
+XInput support unavailable on Linux.
 
 ### Performance considerations
 The mod is extremely lightweight both on performance and memory. It only does a bit of arithmetic and remapping of incoming inputs which should have
 no noticeable effect on CPU usage. Memory usage is in the order of a few megabytes.
-
-### Compatibility with other mods
-The mod has been tested to work with over 50 of the most popular mods.
-
-Here is a (non-exhaustive) list of mods that have been tested to be compatible, in no particular order:
-- MechJeb
-- Ferram Aerospace Research (FAR)
-- KW Rocketry
-- B9 Aerospace 
-- OKS/ MKS
-- Kethane
-- Infernal Robotics
-- Kerbal Engineer Redux
-- ORS
-- PreciseNode
-- TextureReplacer
-- Deadly Reentry
-- Crossfeed Enabler
-- Chatterer
-- Environmental Visual Enhancements
-- TAC Life Support .. and more
 
 ### Bug reports
 Please report any bugs using [GitHub's issue tracker](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/issues).

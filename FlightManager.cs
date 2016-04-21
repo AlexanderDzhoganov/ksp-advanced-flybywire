@@ -333,7 +333,7 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.NavballToggle:
                     if (MapView.MapIsEnabled && MapView.fetch != null)
                     {
-                        MapView.fetch.maneuverModeToggle.OnPress.Invoke();
+                      //  MapView.fetch.maneuverModeToggle.OnPress.Invoke();
                     }
                     return;
                 case DiscreteAction.IVAViewToggle:

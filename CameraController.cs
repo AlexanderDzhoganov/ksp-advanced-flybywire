@@ -68,7 +68,7 @@ namespace KSPAdvancedFlyByWire
                     }
                     if (camZoom != 0)
                     {
-                        InternalCamera.Instance.SetFOV(Utility.Clamp(InternalCamera.Instance.camera.fieldOfView + camZoom * ivaFovStep, ivaFovMin, ivaFovMax));
+                       // InternalCamera.Instance.SetFOV(Utility.Clamp(InternalCamera.Instance.camera.fieldOfView + camZoom * ivaFovStep, ivaFovMin, ivaFovMax));
                     }
                     break;
                 }
@@ -173,7 +173,7 @@ namespace KSPAdvancedFlyByWire
 
             if (camZoom != 0)
             {
-                InternalCamera.Instance.SetFOV(Utility.Clamp(InternalCamera.Instance.camera.fieldOfView + camZoom * IVAscale, fovMinIVA, fovMaxIVA));
+               // InternalCamera.Instance.SetFOV(Utility.Clamp(InternalCamera.Instance.camera.fieldOfView + camZoom * IVAscale, fovMinIVA, fovMaxIVA));
             }
         }
     }
