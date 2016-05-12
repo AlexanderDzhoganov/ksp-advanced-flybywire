@@ -128,6 +128,28 @@
                     return "Camera View [Toggle]";
                 case DiscreteAction.SASHold:
                     return "SAS (Hold)";
+                case DiscreteAction.SASStabilityAssist:
+                    return "SAS (Stability assist)";
+                case DiscreteAction.SASPrograde:
+                    return "SAS (Prograde)";
+                case DiscreteAction.SASRetrograde:
+                    return "SAS (Retrograde)";
+                case DiscreteAction.SASNormal:
+                    return "SAS (Normal)";
+                case DiscreteAction.SASAntinormal:
+                    return "SAS (Antinormal)";
+                case DiscreteAction.SASRadialIn:
+                    return "SAS (Radial in)";
+                case DiscreteAction.SASRadialOut:
+                    return "SAS (Radial out)";
+                case DiscreteAction.SASManeuver:
+                    return "SAS (Maneuver)";
+                case DiscreteAction.SASTarget:
+                    return "SAS (Target)";
+                case DiscreteAction.SASAntiTarget:
+                    return "SAS (Anti target)";
+                case DiscreteAction.SASManeuverOrTarget:
+                    return "SAS (Maneuver or target)";
                 case DiscreteAction.LockStage:
                     return "Lock Staging";
                 case DiscreteAction.TogglePrecisionControls:
