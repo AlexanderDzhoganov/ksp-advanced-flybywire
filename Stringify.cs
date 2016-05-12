@@ -120,6 +120,8 @@
                     return "Physics TimeWarp+";
                 case DiscreteAction.PhysicsTimeWarpMinus:
                     return "Physics TimeWarp-";
+                case DiscreteAction.StopWarp:
+                    return "Stop Warp";
                 case DiscreteAction.NavballToggle:
                     return "Navball [Toggle]";
                 case DiscreteAction.IVAViewToggle:
