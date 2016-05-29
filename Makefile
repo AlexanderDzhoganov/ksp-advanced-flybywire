@@ -40,7 +40,7 @@ DOC_FILES := \
 	README.md
 
 RESGEN2		:= resgen2
-GMCS		:= gmcs
+GMCS		:= mcs
 GMCSFLAGS	:= -optimize -unsafe -d:LINUX
 GIT			:= git
 TAR			:= tar
@@ -60,7 +60,9 @@ info:
 
 ksp-advanced-flybywire.dll: ${AFBW_FILES}
 	${GMCS} ${GMCSFLAGS} -t:library -lib:${XIDIR},${TBGAMEDATA},${MANAGED} \
-		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine \
+		-r:Assembly-CSharp,Assembly-CSharp-firstpass \
+		-r:UnityEngine,UnityEngine.UI \
+		-r:KSPUtil \
 		-r:Toolbar \
 		-out:$@ $^
 
