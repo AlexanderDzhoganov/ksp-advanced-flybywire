@@ -171,13 +171,13 @@ namespace KSPAdvancedFlyByWire
 
             if (FlightGlobals.ActiveVessel != null)
             {
-                FlightGlobals.ActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
+                FlightGlobals.ActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;
             }
         }
 
         void AddFlyByWireCallbackToActiveVessel()
         {
-            FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
+            FlightGlobals.ActiveVessel.OnPreAutopilotUpdate += m_FlightManager.OnFlyByWire;
             m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
 
             if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null
@@ -210,7 +210,7 @@ namespace KSPAdvancedFlyByWire
                     FlightGlobals.ActiveVessel.Autopilot.SAS.DisconnectFlyByWire();
                 }
 
-                m_LastChangedActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
+                m_LastChangedActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;
                 m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
             }
 
