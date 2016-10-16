@@ -61,9 +61,9 @@ namespace KSPAdvancedFlyByWire
         {
 #if LINUX
             return false;
-#endif
-
+#else
             return true;
+#endif
         }
 
         public static bool CheckSDLSupport()
@@ -75,9 +75,9 @@ namespace KSPAdvancedFlyByWire
         {
 #if LINUX
             return false;
-#endif
-
+#else
             return true;
+#endif
         }
 
     }

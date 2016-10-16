@@ -17,12 +17,12 @@ namespace KSPAdvancedFlyByWire
 
         private bool m_ChooseDiscreteAction = false;
         private Rect m_ChooseDiscreteActionRect = new Rect();
-        private DiscreteAction m_ChosenDiscreteAction = DiscreteAction.None;
+        //private DiscreteAction m_ChosenDiscreteAction = DiscreteAction.None;
         private Vector2 m_ChooseDiscreteActionScroll = new Vector2(0, 0);
 
         private bool m_ChooseContinuousAction = false;
         private Rect m_ChooseContinuousActionRect = new Rect();
-        private ContinuousAction m_ChosenContinuousAction = ContinuousAction.None;
+        //private ContinuousAction m_ChosenContinuousAction = ContinuousAction.None;
         private Vector2 m_ChooseContinuousActionScroll = new Vector2(0, 0);
 
         public void DoPressDesiredCombinationWindow(int index)
@@ -102,7 +102,7 @@ namespace KSPAdvancedFlyByWire
 
                 if (GUILayout.Button(Stringify.DiscreteActionToString(action)))
                 {
-                    m_ChosenDiscreteAction = action;
+                    //m_ChosenDiscreteAction = action;
                     m_ChooseDiscreteAction = false;
                     m_CurrentlyEditingDiscreteAction = action;
                     m_ClickSleepTimer = 0.25f;
@@ -144,7 +144,7 @@ namespace KSPAdvancedFlyByWire
 
                 if (GUILayout.Button(Stringify.ContinuousActionToString(action)))
                 {
-                    m_ChosenContinuousAction = action;
+                    //m_ChosenContinuousAction = action;
                     m_ChooseContinuousAction = false;
                     m_CurrentlyEditingContinuousAction = action;
                     m_ClickSleepTimer = 0.25f;
@@ -289,14 +289,14 @@ namespace KSPAdvancedFlyByWire
             if (GUILayout.Button("Add button"))
             {
                 m_ChooseDiscreteAction = true;
-                m_ChosenDiscreteAction = DiscreteAction.None;
+                //m_ChosenDiscreteAction = DiscreteAction.None;
                 m_ChooseDiscreteActionRect = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 256, 512);
             }
 
             if (GUILayout.Button("Add axis"))
             {
                 m_ChooseContinuousAction = true;
-                m_ChosenContinuousAction = ContinuousAction.None;
+                //m_ChosenContinuousAction = ContinuousAction.None;
                 m_ChooseContinuousActionRect = new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 256, 512);
             }
 

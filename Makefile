@@ -62,7 +62,6 @@ ksp-advanced-flybywire.dll: ${AFBW_FILES}
 	${GMCS} ${GMCSFLAGS} -t:library -lib:${XIDIR},${TBGAMEDATA},${MANAGED} \
 		-r:Assembly-CSharp,Assembly-CSharp-firstpass \
 		-r:UnityEngine,UnityEngine.UI \
-		-r:KSPUtil \
 		-r:Toolbar \
 		-out:$@ $^
 
