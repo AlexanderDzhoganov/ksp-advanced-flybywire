@@ -83,6 +83,12 @@ namespace KSPAdvancedFlyByWire
                     state.yaw = preState.yaw;
                     state.roll = preState.roll;
                 }
+				else
+				{
+					state.yaw = Utility.Clamp(state.yaw + state.yawTrim, -1.0f, 1.0f);
+					state.pitch = Utility.Clamp(state.pitch + state.pitchTrim, -1.0f, 1.0f);
+					state.roll = Utility.Clamp(state.roll + state.rollTrim, -1.0f, 1.0f);
+				}
             }
         }
 
