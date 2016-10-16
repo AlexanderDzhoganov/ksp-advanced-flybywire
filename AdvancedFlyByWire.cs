@@ -179,13 +179,14 @@ namespace KSPAdvancedFlyByWire
         {
             FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
             m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
-
+/*
             if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null
                 && FlightGlobals.ActiveVessel.Autopilot.SAS.CanEngageSAS() && FlightGlobals.ActiveVessel.CurrentControlLevel == Vessel.ControlLevel.FULL
                 && !FlightGlobals.ActiveVessel.isEVA)
             {
                 FlightGlobals.ActiveVessel.Autopilot.SAS.ConnectFlyByWire(true);
             }
+*/
         }
 
         private Vessel m_LastChangedActiveVessel = null;
