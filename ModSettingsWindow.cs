@@ -10,7 +10,7 @@ namespace KSPAdvancedFlyByWire
     {
         private Rect windowRect = new Rect(0, 648, 420, 256);
 
-        private Vector2 m_ScrollPosition = new Vector2(0, 0);
+        //private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
         public bool shouldBeDestroyed = false;
 

@@ -156,6 +156,7 @@ namespace KSPAdvancedFlyByWire
         // Inspiration from: https://github.com/pizzaoverhead/KerbTrack/blob/master/KerbTrack/KerbTrack.cs#L402-459
         private void OldUpdateIVACamera(float camPitch, float camYaw, float camZoom, float camSensitivity)
         {
+/*
             float fovMaxIVA = 90f;
             float fovMinIVA = 10f;
             float pitchMaxIVA = 60f;
@@ -175,6 +176,7 @@ namespace KSPAdvancedFlyByWire
             {
                // InternalCamera.Instance.SetFOV(Utility.Clamp(InternalCamera.Instance.camera.fieldOfView + camZoom * IVAscale, fovMinIVA, fovMaxIVA));
             }
+*/
         }
     }
 }
