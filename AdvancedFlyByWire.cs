@@ -27,6 +27,8 @@ namespace KSPAdvancedFlyByWire
 
         public bool m_IgnoreFlightCtrlState = true;
 
+        public bool m_UseOnPreInsteadOfOnFlyByWire = false;
+
         // Configuration
         private static readonly string addonFolder = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
         private Configuration m_Configuration = null;
@@ -106,6 +108,7 @@ namespace KSPAdvancedFlyByWire
                 m_UsePrecisionModeFactor = pluginConfig.GetValue("usePrecisionModeFactor", false);
                 m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue("precisionModeFactor", "0.5"));
                 m_IgnoreFlightCtrlState = pluginConfig.GetValue("ignoreFlightCtrlState", true);
+                m_UseOnPreInsteadOfOnFlyByWire = pluginConfig.GetValue("useOnPreAutopilot", false);
             }
             
             m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
@@ -129,6 +132,7 @@ namespace KSPAdvancedFlyByWire
                 pluginConfig["usePrecisionModeFactor"] = m_UsePrecisionModeFactor;
                 pluginConfig["precisionModeFactor"] = m_PrecisionModeFactor.ToString();
                 pluginConfig["ignoreFlightCtrlState"] = m_IgnoreFlightCtrlState;
+                pluginConfig["useOnPreAutopilot"] = m_UseOnPreInsteadOfOnFlyByWire;
                 pluginConfig.save();
             }
 
@@ -171,13 +175,25 @@ namespace KSPAdvancedFlyByWire
 
             if (FlightGlobals.ActiveVessel != null)
             {
-                FlightGlobals.ActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;
+                try
+                {
+                    FlightGlobals.ActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;
+                }
+                catch (NullReferenceException) { }
+                try
+                {
+                    FlightGlobals.ActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
+                }
+                catch (NullReferenceException) { }
             }
         }
 
         void AddFlyByWireCallbackToActiveVessel()
         {
-            FlightGlobals.ActiveVessel.OnPreAutopilotUpdate += m_FlightManager.OnFlyByWire;
+            if (m_UseOnPreInsteadOfOnFlyByWire)
+                FlightGlobals.ActiveVessel.OnPreAutopilotUpdate += m_FlightManager.OnFlyByWire;
+            else
+                FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
             m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
 /*
             if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null
@@ -211,7 +227,16 @@ namespace KSPAdvancedFlyByWire
                     FlightGlobals.ActiveVessel.Autopilot.SAS.DisconnectFlyByWire();
                 }
 
-                m_LastChangedActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;
+                try
+                {
+                    FlightGlobals.ActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;                    
+                }
+                catch (NullReferenceException) { }
+                try
+                {
+                    FlightGlobals.ActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
+                }
+                catch (NullReferenceException) { }                
                 m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
             }
 
