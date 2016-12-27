@@ -4,7 +4,6 @@ GAMEDATA	:= ${KSPDIR}/GameData
 AFBWGAMEDATA  := ${GAMEDATA}/ksp-advanced-flybywire
 XIDIR		:= ${GAMEDATA}/ksp-advanced-flybywire
 PLUGINDIR	:= ${AFBWGAMEDATA}
-TBGAMEDATA  := ${GAMEDATA}/000_Toolbar
 
 TARGETS		:= ksp-advanced-flybywire.dll
 
@@ -33,6 +32,7 @@ AFBW_FILES := \
     IController.cs \
     CameraController.cs \
     Properties/AssemblyInfo.cs \
+	ToolbarWrapper.cs \
 	$e
 
 DOC_FILES := \
@@ -59,10 +59,9 @@ info:
 	@echo "    KSP Data:   ${KSPDIR}"
 
 ksp-advanced-flybywire.dll: ${AFBW_FILES}
-	${GMCS} ${GMCSFLAGS} -t:library -lib:${XIDIR},${TBGAMEDATA},${MANAGED} \
+	${GMCS} ${GMCSFLAGS} -t:library -lib:${XIDIR},${MANAGED} \
 		-r:Assembly-CSharp,Assembly-CSharp-firstpass \
 		-r:UnityEngine,UnityEngine.UI \
-		-r:Toolbar \
 		-out:$@ $^
 
 clean:
