@@ -108,14 +108,15 @@ namespace KSPAdvancedFlyByWire
 
                 foreach (var action in actions)
                 {
+					var axisValue = axisState;
                     if (config.GetCurrentPreset().IsContinuousBindingInverted(action))
                     {
-                        axisState *= -1.0f;
+                        axisValue *= -1.0f;
                     }
 
                     if (axisState != 0.0f || action == ContinuousAction.Throttle || action == ContinuousAction.WheelThrottle)
                     {
-                        EvaluateContinuousAction(config, action, axisState, state);
+                        EvaluateContinuousAction(config, action, axisValue, state);
                     }
                 }
             }
