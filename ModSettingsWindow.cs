@@ -73,6 +73,12 @@ namespace KSPAdvancedFlyByWire
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
+            GUILayout.Label("AtmosphereAutopilot compatibility");
+            AdvancedFlyByWire.Instance.m_UseOnPreInsteadOfOnFlyByWire = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseOnPreInsteadOfOnFlyByWire, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("Save configuration"))
             {
                 AdvancedFlyByWire.Instance.SaveState(null);
