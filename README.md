@@ -13,6 +13,9 @@ You can also find the mod on:
 - [Official forums](http://forum.kerbalspaceprogram.com/threads/95022-0-24-2-Advanced-Fly-by-wire-v1-0-%28Better-controller-support%29)
 - [KerbalStuff](https://kerbalstuff.com/mod/232/Advanced%20Fly-By-Wire)
 
+#### Installation
+On Windows, simply extract the ZIP file into the root installation folder for your game. Often this is directly in `%ProgramFiles%`. If you are using Steam, it will be located in `%ProgramFiles%\Steam\steamapps\common\Kerbal Space Program`.
+
 ### What is this?
 This is a mod for [Kerbal Space Program](http://kerbalspaceprogram.com), a spaceship building/ space exploration game by Squad.
 It dramatically enhances the stock input system with a bunch of fixes and many new features.
