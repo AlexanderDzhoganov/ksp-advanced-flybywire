@@ -28,7 +28,7 @@ namespace KSPAdvancedFlyByWire
         private int m_HatsCount = 0;
 
         private IntPtr m_Joystick = IntPtr.Zero;
-        int m_ControllerIndex = 0;
+        //int m_ControllerIndex = 0;
 
         static bool SDLInitialized = false;
 
@@ -36,7 +36,7 @@ namespace KSPAdvancedFlyByWire
         {
             InitializeSDL();
 
-            m_ControllerIndex = controllerIndex;
+            //m_ControllerIndex = controllerIndex;
             
             m_Joystick = SDL.SDL_JoystickOpen(controllerIndex);
 

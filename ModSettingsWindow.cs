@@ -10,7 +10,7 @@ namespace KSPAdvancedFlyByWire
     {
         private Rect windowRect = new Rect(0, 648, 420, 256);
 
-        private Vector2 m_ScrollPosition = new Vector2(0, 0);
+        //private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
         public bool shouldBeDestroyed = false;
 
@@ -69,6 +69,12 @@ namespace KSPAdvancedFlyByWire
             GUILayout.BeginHorizontal();
             GUILayout.Label("AFBW input overrides SAS and other control inputs");
             AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("AtmosphereAutopilot compatibility");
+            AdvancedFlyByWire.Instance.m_UseOnPreInsteadOfOnFlyByWire = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseOnPreInsteadOfOnFlyByWire, "");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 

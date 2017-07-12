@@ -84,6 +84,12 @@ namespace KSPAdvancedFlyByWire
                     state.yaw = preState.yaw;
                     state.roll = preState.roll;
                 }
+				else
+				{
+					state.yaw = Utility.Clamp(state.yaw + state.yawTrim, -1.0f, 1.0f);
+					state.pitch = Utility.Clamp(state.pitch + state.pitchTrim, -1.0f, 1.0f);
+					state.roll = Utility.Clamp(state.roll + state.rollTrim, -1.0f, 1.0f);
+				}
             }
         }
 
@@ -103,14 +109,15 @@ namespace KSPAdvancedFlyByWire
 
                 foreach (var action in actions)
                 {
+					var axisValue = axisState;
                     if (config.GetCurrentPreset().IsContinuousBindingInverted(action))
                     {
-                        axisState *= -1.0f;
+                        axisValue *= -1.0f;
                     }
 
                     if (axisState != 0.0f || action == ContinuousAction.Throttle || action == ContinuousAction.WheelThrottle)
                     {
-                        EvaluateContinuousAction(config, action, axisState, state);
+                        EvaluateContinuousAction(config, action, axisValue, state);
                     }
                 }
             }
@@ -395,14 +402,7 @@ namespace KSPAdvancedFlyByWire
                     if (FlightInputHandler.fetch != null)
                     {
                         FlightInputHandler.fetch.precisionMode = !FlightInputHandler.fetch.precisionMode;
-                        //Change color on flight input gauges manually. Hardcoded colors, but unlikely to change.
-                        foreach (var r in FlightInputHandler.fetch.inputGaugeRenderers)
-                        {
-                            if (FlightInputHandler.fetch.precisionMode)
-                                r.material.color = new Color(0.255f, 0.992f, 0.996f);
-                            else
-                                r.material.color = new Color(0.976f, 0.451f, 0.024f);
-                        }
+						GameEvents.Input.OnPrecisionModeToggle.Fire(FlightInputHandler.fetch.precisionMode);
                     }
                     return;
                 case DiscreteAction.ResetTrim:
