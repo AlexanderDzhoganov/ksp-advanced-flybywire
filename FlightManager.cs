@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
@@ -351,6 +352,42 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.SASHold:
                     FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
                     return;
+                case DiscreteAction.SASStabilityAssist:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.StabilityAssist, 0);
+                    return;
+                case DiscreteAction.SASPrograde:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Prograde, 1);
+                    return;
+                case DiscreteAction.SASRetrograde:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Retrograde, 2);
+                    return;
+                case DiscreteAction.SASNormal:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Normal, 3);
+                    return;
+                case DiscreteAction.SASAntinormal:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Antinormal, 4);
+                    return;
+                case DiscreteAction.SASRadialIn:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.RadialIn, 5);
+                    return;
+                case DiscreteAction.SASRadialOut:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.RadialOut, 6);
+                    return;
+                case DiscreteAction.SASManeuver:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Maneuver, 7);
+                    return;
+                case DiscreteAction.SASTarget:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Target, 8);
+                    return;
+                case DiscreteAction.SASAntiTarget:
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.AntiTarget, 9);
+                    return;
+                case DiscreteAction.SASManeuverOrTarget:
+                    if (!setAutopilotMode(VesselAutopilot.AutopilotMode.Maneuver, 7))
+                    {
+                        setAutopilotMode(VesselAutopilot.AutopilotMode.Target, 8);
+                    };
+                    return;
                 case DiscreteAction.TogglePrecisionControls:
                     if (FlightInputHandler.fetch != null)
                     {
@@ -638,6 +675,23 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-    }
+        private static void setSASUI(int mode)
+        {
+            KSP.UI.UIStateToggleButton[] SASbtns = UnityEngine.Object.FindObjectOfType<VesselAutopilotUI>().modeButtons;
+            SASbtns[mode].SetState(true);
+        }
 
+        private static bool setAutopilotMode(VesselAutopilot.AutopilotMode mode, int ui_button)
+        {
+                if (FlightGlobals.ActiveVessel.Autopilot.CanSetMode(mode)) {
+                        FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
+                        FlightGlobals.ActiveVessel.Autopilot.Update();
+                        FlightGlobals.ActiveVessel.Autopilot.SetMode(mode);
+                        setSASUI(ui_button);
+                        return true;
+                } else {
+                    return false;
+                }
+        }
+    }
 }
