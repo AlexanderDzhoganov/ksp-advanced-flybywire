@@ -40,6 +40,11 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
+        public static void StopWarp()
+        {
+            TimeWarp.SetRate(0, false);
+        }
+
         public static bool CheckRegularWarp()
         {
             if (TimeWarp.WarpMode != TimeWarp.Modes.HIGH)

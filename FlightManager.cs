@@ -331,6 +331,9 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.PhysicsTimeWarpMinus:
                     WarpController.DecreasePhysicsWarp();
                     return;
+                case DiscreteAction.StopWarp:
+                    WarpController.StopWarp();
+                    return;
                 case DiscreteAction.NavballToggle:
                     if (MapView.MapIsEnabled && MapView.fetch != null)
                     {
