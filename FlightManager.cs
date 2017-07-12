@@ -427,7 +427,7 @@ namespace KSPAdvancedFlyByWire
             switch (action)
             {
                 case DiscreteAction.Stage:
-                    Staging.ActivateNextStage();
+                    KSP.UI.Screens.StageManager.ActivateNextStage();
                     return;
                 case DiscreteAction.Gear:
                     FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
