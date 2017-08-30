@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using KSP.UI.Screens;
 
 namespace KSPAdvancedFlyByWire
 {
@@ -13,7 +14,7 @@ namespace KSPAdvancedFlyByWire
         public const int versionMinor = 1;
 
         // UI stuff
-        private Toolbar.IButton m_ToolbarButton = null;
+        private IButton m_ToolbarButton = null;
         private bool m_UIActive = true;
         private bool m_UIHidden = false;
         private Rect m_WindowRect = new Rect(0, 64, 432, 576);
@@ -90,7 +91,8 @@ namespace KSPAdvancedFlyByWire
 
             SaveState(null);
             UnregisterCallbacks();
-
+            if (ABFWButton != null)
+                ApplicationLauncher.Instance.RemoveModApplication(ABFWButton);
             m_FlightManager = null;
 
             print("Advanced Fly-By-Wire: Deinitialized");
@@ -248,20 +250,31 @@ namespace KSPAdvancedFlyByWire
 
             StartCoroutine (WaitAndAddFlyByWireCallbackToActiveVessel());
         }
-
+        ApplicationLauncherButton ABFWButton = null;
         private void InitializeToolbarButton()
         {
-            if(Toolbar.ToolbarManager.Instance == null)
+            if(ToolbarManager.Instance == null)
             {
                 print("Advanced Fly-By-Wire: toolbar instance not available");
+
+                if (ABFWButton == null)
+                    ABFWButton = ApplicationLauncher.Instance.AddModApplication(
+                       StockToolbarButtonClick,
+                       StockToolbarButtonClick,
+                       null, null, null, null,
+                       ApplicationLauncher.AppScenes.FLIGHT,
+
+                       (Texture)GameDatabase.Instance.GetTexture("ksp-advanced-flybywire/toolbar_btn", false));
+
+            
                 return;
             }
 
-            m_ToolbarButton = Toolbar.ToolbarManager.Instance.add("advancedflybywire", "mainButton");
+            m_ToolbarButton = ToolbarManager.Instance.add("advancedflybywire", "mainButton");
             m_ToolbarButton.TexturePath = "ksp-advanced-flybywire/toolbar_btn";
             m_ToolbarButton.ToolTip = "Advanced Fly-By-Wire";
 
-            m_ToolbarButton.Visibility = new Toolbar.GameScenesVisibility
+            m_ToolbarButton.Visibility = new GameScenesVisibility
             (
                 GameScenes.FLIGHT
             );
@@ -269,7 +282,12 @@ namespace KSPAdvancedFlyByWire
             m_ToolbarButton.OnClick += OnToolbarButtonClick;
         }
 
-        void OnToolbarButtonClick(Toolbar.ClickEvent ev)
+        void OnToolbarButtonClick(ClickEvent ev)
+        {
+            StockToolbarButtonClick();
+        }
+
+        void StockToolbarButtonClick()
         {
             gameObject.SetActive(true);
             m_UIActive = !m_UIActive;
