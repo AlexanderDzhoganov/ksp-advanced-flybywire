@@ -85,6 +85,7 @@ namespace KSPAdvancedFlyByWire
             SDL.SDL_JoystickUpdate();
             SDL.SDL_Event ev;
             SDL.SDL_PollEvent(out ev);
+            SDL.SDL_PushEvent(ref ev);
         }
 
         public override string GetControllerName()
