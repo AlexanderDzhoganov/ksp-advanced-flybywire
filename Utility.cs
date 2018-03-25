@@ -59,7 +59,7 @@ namespace KSPAdvancedFlyByWire
 
         public static bool CheckXInputSupport()
         {
-#if LINUX
+#if LINUX || OSX
             return false;
 #else
             return true;
@@ -73,7 +73,7 @@ namespace KSPAdvancedFlyByWire
 
         public static bool CheckSharpDXSupport()
         {
-#if LINUX
+#if LINUX || OSX
             return false;
 #else
             return true;

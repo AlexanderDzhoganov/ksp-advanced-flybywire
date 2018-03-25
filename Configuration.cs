@@ -101,7 +101,7 @@ namespace KSPAdvancedFlyByWire
 
             if (Utility.CheckXInputSupport() && wrapper == InputWrapper.XInput)
             {
-#if !LINUX
+#if !LINUX && !OSX
                 controller.iface = new XInputController(controller.controllerIndex);
 #endif
             }
@@ -184,7 +184,7 @@ namespace KSPAdvancedFlyByWire
               {
                 if (Utility.CheckXInputSupport() && config.wrapper == InputWrapper.XInput)
                 {
-#if !LINUX
+#if !LINUX && !OSX
                     config.iface = new XInputController(config.controllerIndex);
 #endif
                 }
