@@ -48,7 +48,7 @@ namespace SDL2
 #if LINUX
 		private const string nativeLibName = "libSDL2-2.0.so.0";
 #elif OSX
-        private const string nativeLibName = "libSDL2-2.0.0.dylib";
+		private const string nativeLibName = "libSDL2-2.0.0.dylib";
 #else
 		private const string nativeLibName = "SDL2.dll";
 #endif
