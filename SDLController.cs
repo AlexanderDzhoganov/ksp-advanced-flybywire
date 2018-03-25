@@ -83,11 +83,7 @@ namespace KSPAdvancedFlyByWire
         {
             InitializeSDL();
             SDL.SDL_JoystickUpdate();
-            SDL.SDL_Event ev;
-            SDL.SDL_PollEvent(out ev);
-#if LINUX
-            SDL.SDL_PushEvent(ref ev);
-#endif
+            SDL.SDL_PumpEvents();
         }
 
         public override string GetControllerName()
