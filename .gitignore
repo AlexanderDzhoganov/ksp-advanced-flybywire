@@ -3,7 +3,6 @@ obj/
 obj/x64/Debug/ksp-advanced-flybywire.csproj.FileListAbsolute.txt
 obj/x64/Debug/ksp-advanced-flybywire.csproj.FileListAbsolute.txt
 *.suo
-*.dll
 Assembly-CSharp.dll
 Assembly-CSharp.xml
 UnityEngine.dll

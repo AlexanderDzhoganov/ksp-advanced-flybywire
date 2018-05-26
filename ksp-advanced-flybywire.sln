@@ -1,17 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire_x86", "ksp-advanced-flybywire_x86.csproj", "{44FB8186-47F3-4807-9BE9-FE8B52AD0DEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire_x86", "AFBW\ksp-advanced-flybywire_x86.csproj", "{44FB8186-47F3-4807-9BE9-FE8B52AD0DEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerTestTool", "controller_test_tool\ControllerTestTool\ControllerTestTool.csproj", "{29E1A82F-02C2-4CD4-BE25-B8E6C0B362D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire-linux", "ksp-advanced-flybywire-linux.csproj", "{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ksp-advanced-flybywire-linux", "AFBW\ksp-advanced-flybywire-linux.csproj", "{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{C57D7AD5-641C-4DF7-B4DE-EBAB622CE783}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9C24FF49-8405-42A1-B729-33A2A2DA7714}"
 	ProjectSection(SolutionItems) = preProject
+		buildRelease.bat = buildRelease.bat
+		CHANGELOG = CHANGELOG
 		deploy.bat = deploy.bat
+		jenkins.txt = jenkins.txt
+		ksp-advanced-flybywire.version = ksp-advanced-flybywire.version
+		LICENSE = LICENSE
+		Makefile = Makefile
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
@@ -35,5 +42,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64D1F287-B6FA-4D1E-AAC6-F84E94047058}
 	EndGlobalSection
 EndGlobal

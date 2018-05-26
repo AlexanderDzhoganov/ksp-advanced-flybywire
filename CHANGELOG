@@ -1,3 +1,10 @@
+1.8
+	Adopted by LGG
+	Updated for 1.4
+	Added support for the ToolbarController
+	Added support for the ClickthroughBlocker
+	Removed option for Bizzy toobar, now handled by the Toolbarcontroller
+
 v1.7
 - Updated for KSP 1.1
 
