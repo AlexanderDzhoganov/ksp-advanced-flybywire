@@ -45,6 +45,12 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndHorizontal();
+            
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Use Blizzy toolbar");
+            AdvancedFlyByWire.Instance.m_UseBlizzyToolbar = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseBlizzyToolbar, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Use stock skin");

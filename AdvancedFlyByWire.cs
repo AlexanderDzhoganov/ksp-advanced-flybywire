@@ -29,6 +29,7 @@ namespace KSPAdvancedFlyByWire
         public bool m_IgnoreFlightCtrlState = true;
 
         public bool m_UseOnPreInsteadOfOnFlyByWire = false;
+        public bool m_UseBlizzyToolbar = false;
 
         // Configuration
         private static readonly string addonFolder = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
@@ -105,6 +106,7 @@ namespace KSPAdvancedFlyByWire
             if (pluginConfig != null)
             {
                 pluginConfig.load();
+                m_UseBlizzyToolbar = pluginConfig.GetValue("useBlizzyToolbar", false);
                 m_UseKSPSkin = pluginConfig.GetValue("useStockSkin", true);
                 m_UseOldPresetsWindow = pluginConfig.GetValue("useOldPresetEditor", false);
                 m_UsePrecisionModeFactor = pluginConfig.GetValue("usePrecisionModeFactor", false);
@@ -129,6 +131,7 @@ namespace KSPAdvancedFlyByWire
 
             if (pluginConfig != null)
             {
+                pluginConfig["useBlizzyToolbar"] = m_UseBlizzyToolbar;
                 pluginConfig["useStockSkin"] = m_UseKSPSkin;
                 pluginConfig["useOldPresetEditor"] = m_UseOldPresetsWindow;
                 pluginConfig["usePrecisionModeFactor"] = m_UsePrecisionModeFactor;
@@ -253,7 +256,7 @@ namespace KSPAdvancedFlyByWire
         ApplicationLauncherButton ABFWButton = null;
         private void InitializeToolbarButton()
         {
-            if(ToolbarManager.Instance == null)
+            if(ToolbarManager.Instance == null || !m_UseBlizzyToolbar)
             {
                 print("Advanced Fly-By-Wire: toolbar instance not available");
 
@@ -264,7 +267,7 @@ namespace KSPAdvancedFlyByWire
                        null, null, null, null,
                        ApplicationLauncher.AppScenes.FLIGHT,
 
-                       (Texture)GameDatabase.Instance.GetTexture("ksp-advanced-flybywire/toolbar_btn", false));
+                       (Texture)GameDatabase.Instance.GetTexture("ksp-advanced-flybywire/toolbar_btn_38", false));
 
             
                 return;
