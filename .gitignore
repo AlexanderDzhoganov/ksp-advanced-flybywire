@@ -10,3 +10,4 @@ UnityEngine.xml
 ksp/
 ksp2/
 .vs
+*.dll
