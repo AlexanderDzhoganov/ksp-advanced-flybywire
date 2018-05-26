@@ -6,6 +6,9 @@
 	Removed option for Bizzy toobar, now handled by the Toolbarcontroller
 	Added transparancy to large button 
 
+	Changed method of serializing settings
+	Reorganized release directory
+
 v1.7
 - Updated for KSP 1.1
 
