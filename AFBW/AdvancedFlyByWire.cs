@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 using UnityEngine;
 using KSP.UI.Screens;
 using ClickThroughFix;
@@ -21,6 +22,46 @@ namespace KSPAdvancedFlyByWire
         }
     }
 
+    public class AFBW_Settings
+    {
+        public bool m_UseKSPSkin = true;
+        public bool m_UseOldPresetsWindow = false;
+        public bool m_UsePrecisionModeFactor = false;
+        public float m_PrecisionModeFactor = 0.5f;
+        public bool m_IgnoreFlightCtrlState = true;
+        public bool m_UseOnPreInsteadOfOnFlyByWire = false;
+
+        public void Serialize(string filename, AFBW_Settings config)
+        {
+            //Debug.Log("Serialize, filename: " + filename);
+            var serializer = new XmlSerializer(typeof(AFBW_Settings));
+
+            using (var writer = new StreamWriter(filename))
+            {
+                serializer.Serialize(writer, config);
+            }
+        }
+
+        public AFBW_Settings Deserialize(string filename)
+        {
+            // Debug.Log("Deserialize, filename: " + filename);
+            var serializer = new XmlSerializer(typeof(AFBW_Settings));
+
+            try
+            {
+                using (var reader = new StreamReader(filename))
+                {
+                    var config = (AFBW_Settings)serializer.Deserialize(reader);
+                    return config;
+                }
+            }
+            catch { }
+
+            return null;
+        }
+
+    }
+
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class AdvancedFlyByWire : MonoBehaviour
     {
@@ -36,13 +77,7 @@ namespace KSPAdvancedFlyByWire
         private Rect m_WindowRect = new Rect(0, 64, 432, 576);
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
-        public bool m_UseKSPSkin = true;
-        public bool m_UseOldPresetsWindow = false;
-
-        public bool m_UsePrecisionModeFactor = false;
-        public float m_PrecisionModeFactor = 0.5f;
-
-        public bool m_IgnoreFlightCtrlState = true;
+        public AFBW_Settings settings = new AFBW_Settings();
 
         public bool m_UseOnPreInsteadOfOnFlyByWire = false;
 
@@ -70,15 +105,23 @@ namespace KSPAdvancedFlyByWire
         public float GetPrecisionModeFactor()
         {
             bool precisionModeEnabled = FlightInputHandler.fetch != null && FlightInputHandler.fetch.precisionMode;
-            return (precisionModeEnabled && m_UsePrecisionModeFactor) ? m_PrecisionModeFactor : 1.0f;
+            return (precisionModeEnabled && settings.m_UsePrecisionModeFactor) ? settings.m_PrecisionModeFactor : 1.0f;
         }
 
         public string GetAbsoluteConfigurationPath()
         {
             return Path.Combine
             (
-                addonFolder,
+                addonFolder + "/PluginData",
                 "advanced_flybywire_config_v" + versionMajor + versionMinor + ".xml"
+            );
+        }
+        public string GetAbsoluteSettingsPath()
+        {
+            return Path.Combine
+            (
+                addonFolder + "/PluginData",
+                "settings" + ".xml"
             );
         }
 
@@ -114,43 +157,22 @@ namespace KSPAdvancedFlyByWire
 
         private void LoadState(ConfigNode configNode)
         {
-            KSP.IO.PluginConfiguration pluginConfig = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
-
-            if (pluginConfig != null)
-            {
-                pluginConfig.load();
-                m_UseKSPSkin = pluginConfig.GetValue("useStockSkin", true);
-                m_UseOldPresetsWindow = pluginConfig.GetValue("useOldPresetEditor", false);
-                m_UsePrecisionModeFactor = pluginConfig.GetValue("usePrecisionModeFactor", false);
-                m_PrecisionModeFactor = float.Parse(pluginConfig.GetValue("precisionModeFactor", "0.5"));
-                m_IgnoreFlightCtrlState = pluginConfig.GetValue("ignoreFlightCtrlState", true);
-                m_UseOnPreInsteadOfOnFlyByWire = pluginConfig.GetValue("useOnPreAutopilot", false);
-            }
-            
+            var s = settings.Deserialize("");
+            if (s != null)
+                settings = s;
             m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
             if (m_Configuration == null)
             {
                 m_Configuration = new Configuration();
-                Configuration.Serialize(GetAbsoluteConfigurationPath(), m_Configuration);
+                Configuration.Serialize(GetAbsoluteSettingsPath(), m_Configuration);
             }
 
             m_FlightManager.m_Configuration = m_Configuration;
         }
-
+        
         public void SaveState(ConfigNode configNode)
-        {
-            KSP.IO.PluginConfiguration pluginConfig = KSP.IO.PluginConfiguration.CreateForType<AdvancedFlyByWire>();
-
-            if (pluginConfig != null)
-            {
-                pluginConfig["useStockSkin"] = m_UseKSPSkin;
-                pluginConfig["useOldPresetEditor"] = m_UseOldPresetsWindow;
-                pluginConfig["usePrecisionModeFactor"] = m_UsePrecisionModeFactor;
-                pluginConfig["precisionModeFactor"] = m_PrecisionModeFactor.ToString();
-                pluginConfig["ignoreFlightCtrlState"] = m_IgnoreFlightCtrlState;
-                pluginConfig["useOnPreAutopilot"] = m_UseOnPreInsteadOfOnFlyByWire;
-                pluginConfig.save();
-            }
+        { 
+            settings.Serialize(GetAbsoluteSettingsPath(), settings);
 
             Configuration.Serialize(GetAbsoluteConfigurationPath(), m_Configuration);
         }
@@ -477,7 +499,7 @@ namespace KSPAdvancedFlyByWire
 
                 if (GUILayout.Button("Presets", GUILayout.Height(32)))
                 {
-                    if (m_UseOldPresetsWindow)
+                    if (settings.m_UseOldPresetsWindow)
                     {
                         m_PresetEditors.Add(new PresetEditorWindow(config, m_PresetEditors.Count));
                     }
@@ -564,7 +586,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUISkin oldSkin = GUI.skin;
-            if (m_UseKSPSkin)
+            if (settings.m_UseKSPSkin)
             {
                 GUI.skin = HighLogic.Skin;
             }

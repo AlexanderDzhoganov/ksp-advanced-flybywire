@@ -38,7 +38,7 @@ namespace KSPAdvancedFlyByWire
             // State may arrive with SAS or WASD controls pre-applied. Save it and reset pitch/yaw/roll so that it doesn't mess with input.
             FlightCtrlState preState = new FlightCtrlState();
             preState.CopyFrom(state);
-            if (AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState)
+            if (AdvancedFlyByWire.Instance.settings.m_IgnoreFlightCtrlState)
             {
                 state.pitch = 0; state.yaw = 0; state.roll = 0;
             }
@@ -73,7 +73,7 @@ namespace KSPAdvancedFlyByWire
             ZeroOutFlightProperties();
 
             // Apply pre-state if not neutral and no AFBW input (including trim).
-            if (!preState.isNeutral && AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState)
+            if (!preState.isNeutral && AdvancedFlyByWire.Instance.settings.m_IgnoreFlightCtrlState)
             {
                 float t = controlDetectionThreshold;
                 bool hasInput = Math.Abs(state.pitch) > t || Math.Abs(state.yaw) > t || Math.Abs(state.roll) > t;

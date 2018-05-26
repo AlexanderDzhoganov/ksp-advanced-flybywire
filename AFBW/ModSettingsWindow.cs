@@ -49,27 +49,27 @@ namespace KSPAdvancedFlyByWire
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Use stock skin");
-            AdvancedFlyByWire.Instance.m_UseKSPSkin = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseKSPSkin, "");
+            AdvancedFlyByWire.Instance.settings.m_UseKSPSkin = GUILayout.Toggle(AdvancedFlyByWire.Instance.settings.m_UseKSPSkin, "");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Use old presets editor");
-            AdvancedFlyByWire.Instance.m_UseOldPresetsWindow = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseOldPresetsWindow, "");
+            AdvancedFlyByWire.Instance.settings.m_UseOldPresetsWindow = GUILayout.Toggle(AdvancedFlyByWire.Instance.settings.m_UseOldPresetsWindow, "");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("PrecisionMode Factor");
-            AdvancedFlyByWire.Instance.m_UsePrecisionModeFactor = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UsePrecisionModeFactor, "");
+            AdvancedFlyByWire.Instance.settings.m_UsePrecisionModeFactor = GUILayout.Toggle(AdvancedFlyByWire.Instance.settings.m_UsePrecisionModeFactor, "");
             GUILayout.FlexibleSpace();
-            GUILayout.Label(AdvancedFlyByWire.Instance.m_PrecisionModeFactor.ToString("0.000"));
-            AdvancedFlyByWire.Instance.m_PrecisionModeFactor = GUILayout.HorizontalSlider(AdvancedFlyByWire.Instance.m_PrecisionModeFactor, 0.0f, 1.0f, GUILayout.Width(150));
+            GUILayout.Label(AdvancedFlyByWire.Instance.settings.m_PrecisionModeFactor.ToString("0.000"));
+            AdvancedFlyByWire.Instance.settings.m_PrecisionModeFactor = GUILayout.HorizontalSlider(AdvancedFlyByWire.Instance.settings.m_PrecisionModeFactor, 0.0f, 1.0f, GUILayout.Width(150));
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("AFBW input overrides SAS and other control inputs");
-            AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_IgnoreFlightCtrlState, "");
+            AdvancedFlyByWire.Instance.settings.m_IgnoreFlightCtrlState = GUILayout.Toggle(AdvancedFlyByWire.Instance.settings.m_IgnoreFlightCtrlState, "");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 

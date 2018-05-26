@@ -265,6 +265,7 @@ namespace KSPAdvancedFlyByWire
 
         public static void Serialize(string filename, Configuration config)
         {
+            //Debug.Log("Serialize, filename: " + filename);
             var serializer = new XmlSerializer(typeof(Configuration));
 
             using (var writer = new StreamWriter(filename))
@@ -276,6 +277,7 @@ namespace KSPAdvancedFlyByWire
 
         public static Configuration Deserialize(string filename)
         {
+           // Debug.Log("Deserialize, filename: " + filename);
             var serializer = new XmlSerializer(typeof(Configuration));
 
             try
