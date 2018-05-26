@@ -30,7 +30,9 @@
 # 1:GAMEDIR, VERSIONFILE [, GITHUBREPO ]
 1:ksp-advanced-flybywire, ksp-advanced-flybywire.version
 
+# 2c: compiler options and flags
 2c: /unsafe
+
 # 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
 2:AFBW,AFBW/ksp-advanced-flybywire_x86.csproj,ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire/Plugins
 
@@ -56,6 +58,7 @@
 # 8: AdditionalMods to include
 #8:ConnectedLivingSpace
 
+10:SUPPORTFILES
 #
 # End of file
 #
