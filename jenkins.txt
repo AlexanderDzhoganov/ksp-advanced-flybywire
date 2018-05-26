@@ -28,7 +28,7 @@
 1:ksp-advanced-flybywire, ksp-advanced-flybywire.version
 
 # 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
-2:ABFW,KerbalHotSeat/ksp-advanced-flybywire_x64.csproj,ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire/Plugins
+2:ABFW,ABFW/ksp-advanced-flybywire_x64.csproj,ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire/Plugins
 
 # 3:SOURCEFILE, DESTDIR
 3:ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire

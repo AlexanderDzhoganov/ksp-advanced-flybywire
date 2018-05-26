@@ -4,6 +4,7 @@
 	Added support for the ToolbarController
 	Added support for the ClickthroughBlocker
 	Removed option for Bizzy toobar, now handled by the Toolbarcontroller
+	Added transparancy to large button 
 
 v1.7
 - Updated for KSP 1.1
