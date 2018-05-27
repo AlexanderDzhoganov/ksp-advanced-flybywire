@@ -1,4 +1,8 @@
-1.8
+1.8.0.1
+	Rebuild for bad dll
+	Moved XInputDotNetPure dll into Plugins folder
+
+1.8.0
 	Adopted by LGG
 	Updated for 1.4
 	Added support for the ToolbarController

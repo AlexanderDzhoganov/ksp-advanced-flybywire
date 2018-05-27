@@ -36,3 +36,6 @@ using System.Resources;
 //[assembly: AssemblyVersion("1.1.0.28")]
 [assembly: AssemblyFileVersion("1.1.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("")]
+
+[assembly: KSPAssemblyDependency("ClickThroughBlocker", 1, 0)]
+[assembly: KSPAssemblyDependency("ToolbarController", 1, 0)]
