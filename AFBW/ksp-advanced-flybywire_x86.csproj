@@ -118,7 +118,7 @@
       <HintPath>R:\KSP_1.4.3_dev\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="XInputDotNetPure">
-      <HintPath>..\SUPPORTFILES\GameData\ksp-advanced-flybywire\XInputDotNetPure.dll</HintPath>
+      <HintPath>..\SUPPORTFILES\GameData\ksp-advanced-flybywire\Plugins\XInputDotNetPure.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
