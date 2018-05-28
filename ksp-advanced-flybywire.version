@@ -1,5 +1,5 @@
 {
-  "NAME": "KerbalSlingShotter",
+  "NAME": "AdvancedFlyByWire",
   "URL": "https://raw.githubusercontent.com/linuxgurugamer/ksp-advanced-flybywire/master/ksp-advanced-flybywire.version",
   "DOWNLOAD": "https://github.com/linuxgurugamer/ksp-advanced-flybywire/releases",
   "GITHUB": {
@@ -10,7 +10,7 @@
     "MAJOR": 1,
     "MINOR": 8,
     "PATCH": 0,
-    "BUILD": 1
+    "BUILD": 2
   },
   "KSP_VERSION": {
     "MAJOR": 1,

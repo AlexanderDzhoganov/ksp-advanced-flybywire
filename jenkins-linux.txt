@@ -39,6 +39,8 @@
 # 3:SOURCEFILE, DESTDIR
 3:ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire
 
+
+10:LINUXSUPPORTFILES
 #
 # End of file
 #
