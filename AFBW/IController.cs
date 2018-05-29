@@ -24,7 +24,7 @@ namespace KSPAdvancedFlyByWire
 
             if (Utility.CheckXInputSupport())
             {
-#if !LINUX
+#if !LINUX && !OSX
                 foreach (var controllerName in XInputController.EnumerateControllers())
                 {
                     controllers.Add(new KeyValuePair<InputWrapper, KeyValuePair<int, string>>(InputWrapper.XInput, controllerName));
