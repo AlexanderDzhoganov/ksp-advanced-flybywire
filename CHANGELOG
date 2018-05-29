@@ -1,3 +1,9 @@
+1.8.0.3
+	Updated the SDLs library
+	Updated the SDL2 file
+	Added code to dynamically get the FSM offsets:  InitFsmOffsets
+	Updated events to use dynamic FSM offsets
+
 1.8.0.2
 	Updated name in .version file
 	Updated Jenkins file for Linux build

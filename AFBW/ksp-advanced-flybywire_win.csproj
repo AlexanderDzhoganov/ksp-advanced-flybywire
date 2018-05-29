@@ -78,6 +78,7 @@
     <Compile Include="EVAController.cs" />
     <Compile Include="FlightManager.cs" />
     <Compile Include="FlightProperty.cs" />
+    <Compile Include="InitFsmOffsets.cs" />
     <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="ModSettingsWindow.cs" />
     <Compile Include="PresetEditorWindow.cs" />
