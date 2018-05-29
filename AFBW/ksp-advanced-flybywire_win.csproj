@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C4BAF0C4-E0D3-4246-9CC0-2DE5B6E962FD}</ProjectGuid>
+    <ProjectGuid>{44FB8186-47F3-4807-9BE9-FE8B52AD0DEB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KSPAdvancedFlyByWire</RootNamespace>
@@ -32,20 +32,21 @@
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>LINUX</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\linux\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;LINUX</DefineConstants>
+    <OutputPath>bin\win\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -53,10 +54,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\linux\Release\</OutputPath>
-    <DefineConstants>LINUX</DefineConstants>
+    <OutputPath>bin\win\Release\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -77,32 +78,28 @@
     <Compile Include="EVAController.cs" />
     <Compile Include="FlightManager.cs" />
     <Compile Include="FlightProperty.cs" />
+    <Compile Include="InitFsmOffsets.cs" />
     <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="ModSettingsWindow.cs" />
     <Compile Include="PresetEditorWindow.cs" />
     <Compile Include="PresetEditorWindowNG.cs" />
     <Compile Include="SDL2.cs" />
+    <Compile Include="DirectXController.cs" />
     <Compile Include="SDLController.cs" />
     <Compile Include="Stringify.cs" />
     <Compile Include="StringMarshaller.cs" />
+    <Compile Include="ToolbarWrapper.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WarpController.cs" />
+    <Compile Include="XInputController.cs" />
     <Compile Include="EvaluationCurves.cs" />
     <Compile Include="AdvancedFlyByWire.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AssemblyVersion.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>AssemblyVersion.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>R:\R-Synced\KSP_1.4.3_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="ClickThroughBlocker">
@@ -113,27 +110,42 @@
     <Reference Include="ToolbarControl">
       <HintPath>R:\R-Synced\KSP_1.4.3_dev\GameData\001_ToolbarControl\Plugins\ToolbarControl.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine">
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>R:\R-Synced\KSP_1.4.3_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UI">
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>R:\R-Synced\KSP_1.4.3_dev\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="XInputDotNetPure">
-      <HintPath>..\LINUXSUPPORTFILES\GameData\ksp-advanced-flybywire\Plugins\XInputDotNetPure.dll</HintPath>
+      <HintPath>..\SUPPORTFILES\GameData\ksp-advanced-flybywire\Plugins\XInputDotNetPure.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssemblyVersion.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyVersion.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>REM xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\linux\GameData\ksp-advanced-flybywire\
+    <PostBuildEvent>
+start /D D:\Users\jbb\github\ksp-advanced-flybywire\  /WAIT deploy.bat  $(TargetDir) $(TargetFileName)
 
-rem xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\alpha\linux\
-rmdir /S /q ..\..\obj\
+if $(ConfigurationName) == Release (
+	start /D D:\Users\jbb\github\ksp-advanced-flybywire\ /WAIT buildRelease.bat $(TargetDir) $(TargetFileName)
+)
 
-rem xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)GameData\ksp-advanced-flybywire\"</PostBuildEvent>
+
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
+
 set textTemplatingPath="%25ProgramFiles(x86)%25\Microsoft Visual Studio\2017\Community\Common7\IDE\texttransform.exe"
 
 

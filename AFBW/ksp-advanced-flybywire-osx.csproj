@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{44FB8186-47F3-4807-9BE9-FE8B52AD0DEB}</ProjectGuid>
+    <ProjectGuid>{2BDBDD8E-10F9-4C56-9037-30083E4CBE17}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KSPAdvancedFlyByWire</RootNamespace>
@@ -23,7 +23,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;OSX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -32,21 +32,20 @@
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>LINUX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <OutputPath>bin\osx\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;OSX</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -54,20 +53,15 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
+    <OutputPath>bin\osx\Release\</OutputPath>
+    <DefineConstants>OSX</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AssemblyVersion.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyVersion.tt</DependentUpon>
-    </Compile>
     <Compile Include="AxisConfiguration.cs" />
     <Compile Include="Bitset.cs" />
     <Compile Include="CameraController.cs" />
@@ -83,14 +77,11 @@
     <Compile Include="PresetEditorWindow.cs" />
     <Compile Include="PresetEditorWindowNG.cs" />
     <Compile Include="SDL2.cs" />
-    <Compile Include="DirectXController.cs" />
     <Compile Include="SDLController.cs" />
     <Compile Include="Stringify.cs" />
     <Compile Include="StringMarshaller.cs" />
-    <Compile Include="ToolbarWrapper.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WarpController.cs" />
-    <Compile Include="XInputController.cs" />
     <Compile Include="EvaluationCurves.cs" />
     <Compile Include="AdvancedFlyByWire.cs" />
     <Compile Include="IController.cs" />
@@ -99,52 +90,44 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>R:\KSP_1.4.3_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>R:\R-Synced\KSP_1.4.3_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="ClickThroughBlocker">
-      <HintPath>R:\KSP_1.4.3_dev\GameData\000_ClickThroughBlocker\Plugins\ClickThroughBlocker.dll</HintPath>
+    <Reference Include="ClickThroughBlocker, Version=0.1.6.5, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\R-Synced\KSP_1.4.3_dev\GameData\ClickThroughBlocker\Plugins\ClickThroughBlocker.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
-    <Reference Include="ToolbarControl">
-      <HintPath>R:\KSP_1.4.3_dev\GameData\001_ToolbarControl\Plugins\ToolbarControl.dll</HintPath>
+    <Reference Include="ToolbarControl, Version=0.1.6.7, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\R-Synced\KSP_1.4.3_dev\GameData\001_ToolbarControl\Plugins\ToolbarControl.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>R:\KSP_1.4.3_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>R:\R-Synced\KSP_1.4.3_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>R:\KSP_1.4.3_dev\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>R:\R-Synced\KSP_1.4.3_dev\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
-    <Reference Include="XInputDotNetPure">
-      <HintPath>..\SUPPORTFILES\GameData\ksp-advanced-flybywire\Plugins\XInputDotNetPure.dll</HintPath>
+    <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\LINUXSUPPORTFILES\GameData\ksp-advanced-flybywire\Plugins\XInputDotNetPure.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="AssemblyVersion.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>AssemblyVersion.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-start /D D:\Users\jbb\github\ksp-advanced-flybywire\  /WAIT deploy.bat  $(TargetDir) $(TargetFileName)
-
-if $(ConfigurationName) == Release (
-	start /D D:\Users\jbb\github\ksp-advanced-flybywire\ /WAIT buildRelease.bat $(TargetDir) $(TargetFileName)
-)
-
-
-</PostBuildEvent>
+    <PostBuildEvent>rem xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\osx\GameData\ksp-advanced-flybywire\
+xcopy /Y ksp-advanced-flybywire.dll ..\..\builds\alpha\osx\
+rmdir /S /q ..\..\obj\
+xcopy /Y ksp-advanced-flybywire.dll "$(KSP_PATH)GameData\ksp-advanced-flybywire\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
+
 set textTemplatingPath="%25ProgramFiles(x86)%25\Microsoft Visual Studio\2017\Community\Common7\IDE\texttransform.exe"
+
+
 
 %25textTemplatingPath%25 "$(ProjectDir)AssemblyVersion.tt"
 </PreBuildEvent>

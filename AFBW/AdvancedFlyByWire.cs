@@ -31,6 +31,8 @@ namespace KSPAdvancedFlyByWire
         public bool m_IgnoreFlightCtrlState = true;
         public bool m_UseOnPreInsteadOfOnFlyByWire = false;
 
+       
+
         public void Serialize(string filename, AFBW_Settings config)
         {
             //Debug.Log("Serialize, filename: " + filename);
@@ -427,7 +429,6 @@ namespace KSPAdvancedFlyByWire
                     m_FlightManager.OnFlyByWire(new FlightCtrlState());
                 }
             }
-
             if(Input.GetKey("left shift") && Input.GetKey("l"))
             {
                 m_UIActive = true;

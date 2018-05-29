@@ -29,6 +29,8 @@ namespace KSPAdvancedFlyByWire
 
         private static EVAController instance;
 
+        internal InitFsmOffsets fsmOffsets = new InitFsmOffsets();
+
         public static EVAController Instance
         {
             get
@@ -43,7 +45,7 @@ namespace KSPAdvancedFlyByWire
 
         public EVAController()
         {
-            LoadReflectionFields();
+            LoadReflectionFields(); 
         }
 
         public void UpdateEVAFlightProperties(ControllerConfiguration config, FlightCtrlState state)
@@ -155,7 +157,7 @@ namespace KSPAdvancedFlyByWire
                     {
                         try
                         {
-                            eva.fsm.RunEvent((KFSMEvent) this.eventFields[34].GetValue(eva)); // Board Vessel
+                            eva.fsm.RunEvent((KFSMEvent)this.eventFields[fsmOffsets.BoardVessel].GetValue(eva)); // Board Vessel
                         }
                         catch (Exception)
                         {
@@ -166,7 +168,7 @@ namespace KSPAdvancedFlyByWire
                     {
                         try
                         {
-                            eva.fsm.RunEvent((KFSMEvent) this.eventFields[22].GetValue(eva)); // Grab Ladder
+                            eva.fsm.RunEvent((KFSMEvent)this.eventFields[fsmOffsets.GrabLadder].GetValue(eva)); // Grab Ladder
                         }
                         catch (Exception)
                         {
@@ -189,11 +191,11 @@ namespace KSPAdvancedFlyByWire
             KerbalEVA eva = GetKerbalEVA();
             if (eva.OnALadder)
             {
-                eva.fsm.RunEvent((KFSMEvent)this.eventFields[27].GetValue(eva)); // Ladder Let Go
+                eva.fsm.RunEvent((KFSMEvent)this.eventFields[fsmOffsets.LadderLetGo].GetValue(eva)); // Ladder Let Go
             }
             else
             {
-                eva.fsm.RunEvent((KFSMEvent)this.eventFields[9].GetValue(eva)); // Jump Start
+                eva.fsm.RunEvent((KFSMEvent)this.eventFields[fsmOffsets.JumpStart].GetValue(eva)); // Jump Start
             }
         }
 
@@ -213,7 +215,7 @@ namespace KSPAdvancedFlyByWire
                 return;
 
             KerbalEVA eva = GetKerbalEVA();
-            KFSMEvent togglePackEvent = (KFSMEvent)eventFields[17].GetValue(eva);
+            KFSMEvent togglePackEvent = (KFSMEvent)eventFields[fsmOffsets.TogglePackEvent].GetValue(eva); // Pack Event
             togglePackEvent.GoToStateOnEvent = eva.fsm.CurrentState;
             eva.fsm.RunEvent(togglePackEvent);
         }
@@ -230,12 +232,12 @@ namespace KSPAdvancedFlyByWire
                 //Debug.Log("RunSpeed is: " + runSpeed);
                 if (runSpeed > 0.75f)
                 {
-                    eva.fsm.RunEvent((KFSMEvent)eventFields[2].GetValue(eva)); // Start Run
+                    eva.fsm.RunEvent((KFSMEvent)eventFields[fsmOffsets.StartRun].GetValue(eva)); // Start Run
                     DisableRunStopCondition(eva);
                 }
                 else
                 {
-                    eva.fsm.RunEvent((KFSMEvent)eventFields[3].GetValue(eva)); // Stop Run
+                    eva.fsm.RunEvent((KFSMEvent)eventFields[fsmOffsets.StopRun].GetValue(eva)); // Stop Run
                 }
                 floatFields[6].SetValue(eva, runSpeed * eva.runSpeed);
             }
@@ -289,7 +291,7 @@ namespace KSPAdvancedFlyByWire
             if (this.runStopCondition == null)
             {
                 //Debug.Log("Disabling RunStop");
-                KFSMEvent eRunStop = (KFSMEvent)eventFields[3].GetValue(eva); // End Run
+                KFSMEvent eRunStop = (KFSMEvent)eventFields[fsmOffsets.EndRun].GetValue(eva); // End Run
                 this.runStopCondition = eRunStop.OnCheckCondition;
                 eRunStop.OnCheckCondition = this.eventConditionDisabled;
             }
@@ -299,7 +301,7 @@ namespace KSPAdvancedFlyByWire
             if (this.ladderStopCondition == null)
             {
                 //Debug.Log("Disabling LadderStop");
-                KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva); // Ladder Stop
+                KFSMEvent eLadderStop = (KFSMEvent)eventFields[fsmOffsets.LadderStop].GetValue(eva); // Ladder Stop
                 this.ladderStopCondition = eLadderStop.OnCheckCondition;
                 eLadderStop.OnCheckCondition = this.eventConditionDisabled;
             }
@@ -310,7 +312,7 @@ namespace KSPAdvancedFlyByWire
             if (this.swimStopCondition == null)
             {
                 //Debug.Log("Disabling SwimStop");
-                KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva); // Swim Stop
+                KFSMEvent eSwimStop = (KFSMEvent)eventFields[fsmOffsets.SwimStop].GetValue(eva); // Swim Stop
                 this.swimStopCondition = eSwimStop.OnCheckCondition;
                 eSwimStop.OnCheckCondition = this.eventConditionDisabled;
             }
@@ -321,21 +323,21 @@ namespace KSPAdvancedFlyByWire
             if (this.ladderStopCondition != null)
             {
                 //Debug.Log("Re-enable LadderStop");
-                KFSMEvent eLadderStop = (KFSMEvent)eventFields[26].GetValue(eva);
+                KFSMEvent eLadderStop = (KFSMEvent)eventFields[fsmOffsets.LadderStop].GetValue(eva);
                 eLadderStop.OnCheckCondition = this.ladderStopCondition;
                 this.ladderStopCondition = null;
             }
             if (this.swimStopCondition != null)
             {
                 //Debug.Log("Re-enable SwimStop");
-                KFSMEvent eSwimStop = (KFSMEvent)eventFields[21].GetValue(eva);
+                KFSMEvent eSwimStop = (KFSMEvent)eventFields[fsmOffsets.SwimStop].GetValue(eva);
                 eSwimStop.OnCheckCondition = this.swimStopCondition;
                 this.swimStopCondition = null;
             }
             if (this.runStopCondition != null)
             {
                 //Debug.Log("Re-enable RunStop");
-                KFSMEvent eRunStop = (KFSMEvent)eventFields[3].GetValue(eva);
+                KFSMEvent eRunStop = (KFSMEvent)eventFields[fsmOffsets.StopRun].GetValue(eva);
                 eRunStop.OnCheckCondition = this.runStopCondition;
                 this.runStopCondition = null;
             }
