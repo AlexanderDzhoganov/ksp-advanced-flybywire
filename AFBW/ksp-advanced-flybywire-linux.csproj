@@ -106,7 +106,7 @@
       <HintPath>R:\KSP_1.4.3_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="ClickThroughBlocker">
-      <HintPath>R:\KSP_1.4.3_dev\GameData\ClickThroughBlocker\Plugins\ClickThroughBlocker.dll</HintPath>
+      <HintPath>R:\KSP_1.4.3_dev\GameData\000_ClickThroughBlocker\Plugins\ClickThroughBlocker.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
