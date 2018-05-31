@@ -8,6 +8,8 @@
 	Rewrote all event code for EVA events to use new methods of calling
 	Repositioned the GUI.DragWindow() calls to allow full windows to be draggable
 	Added a DragWindow to the Choose Action windows, and fixed the call to properly save the location
+	Added OSX build
+
 
 1.8.0.2
 	Updated name in .version file

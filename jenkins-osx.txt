@@ -31,18 +31,16 @@
 1:ksp-advanced-flybywire, ksp-advanced-flybywire.version
 
 # 2c: compiler options and flags
-2c: /unsafe
+2c: /unsafe -define:OSX
 
 # 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
-2:AFBW,AFBW/ksp-advanced-flybywire_win.csproj,ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire/Plugins
+2:AFBW,AFBW/ksp-advanced-flybywire_x86.csproj,ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire/Plugins
 
 # 3:SOURCEFILE, DESTDIR
 3:ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire
-#3:LICENSE.md,GameData/KerbalHotSeat
-#3:README.md,GameData/KerbalHotSeat
 
 
-10:SUPPORTFILES
+10:LINUXSUPPORTFILES
 #
 # End of file
 #

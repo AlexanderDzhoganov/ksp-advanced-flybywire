@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CHANGELOG = CHANGELOG
 		deploy.bat = deploy.bat
 		jenkins-linux.txt = jenkins-linux.txt
+		jenkins-osx.txt = jenkins-osx.txt
 		jenkins-win.txt = jenkins-win.txt
 		ksp-advanced-flybywire.version = ksp-advanced-flybywire.version
 		LICENSE = LICENSE
