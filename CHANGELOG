@@ -1,10 +1,13 @@
 1.8.0.3
 	Updated the SDLs library
 	Updated the SDL2 file
+
+		Note:  The SDL update should fix the issues with the non-us keyboards
+
 	Added code to dynamically get the vectorField and floatField offsets
 	Rewrote all event code for EVA events to use new methods of calling
 	Repositioned the GUI.DragWindow() calls to allow full windows to be draggable
-	Added a DragWindow to the Choose Action window
+	Added a DragWindow to the Choose Action windows, and fixed the call to properly save the location
 
 1.8.0.2
 	Updated name in .version file
