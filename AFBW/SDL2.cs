@@ -35,15 +35,21 @@ namespace SDL2
 {
 	public static class SDL
 	{
-		#region SDL2# Variables
+        #region SDL2# Variables
 
-		private const string nativeLibName = "SDL2.dll";
+#if LINUX
+		private const string nativeLibName = "libSDL2-2.0.so.0";
+#elif OSX
+		private const string nativeLibName = "libSDL2-2.0.0.dylib";
+#else
+        private const string nativeLibName = "SDL2.dll";
+#endif
 
-		#endregion
+        #endregion
 
-		#region UTF8 Marshaling
+        #region UTF8 Marshaling
 
-		internal static byte[] UTF8_ToNative(string s)
+        internal static byte[] UTF8_ToNative(string s)
 		{
 			if (s == null)
 			{
