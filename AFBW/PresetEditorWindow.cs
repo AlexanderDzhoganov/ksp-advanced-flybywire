@@ -48,12 +48,13 @@ namespace KSPAdvancedFlyByWire
 
         public virtual void DoWindow(int window)
         {
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("X", GUILayout.Height(16)) || m_Controller == null || m_Controller.iface == null)
+            if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X")
+            //if (GUILayout.Button("X", GUILayout.Height(16))
+                || m_Controller == null || m_Controller.iface == null)
             {
                 shouldBeDestroyed = true;
                 if (m_Controller != null)
@@ -218,7 +219,8 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.Space(8);
 
-                if (GUILayout.Button("X"))
+                if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X"))
+                //if (GUILayout.Button("X"))
                 {
                     currentPreset.UnsetContinuousBinding(action);
                     m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -281,7 +283,8 @@ namespace KSPAdvancedFlyByWire
                     m_CurrentMask = null;
                 }
 
-                if (GUILayout.Button("X"))
+                if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X"))
+                    //if (GUILayout.Button("X"))
                 {
                     currentPreset.UnsetDiscreteBinding(action);
                     m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -292,6 +295,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndScrollView();
+            GUI.DragWindow();
         }
 
         public virtual void OnGUI()

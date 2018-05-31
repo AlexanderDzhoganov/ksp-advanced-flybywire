@@ -437,11 +437,10 @@ namespace KSPAdvancedFlyByWire
 
         void DoMainWindow(int index)
         {
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
-
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("X", GUILayout.Height(16)))
+            if (GUI.Button(new Rect(m_WindowRect.width - 24, 4, 20, 20), "X"))
+              //  if (GUILayout.Button("X", GUILayout.Height(16)))
             {
                 m_UIActive = false;
                 InputLockManager.RemoveControlLock("AdvancedFlyByWireMainWindow");
@@ -577,6 +576,8 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndScrollView();
+
+            GUI.DragWindow();
         }
 
         void OnGUI()

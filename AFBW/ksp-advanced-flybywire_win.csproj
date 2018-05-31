@@ -78,7 +78,6 @@
     <Compile Include="EVAController.cs" />
     <Compile Include="FlightManager.cs" />
     <Compile Include="FlightProperty.cs" />
-    <Compile Include="InitFsmOffsets.cs" />
     <Compile Include="KeyboardMouseController.cs" />
     <Compile Include="ModSettingsWindow.cs" />
     <Compile Include="PresetEditorWindow.cs" />
@@ -88,7 +87,6 @@
     <Compile Include="SDLController.cs" />
     <Compile Include="Stringify.cs" />
     <Compile Include="StringMarshaller.cs" />
-    <Compile Include="ToolbarWrapper.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WarpController.cs" />
     <Compile Include="XInputController.cs" />

@@ -19,7 +19,7 @@ namespace KSPAdvancedFlyByWire
 
         private List<FieldInfo> vectorFields;
         private List<FieldInfo> floatFields;
-        private List<FieldInfo> eventFields;
+        internal List<FieldInfo> eventFields;
         private FieldInfo colliderListField;
         private KFSMEventCondition runStopCondition;
         private KFSMEventCondition ladderStopCondition;
@@ -29,7 +29,6 @@ namespace KSPAdvancedFlyByWire
 
         private static EVAController instance;
 
-        internal InitFsmOffsets fsmOffsets = new InitFsmOffsets();
 
         public static EVAController Instance
         {
@@ -45,7 +44,9 @@ namespace KSPAdvancedFlyByWire
 
         public EVAController()
         {
-            LoadReflectionFields(); 
+            Debug.Log("EVAController Inststantation");
+            LoadReflectionFields();
+
         }
 
         public void UpdateEVAFlightProperties(ControllerConfiguration config, FlightCtrlState state)
@@ -110,9 +111,9 @@ namespace KSPAdvancedFlyByWire
                 moveDirection.Normalize();
                 //Debug.Log("MoveDirection: " + moveDirection);
                 //Debug.Log("LadderDirection: "+ ladderDirection);
-                this.vectorFields[0].SetValue(eva, moveDirection);              //vector3_0 = MoveDirection
-                this.vectorFields[2].SetValue(eva, moveDirection);              //vector3_2 = JetpackDirection
-                this.vectorFields[6].SetValue(eva, ladderDirection);            //vector3_6 = LadderDirection
+                this.vectorFields[tgtRposOffset].SetValue(eva, moveDirection);              //vector3_0 = MoveDirection
+                this.vectorFields[packTgtRPosOffset].SetValue(eva, moveDirection);              //vector3_2 = JetpackDirection
+                this.vectorFields[ladderTgtRPosOffset].SetValue(eva, ladderDirection);            //vector3_6 = LadderDirection
 
                 Quaternion rotation = Quaternion.identity;
                 rotation *= Quaternion.AngleAxis(eva.turnRate * state.pitch * EVARotationStep * Time.deltaTime, -eva.transform.right);
@@ -120,21 +121,21 @@ namespace KSPAdvancedFlyByWire
                 rotation *= Quaternion.AngleAxis(eva.turnRate * state.roll * EVARotationStep * Time.deltaTime, -eva.transform.forward);
                 if (rotation != Quaternion.identity)
                 {
-                    this.vectorFields[8].SetValue(eva, rotation * (Vector3)this.vectorFields[8].GetValue(eva));
-                    this.vectorFields[13].SetValue(eva, rotation * (Vector3)this.vectorFields[13].GetValue(eva));
+                    this.vectorFields[tgtFwdOffset].SetValue(eva, rotation * (Vector3)this.vectorFields[8].GetValue(eva));
+                    this.vectorFields[tgtUpOffset].SetValue(eva, rotation * (Vector3)this.vectorFields[13].GetValue(eva));
                 }
 
                 if (!moveDirection.IsZero() && !eva.OnALadder)
                 {
                     if (eva.CharacterFrameMode)
                     {
-                        this.vectorFields[8].SetValue(eva, eva.fFwd);           //vector3_8
-                        this.vectorFields[13].SetValue(eva, eva.fUp);           //vector3_13
+                        this.vectorFields[tgtFwdOffset].SetValue(eva, eva.fFwd);           //vector3_8
+                        this.vectorFields[tgtUpOffset].SetValue(eva, eva.fUp);           //vector3_13
                     }
                     else
                     {
-                        this.vectorFields[8].SetValue(eva, moveDirection);      //vector3_8
-                        this.vectorFields[13].SetValue(eva, eva.fUp);           //vector3_13
+                        this.vectorFields[tgtFwdOffset].SetValue(eva, moveDirection);      //vector3_8
+                        this.vectorFields[tgtUpOffset].SetValue(eva, eva.fUp);           //vector3_13
                     }
                 }
             }
@@ -157,23 +158,29 @@ namespace KSPAdvancedFlyByWire
                     {
                         try
                         {
-                            eva.fsm.RunEvent((KFSMEvent)this.eventFields[fsmOffsets.BoardVessel].GetValue(eva)); // Board Vessel
+                            foreach (var item in eva.fsm.CurrentState.StateEvents)
+                            {
+                                if (item.name == "Board Vessel")
+                                {
+                                    eva.fsm.RunEvent(item);
+                                }
+                            }
                         }
-                        catch (Exception)
-                        {
-                            return;
-                        }
+                        catch { }
                     }
                     else
                     {
                         try
                         {
-                            eva.fsm.RunEvent((KFSMEvent)this.eventFields[fsmOffsets.GrabLadder].GetValue(eva)); // Grab Ladder
+                            foreach (var item in eva.fsm.CurrentState.StateEvents)
+                            {
+                                if (item.name == "Ladder Grab Start")
+                                {
+                                    eva.fsm.RunEvent(item);
+                                }
+                            }
                         }
-                        catch (Exception)
-                        {
-                            return;
-                        }
+                        catch { }
                     }
                 }
             }
@@ -187,15 +194,36 @@ namespace KSPAdvancedFlyByWire
         {
             if (!FlightGlobals.ActiveVessel.isEVA)
                 return;
+            //Debug.Log("DoJump");
 
             KerbalEVA eva = GetKerbalEVA();
             if (eva.OnALadder)
             {
-                eva.fsm.RunEvent((KFSMEvent)this.eventFields[fsmOffsets.LadderLetGo].GetValue(eva)); // Ladder Let Go
+                try
+                {
+                    foreach (var item in eva.fsm.CurrentState.StateEvents)
+                    {
+                        if (item.name == "Ladder Let Go")
+                        {
+                            eva.fsm.RunEvent(item);
+                        }
+                    }
+                }
+                catch { }
             }
             else
             {
-                eva.fsm.RunEvent((KFSMEvent)this.eventFields[fsmOffsets.JumpStart].GetValue(eva)); // Jump Start
+                try
+                {
+                    foreach (var item in eva.fsm.CurrentState.StateEvents)
+                    {
+                        if (item.name == "Jump Start")
+                        {
+                            eva.fsm.RunEvent(item);
+                        }
+                    }
+                }
+                catch { }
             }
         }
 
@@ -215,9 +243,17 @@ namespace KSPAdvancedFlyByWire
                 return;
 
             KerbalEVA eva = GetKerbalEVA();
-            KFSMEvent togglePackEvent = (KFSMEvent)eventFields[fsmOffsets.TogglePackEvent].GetValue(eva); // Pack Event
-            togglePackEvent.GoToStateOnEvent = eva.fsm.CurrentState;
-            eva.fsm.RunEvent(togglePackEvent);
+            try
+            {
+                foreach (var item in eva.fsm.CurrentState.StateEvents)
+                {
+                    if (item.name == "Pack Toggle")
+                    {
+                        eva.fsm.RunEvent(item);
+                    }
+                }
+            }
+            catch { }
         }
 
         public void SetMoveSpeed(float runSpeed)
@@ -230,16 +266,39 @@ namespace KSPAdvancedFlyByWire
                 && !eva.JetpackDeployed && !eva.OnALadder && !eva.isRagdoll && !eva.vessel.Splashed)
             {
                 //Debug.Log("RunSpeed is: " + runSpeed);
+
                 if (runSpeed > 0.75f)
                 {
-                    eva.fsm.RunEvent((KFSMEvent)eventFields[fsmOffsets.StartRun].GetValue(eva)); // Start Run
+                    try
+                    {
+                        foreach (var item in eva.fsm.CurrentState.StateEvents)
+                        {
+                            if (item.name == "Start Run")
+                            {
+                                eva.fsm.RunEvent(item);
+                            }
+                        }
+                    }
+                    catch { }
+
                     DisableRunStopCondition(eva);
                 }
                 else
                 {
-                    eva.fsm.RunEvent((KFSMEvent)eventFields[fsmOffsets.StopRun].GetValue(eva)); // Stop Run
+                    try
+                    {
+                        foreach (var item in eva.fsm.CurrentState.StateEvents)
+                        {
+                            if (item.name == "End Run")
+                            {
+                                eva.fsm.RunEvent(item);
+                            }
+                        }
+                    }
+                    catch { }
+
+                    floatFields[tgtSpeedOffset].SetValue(eva, runSpeed * eva.runSpeed);
                 }
-                floatFields[6].SetValue(eva, runSpeed * eva.runSpeed);
             }
         }
 
@@ -291,9 +350,19 @@ namespace KSPAdvancedFlyByWire
             if (this.runStopCondition == null)
             {
                 //Debug.Log("Disabling RunStop");
-                KFSMEvent eRunStop = (KFSMEvent)eventFields[fsmOffsets.EndRun].GetValue(eva); // End Run
-                this.runStopCondition = eRunStop.OnCheckCondition;
-                eRunStop.OnCheckCondition = this.eventConditionDisabled;
+                try
+                {
+                    foreach (var item in eva.fsm.CurrentState.StateEvents)
+                    {
+                        if (item.name == "End Run")
+                        {
+                            this.runStopCondition = item.OnCheckCondition;
+                            item.OnCheckCondition = this.eventConditionDisabled;
+                            eva.fsm.RunEvent(item);
+                        }
+                    }
+                }
+                catch { }
             }
         }
         private void DisableLadderStopCondition(KerbalEVA eva)
@@ -301,9 +370,19 @@ namespace KSPAdvancedFlyByWire
             if (this.ladderStopCondition == null)
             {
                 //Debug.Log("Disabling LadderStop");
-                KFSMEvent eLadderStop = (KFSMEvent)eventFields[fsmOffsets.LadderStop].GetValue(eva); // Ladder Stop
-                this.ladderStopCondition = eLadderStop.OnCheckCondition;
-                eLadderStop.OnCheckCondition = this.eventConditionDisabled;
+
+                try
+                {
+                    foreach (var item in eva.fsm.CurrentState.StateEvents)
+                    {
+                        if (item.name == "Ladder Stop")
+                        {
+                            this.ladderStopCondition = item.OnCheckCondition;
+                            item.OnCheckCondition = this.eventConditionDisabled;
+                        }
+                    }
+                }
+                catch { }
             }
         }
 
@@ -312,9 +391,19 @@ namespace KSPAdvancedFlyByWire
             if (this.swimStopCondition == null)
             {
                 //Debug.Log("Disabling SwimStop");
-                KFSMEvent eSwimStop = (KFSMEvent)eventFields[fsmOffsets.SwimStop].GetValue(eva); // Swim Stop
-                this.swimStopCondition = eSwimStop.OnCheckCondition;
-                eSwimStop.OnCheckCondition = this.eventConditionDisabled;
+
+                try
+                {
+                    foreach (var item in eva.fsm.CurrentState.StateEvents)
+                    {
+                        if (item.name == "Swim Stop")
+                        {
+                            this.swimStopCondition = item.OnCheckCondition;
+                            item.OnCheckCondition = this.eventConditionDisabled;
+                        }
+                    }
+                }
+                catch { }
             }
         }
 
@@ -323,22 +412,54 @@ namespace KSPAdvancedFlyByWire
             if (this.ladderStopCondition != null)
             {
                 //Debug.Log("Re-enable LadderStop");
-                KFSMEvent eLadderStop = (KFSMEvent)eventFields[fsmOffsets.LadderStop].GetValue(eva);
-                eLadderStop.OnCheckCondition = this.ladderStopCondition;
+
+                try
+                {
+                    foreach (var item in eva.fsm.CurrentState.StateEvents)
+                    {
+                        if (item.name == "Ladder Stop")
+                        {
+                            item.OnCheckCondition = this.ladderStopCondition;
+                        }
+                    }
+                }
+                catch { }
+
                 this.ladderStopCondition = null;
             }
             if (this.swimStopCondition != null)
             {
                 //Debug.Log("Re-enable SwimStop");
-                KFSMEvent eSwimStop = (KFSMEvent)eventFields[fsmOffsets.SwimStop].GetValue(eva);
-                eSwimStop.OnCheckCondition = this.swimStopCondition;
+
+                try
+                {
+                    foreach (var item in eva.fsm.CurrentState.StateEvents)
+                    {
+                        if (item.name == "Swim Stop")
+                        {
+                            item.OnCheckCondition = this.swimStopCondition;
+                        }
+                    }
+                }
+                catch { }
+
                 this.swimStopCondition = null;
             }
             if (this.runStopCondition != null)
             {
                 //Debug.Log("Re-enable RunStop");
-                KFSMEvent eRunStop = (KFSMEvent)eventFields[fsmOffsets.StopRun].GetValue(eva);
-                eRunStop.OnCheckCondition = this.runStopCondition;
+
+                try
+                {
+                    foreach (var item in eva.fsm.CurrentState.StateEvents)
+                    {
+                        if (item.name == "End Run")
+                        {
+                            item.OnCheckCondition = this.runStopCondition;
+                        }
+                    }
+                }
+                catch { }
                 this.runStopCondition = null;
             }
         }
@@ -353,19 +474,63 @@ namespace KSPAdvancedFlyByWire
             return vessel.state == Vessel.State.ACTIVE && !vessel.packed;
         }
 
-        private KerbalEVA GetKerbalEVA()
+        internal KerbalEVA GetKerbalEVA()
         {
             return FlightGlobals.ActiveVessel.GetComponent<KerbalEVA>();
         }
 
+
+
+        int tgtSpeedOffset = -1;
+        int tgtRposOffset = -1;
+        int packTgtRPosOffset = -1;
+        int ladderTgtRPosOffset = -1;
+        int tgtFwdOffset = -1;
+        int tgtUpOffset = -1;
+
+
         private void LoadReflectionFields()
         {
             List<FieldInfo> fields = new List<FieldInfo>(typeof(KerbalEVA).GetFields(
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
+                BindingFlags.NonPublic | BindingFlags.Instance));
             this.vectorFields = new List<FieldInfo>(fields.Where<FieldInfo>(f => f.FieldType.Equals(typeof(Vector3))));
             this.floatFields = new List<FieldInfo>(fields.Where<FieldInfo>(f => f.FieldType.Equals(typeof(float))));
             this.eventFields = new List<FieldInfo>(fields.Where<FieldInfo>(f => f.FieldType.Equals(typeof(KFSMEvent))));
             this.colliderListField = new List<FieldInfo>(fields.Where<FieldInfo>(f => f.FieldType.Equals(typeof(List<Collider>))))[0];
+
+            // Get the offsets for the necessary fields to avoid having unknown constants in arrays
+            // the way the mod used to have it
+
+            for (int c = 0; c < floatFields.Count; c++)
+            {
+                var i = floatFields[c];
+                //Debug.Log("floatFields[" + c + "]: " + i.Name);
+                switch (i.Name)
+                {
+                    case "tgtSpeed":
+                        tgtSpeedOffset = c;
+                        break;
+                }
+            }
+
+            for (int c = 0; c < vectorFields.Count; c++)
+            {
+                var i = vectorFields[c];
+                //Debug.Log("vectorFields[" + c + "]: " + i.Name);
+                switch (i.Name)
+                {
+                    case "tgtRpos":
+                        tgtRposOffset = c; break;
+                    case "packTgtRPos":
+                        packTgtRPosOffset = c; break;
+                    case "ladderTgtRPos":
+                        ladderTgtRPosOffset = c; break;
+                    case "tgtFwd":
+                        tgtFwdOffset = c; break;
+                    case "tgtUp":
+                        tgtUpOffset = c; break;
+                }
+            }
         }
     }
 }

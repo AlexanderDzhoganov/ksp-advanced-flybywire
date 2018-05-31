@@ -1,8 +1,10 @@
 1.8.0.3
 	Updated the SDLs library
 	Updated the SDL2 file
-	Added code to dynamically get the FSM offsets:  InitFsmOffsets
-	Updated events to use dynamic FSM offsets
+	Added code to dynamically get the vectorField and floatField offsets
+	Rewrote all event code for EVA events to use new methods of calling
+	Repositioned the GUI.DragWindow() calls to allow full windows to be draggable
+	Added a DragWindow to the Choose Action window
 
 1.8.0.2
 	Updated name in .version file

@@ -46,12 +46,14 @@ namespace KSPAdvancedFlyByWire
 
         public void DoWindow(int window)
         {
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("X", GUILayout.Height(16)) || m_Controller == null || m_Controller.iface == null)
+            if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X")
+
+                //if (GUILayout.Button("X", GUILayout.Height(16)) 
+                    || m_Controller == null || m_Controller.iface == null)
             {
                 shouldBeDestroyed = true;
                 if (m_Controller != null)
@@ -245,6 +247,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndScrollView();
+            GUI.DragWindow();
         }
 
         public void OnGUI()

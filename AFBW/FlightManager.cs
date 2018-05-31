@@ -214,6 +214,7 @@ namespace KSPAdvancedFlyByWire
 
         public void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
         {
+            Debug.Log("EvaluateDiscreteAction: " + action);
             switch (action)
             {
                 case DiscreteAction.None:

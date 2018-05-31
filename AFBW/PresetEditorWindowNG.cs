@@ -77,6 +77,7 @@ namespace KSPAdvancedFlyByWire
             {
                 return;
             }
+            GUILayout.BeginHorizontal();
            
             var currentPreset = m_Controller.GetCurrentPreset();
 
@@ -85,6 +86,8 @@ namespace KSPAdvancedFlyByWire
                 m_ChooseDiscreteAction = false;
                 return;
             }
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
 
             m_ChooseDiscreteActionScroll = GUILayout.BeginScrollView(m_ChooseDiscreteActionScroll);
 
@@ -111,6 +114,10 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndScrollView();
+            GUILayout.EndHorizontal();
+  
+            GUI.DragWindow();
+
         }
 
         public void DoChooseContinuousActionWindow(int window)
@@ -119,7 +126,7 @@ namespace KSPAdvancedFlyByWire
             {
                 return;
             }
-
+            GUILayout.BeginHorizontal();
             var currentPreset = m_Controller.GetCurrentPreset();
 
             if (GUILayout.Button("Cancel"))
@@ -127,7 +134,8 @@ namespace KSPAdvancedFlyByWire
                 m_ChooseContinuousAction = false;
                 return;
             }
-
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
             m_ChooseContinuousActionScroll = GUILayout.BeginScrollView(m_ChooseContinuousActionScroll);
 
             foreach (var action in (ContinuousAction[]) Enum.GetValues(typeof (ContinuousAction)))
@@ -157,17 +165,21 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
+
             GUILayout.EndScrollView();
+            GUILayout.EndHorizontal();
+     
+            GUI.DragWindow();
         }
 
         public override void DoWindow(int window)
         {
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
-
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("X", GUILayout.Height(16)) || m_Controller == null || m_Controller.iface == null)
+            if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X")
+            //if (GUILayout.Button("X", GUILayout.Height(16)) 
+                || m_Controller == null || m_Controller.iface == null)
             {
                 shouldBeDestroyed = true;
                 if (m_Controller != null)
@@ -381,7 +393,8 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.Space(8);
 
-                if (GUILayout.Button("X"))
+                if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X"))
+                //if (GUILayout.Button("X"))
                 {
                     currentPreset.UnsetContinuousBinding(action);
                     m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -450,7 +463,8 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.Space(96);
 
-                if (GUILayout.Button("X"))
+                if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X"))
+                //if (GUILayout.Button("X"))
                 {
                     currentPreset.UnsetDiscreteBinding(action);
                     m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -463,6 +477,7 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndScrollView();
+            GUI.DragWindow();
         }
 
         public override void OnGUI()
@@ -507,12 +522,12 @@ namespace KSPAdvancedFlyByWire
 
             if (m_ChooseDiscreteAction)
             {
-                ClickThruBlocker.GUIWindow(1337 + m_EditorId * 4 + 1, m_ChooseDiscreteActionRect, DoChooseDiscreteActionWindow, "Choose action");
+                m_ChooseDiscreteActionRect = ClickThruBlocker.GUIWindow(1337 + m_EditorId * 4 + 1, m_ChooseDiscreteActionRect, DoChooseDiscreteActionWindow, "Choose action");
             }
 
             if (m_ChooseContinuousAction)
             {
-                ClickThruBlocker.GUIWindow(1337 + m_EditorId * 4 + 2, m_ChooseContinuousActionRect, DoChooseContinuousActionWindow, "Choose action");
+                m_ChooseContinuousActionRect = ClickThruBlocker.GUIWindow(1337 + m_EditorId * 4 + 2, m_ChooseContinuousActionRect, DoChooseContinuousActionWindow, "Choose action");
             }
 
             if (m_CurrentlyEditingContinuousAction != ContinuousAction.None || m_CurrentlyEditingDiscreteAction != DiscreteAction.None)
