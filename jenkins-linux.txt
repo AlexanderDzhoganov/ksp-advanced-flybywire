@@ -34,7 +34,7 @@
 2c: /unsafe -define:LINUX
 
 # 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
-2:AFBW,AFBW/ksp-advanced-flybywire_x86.csproj,ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire/Plugins
+2:AFBW,AFBW/ksp-advanced-flybywire-linux.csproj,ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire/Plugins
 
 # 3:SOURCEFILE, DESTDIR
 3:ksp-advanced-flybywire.version,GameData/ksp-advanced-flybywire
