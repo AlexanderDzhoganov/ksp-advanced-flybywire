@@ -83,6 +83,8 @@ namespace KSPAdvancedFlyByWire
 
         public bool m_UseOnPreInsteadOfOnFlyByWire = false;
 
+        public bool m_MaxMoveSpeedAlways = false;
+
         // Configuration
         private static readonly string addonFolder = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
         private Configuration m_Configuration = null;
@@ -448,7 +450,7 @@ namespace KSPAdvancedFlyByWire
 
             GUILayout.EndHorizontal();
 
-            if (GUILayout.Button("Mod settings"))
+            if (GUILayout.Button("Mod settings", GUILayout.Width(m_WindowRect.width / 2)))
             {
                 if (m_ModSettings == null)
                 {

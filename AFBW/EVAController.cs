@@ -90,7 +90,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     float moveSpeed = moveDirection.magnitude;
                     // Decrease max moveSpeed when not moving in a forwards direction.
-                    if (Vector3.Angle(moveDirection, eva.transform.forward) > 45)
+                    if (!AdvancedFlyByWire.Instance.m_MaxMoveSpeedAlways && Vector3.Angle(moveDirection, eva.transform.forward) > 45)
                     {
                         moveSpeed = Mathf.Clamp(moveSpeed, 0, 0.25f);
                     }

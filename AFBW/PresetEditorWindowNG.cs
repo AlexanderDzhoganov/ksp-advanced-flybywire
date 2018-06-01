@@ -80,12 +80,13 @@ namespace KSPAdvancedFlyByWire
             GUILayout.BeginHorizontal();
            
             var currentPreset = m_Controller.GetCurrentPreset();
-
-            if (GUILayout.Button("Cancel"))
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Cancel", GUILayout.Width(m_ChooseDiscreteActionRect.width / 2)))
             {
                 m_ChooseDiscreteAction = false;
                 return;
             }
+            GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
 
@@ -128,12 +129,13 @@ namespace KSPAdvancedFlyByWire
             }
             GUILayout.BeginHorizontal();
             var currentPreset = m_Controller.GetCurrentPreset();
-
-            if (GUILayout.Button("Cancel"))
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Cancel", GUILayout.Width(m_ChooseContinuousActionRect.width / 2)))
             {
                 m_ChooseContinuousAction = false;
                 return;
             }
+            GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             m_ChooseContinuousActionScroll = GUILayout.BeginScrollView(m_ChooseContinuousActionScroll);
@@ -174,8 +176,8 @@ namespace KSPAdvancedFlyByWire
 
         public override void DoWindow(int window)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
+            //GUILayout.BeginHorizontal();
+            //GUILayout.FlexibleSpace();
 
             if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X")
             //if (GUILayout.Button("X", GUILayout.Height(16)) 
@@ -188,11 +190,11 @@ namespace KSPAdvancedFlyByWire
                     AdvancedFlyByWire.Instance.SaveState(null);
                 }
 
-                GUILayout.EndHorizontal();
+                //GUILayout.EndHorizontal();
                 return;
             }
 
-            GUILayout.EndHorizontal();
+            //GUILayout.EndHorizontal();
 
             var currentPreset = m_Controller.GetCurrentPreset();
 
@@ -201,33 +203,26 @@ namespace KSPAdvancedFlyByWire
 
             currentPreset.name = GUILayout.TextField(currentPreset.name, GUILayout.Width(256));
 
-            if (m_Controller.currentPreset > 0)
-            {
-                if (GUILayout.Button("<"))
-                {
-                    m_Controller.currentPreset--;
-                }
-            }
-            else
-            {
+            if (m_Controller.currentPreset <= 0)
                 GUI.enabled = false;
-                GUILayout.Button("<");
-                GUI.enabled = true;
-            }
+            
+            if (GUILayout.Button("<"))
+            {
+                m_Controller.currentPreset--;
+            }            
+            GUI.enabled = true;
+            
 
-            if (m_Controller.currentPreset < m_Controller.presets.Count - 1)
+            if (m_Controller.currentPreset >= m_Controller.presets.Count - 1)
+               GUI.enabled = false;
+            
+            if (GUILayout.Button(">"))
             {
-                if (GUILayout.Button(">"))
-                {
-                    m_Controller.currentPreset++;
-                }
+                m_Controller.currentPreset++;
             }
-            else
-            {
-                GUI.enabled = false;
-                GUILayout.Button(">");
-                GUI.enabled = true;
-            }
+            
+            GUI.enabled = true;
+            
 
             if (GUILayout.Button("New"))
             {
@@ -260,7 +255,7 @@ namespace KSPAdvancedFlyByWire
                 destructiveRemoveLabel = "Sure?";
             }
 
-            if (m_Controller.presets.Count <= 1 || m_Controller.currentPreset == 0)
+            if (m_Controller.presets.Count <= 1 /*|| m_Controller.currentPreset == 0 */)
             {
                 GUI.enabled = false;
             }
@@ -393,8 +388,8 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.Space(8);
 
-                if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X"))
-                //if (GUILayout.Button("X"))
+                //if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X"))
+                if (GUILayout.Button("X"))
                 {
                     currentPreset.UnsetContinuousBinding(action);
                     m_CurrentlyEditingContinuousAction = ContinuousAction.None;
@@ -463,8 +458,8 @@ namespace KSPAdvancedFlyByWire
 
                 GUILayout.Space(96);
 
-                if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X"))
-                //if (GUILayout.Button("X"))
+                //if (GUI.Button(new Rect(windowRect.width - 24, 4, 20, 20), "X"))
+                if (GUILayout.Button("X"))
                 {
                     currentPreset.UnsetDiscreteBinding(action);
                     m_CurrentlyEditingContinuousAction = ContinuousAction.None;

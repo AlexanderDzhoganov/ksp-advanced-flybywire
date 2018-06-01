@@ -1,3 +1,10 @@
+1.8.0.4
+	Fixed builds
+	Added option to run at max speed always when autorun is enabled
+	Now closes the config window after saving
+	Tweaked size of some buttons
+	some minor optimizations
+
 1.8.0.3
 	Updated the SDLs library
 	Updated the SDL2 file

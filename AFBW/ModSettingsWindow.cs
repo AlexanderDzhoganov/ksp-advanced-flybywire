@@ -78,10 +78,18 @@ namespace KSPAdvancedFlyByWire
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Run at max speed always (even when not going forward)");
+            AdvancedFlyByWire.Instance.m_MaxMoveSpeedAlways = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_MaxMoveSpeedAlways, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Save configuration"))
             {
                 AdvancedFlyByWire.Instance.SaveState(null);
+                shouldBeDestroyed = true;
             }
             GUILayout.EndHorizontal();
             GUI.DragWindow();
