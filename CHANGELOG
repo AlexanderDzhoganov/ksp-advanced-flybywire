@@ -1,9 +1,15 @@
+1.8.0.5
+	Centered Mod Settings button
+	Fixed RadialIn/RadialOut buttons (are reversed)
+	Fixed Pitch Trim +/- to adjust trim by .1 per click
+
 1.8.0.4
 	Fixed builds
 	Added option to run at max speed always when autorun is enabled
 	Now closes the config window after saving
 	Tweaked size of some buttons
-	some minor optimizations
+	Some minor optimizations
+	Now allows deleting 1st preset in list, if more than one exists
 
 1.8.0.3
 	Updated the SDLs library

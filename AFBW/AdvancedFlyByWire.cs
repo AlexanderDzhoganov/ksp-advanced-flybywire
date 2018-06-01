@@ -449,7 +449,8 @@ namespace KSPAdvancedFlyByWire
             }
 
             GUILayout.EndHorizontal();
-
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
             if (GUILayout.Button("Mod settings", GUILayout.Width(m_WindowRect.width / 2)))
             {
                 if (m_ModSettings == null)
@@ -457,7 +458,9 @@ namespace KSPAdvancedFlyByWire
                     m_ModSettings = new ModSettingsWindow();
                 }
             }
-            
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
             m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 
             GUILayout.BeginHorizontal();

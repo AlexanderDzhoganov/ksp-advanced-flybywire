@@ -214,7 +214,7 @@ namespace KSPAdvancedFlyByWire
 
         public void EvaluateDiscreteAction(ControllerConfiguration controller, DiscreteAction action, FlightCtrlState state)
         {
-            Debug.Log("EvaluateDiscreteAction: " + action);
+            //Debug.Log("EvaluateDiscreteAction: " + action);
             switch (action)
             {
                 case DiscreteAction.None:
@@ -231,11 +231,11 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.PitchMinus:
                     m_Pitch.SetIncrement(-1, controller.discreteActionStep);
                     return;
-                case DiscreteAction.PitchTrimPlus:
-                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() + controller.discreteActionStep, -1.0f, 1.0f));
+                case DiscreteAction.PitchTrimPlus:                    
+                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() + controller.discreteActionStep / 10f, -1.0f, 1.0f));
                     return;
-                case DiscreteAction.PitchTrimMinus:
-                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() - controller.discreteActionStep, -1.0f, 1.0f));
+                case DiscreteAction.PitchTrimMinus:                    
+                    m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() - controller.discreteActionStep / 10f, -1.0f, 1.0f));
                     return;
                 case DiscreteAction.RollPlus:
                     m_Roll.SetIncrement(1, controller.discreteActionStep);
@@ -378,10 +378,13 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.SASAntinormal:
                     setAutopilotMode(VesselAutopilot.AutopilotMode.Antinormal, 4);
                     return;
-                case DiscreteAction.SASRadialIn:
+                // The radial controls are reversed
+                case DiscreteAction.SASRadialOut:
+                //case DiscreteAction.SASRadialIn:
                     setAutopilotMode(VesselAutopilot.AutopilotMode.RadialIn, 5);
                     return;
-                case DiscreteAction.SASRadialOut:
+                case DiscreteAction.SASRadialIn:
+                //case DiscreteAction.SASRadialOut:
                     setAutopilotMode(VesselAutopilot.AutopilotMode.RadialOut, 6);
                     return;
                 case DiscreteAction.SASManeuver:
@@ -406,7 +409,7 @@ namespace KSPAdvancedFlyByWire
 						GameEvents.Input.OnPrecisionModeToggle.Fire(FlightInputHandler.fetch.precisionMode);
                     }
                     return;
-                case DiscreteAction.ResetTrim:
+                case DiscreteAction.ResetTrim:                    
                     m_Yaw.SetTrim(0.0f);
                     m_Pitch.SetTrim(0.0f);
                     m_Roll.SetTrim(0.0f);
@@ -687,6 +690,7 @@ namespace KSPAdvancedFlyByWire
 
         private static bool setAutopilotMode(VesselAutopilot.AutopilotMode mode, int ui_button)
         {
+            //Debug.Log("setAutopilotMode, mode: " + mode);
                 if (FlightGlobals.ActiveVessel.Autopilot.CanSetMode(mode)) {
                         FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
                         FlightGlobals.ActiveVessel.Autopilot.Update();
