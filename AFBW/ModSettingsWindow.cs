@@ -73,15 +73,21 @@ namespace KSPAdvancedFlyByWire
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
+            GUILayout.Label("AFBW input overrides throttle");
+            AdvancedFlyByWire.Instance.settings.m_ThrottleOverride = GUILayout.Toggle(AdvancedFlyByWire.Instance.settings.m_ThrottleOverride, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
             GUILayout.Label("AtmosphereAutopilot compatibility");
-            AdvancedFlyByWire.Instance.m_UseOnPreInsteadOfOnFlyByWire = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_UseOnPreInsteadOfOnFlyByWire, "");
+            AdvancedFlyByWire.Instance.settings.m_UseOnPreInsteadOfOnFlyByWire = GUILayout.Toggle(AdvancedFlyByWire.Instance.settings.m_UseOnPreInsteadOfOnFlyByWire, "");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Run at max speed always (even when not going forward)");
-            AdvancedFlyByWire.Instance.m_MaxMoveSpeedAlways = GUILayout.Toggle(AdvancedFlyByWire.Instance.m_MaxMoveSpeedAlways, "");
+            AdvancedFlyByWire.Instance.settings.m_MaxMoveSpeedAlways = GUILayout.Toggle(AdvancedFlyByWire.Instance.settings.m_MaxMoveSpeedAlways, "");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 

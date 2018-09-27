@@ -54,7 +54,7 @@ namespace KSPAdvancedFlyByWire
                 {
                     config.iface.Update(state);
                     UpdateAxes(config, state);
-                    
+
                     if (FlightGlobals.ActiveVessel.isEVA)
                     {
                         EVAController.Instance.UpdateEVAFlightProperties(config, state);
@@ -84,12 +84,12 @@ namespace KSPAdvancedFlyByWire
                     state.yaw = preState.yaw;
                     state.roll = preState.roll;
                 }
-				else
-				{
-					state.yaw = Utility.Clamp(state.yaw + state.yawTrim, -1.0f, 1.0f);
-					state.pitch = Utility.Clamp(state.pitch + state.pitchTrim, -1.0f, 1.0f);
-					state.roll = Utility.Clamp(state.roll + state.rollTrim, -1.0f, 1.0f);
-				}
+                else
+                {
+                    state.yaw = Utility.Clamp(state.yaw + state.yawTrim, -1.0f, 1.0f);
+                    state.pitch = Utility.Clamp(state.pitch + state.pitchTrim, -1.0f, 1.0f);
+                    state.roll = Utility.Clamp(state.roll + state.rollTrim, -1.0f, 1.0f);
+                }
             }
         }
 
@@ -109,19 +109,51 @@ namespace KSPAdvancedFlyByWire
 
                 foreach (var action in actions)
                 {
-					var axisValue = axisState;
+                    var axisValue = axisState;
                     if (config.GetCurrentPreset().IsContinuousBindingInverted(action))
                     {
                         axisValue *= -1.0f;
                     }
 
-                    if (axisState != 0.0f || action == ContinuousAction.Throttle || action == ContinuousAction.WheelThrottle)
+
+                    throttleActive = true;
+                    if (!AdvancedFlyByWire.Instance.settings.m_ThrottleOverride && action == ContinuousAction.Throttle)
+                    {
+                        if (axisValue == last_m_throttle)
+                        {
+                            throttleActive = false;
+                        }
+                        else
+                        {
+                            EvaluateContinuousAction(config, action, axisValue, state);
+                            last_m_throttle = axisValue;
+                        }
+                    }
+                    wheelThrottleActive = true;
+                    if (!AdvancedFlyByWire.Instance.settings.m_ThrottleOverride && action == ContinuousAction.Throttle)
+                    {
+                        if (axisValue == m_lastWheelThrottle)
+                        {
+                            wheelThrottleActive = false;
+                        }
+                        else
+                        {
+                            m_lastWheelThrottle = axisValue;
+                            EvaluateContinuousAction(config, action, axisValue, state);
+                        }
+                    }
+                    if ((axisState != 0.0f && action != ContinuousAction.Throttle && action != ContinuousAction.WheelThrottle) ||
+                        (AdvancedFlyByWire.Instance.settings.m_ThrottleOverride && (action == ContinuousAction.Throttle || action == ContinuousAction.WheelThrottle)))
                     {
                         EvaluateContinuousAction(config, action, axisValue, state);
                     }
                 }
             }
         }
+
+        float last_m_throttle = 0;
+        float m_lastWheelThrottle = 0;
+        bool throttleActive, wheelThrottleActive;
 
         private void UpdateFlightProperties(FlightCtrlState state)
         {
@@ -142,9 +174,16 @@ namespace KSPAdvancedFlyByWire
             state.wheelSteerTrim = m_WheelSteer.GetTrim();
             state.wheelThrottleTrim = m_WheelThrottle.GetTrim();
 
-            state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
+            if (throttleActive)
+            {
+                state.mainThrottle = Utility.Clamp(state.mainThrottle + m_Throttle.Update(), 0.0f, 1.0f);
+            }
+            if (wheelThrottleActive)
+            {
+                state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), -1.0f, 1.0f);
+            }
+
             state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
-            state.wheelThrottle = Utility.Clamp(state.wheelThrottle + m_WheelThrottle.Update(), -1.0f, 1.0f);
         }
 
         private void ZeroOutFlightProperties()
@@ -231,10 +270,10 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.PitchMinus:
                     m_Pitch.SetIncrement(-1, controller.discreteActionStep);
                     return;
-                case DiscreteAction.PitchTrimPlus:                    
+                case DiscreteAction.PitchTrimPlus:
                     m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() + controller.discreteActionStep / 10f, -1.0f, 1.0f));
                     return;
-                case DiscreteAction.PitchTrimMinus:                    
+                case DiscreteAction.PitchTrimMinus:
                     m_Pitch.SetTrim(Utility.Clamp(m_Pitch.GetTrim() - controller.discreteActionStep / 10f, -1.0f, 1.0f));
                     return;
                 case DiscreteAction.RollPlus:
@@ -345,7 +384,7 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.NavballToggle:
                     if (MapView.MapIsEnabled && MapView.fetch != null)
                     {
-                      //  MapView.fetch.maneuverModeToggle.OnPress.Invoke();
+                        //  MapView.fetch.maneuverModeToggle.OnPress.Invoke();
                     }
                     return;
                 case DiscreteAction.IVAViewToggle:
@@ -380,11 +419,11 @@ namespace KSPAdvancedFlyByWire
                     return;
                 // The radial controls are reversed
                 case DiscreteAction.SASRadialOut:
-                //case DiscreteAction.SASRadialIn:
+                    //case DiscreteAction.SASRadialIn:
                     setAutopilotMode(VesselAutopilot.AutopilotMode.RadialIn, 5);
                     return;
                 case DiscreteAction.SASRadialIn:
-                //case DiscreteAction.SASRadialOut:
+                    //case DiscreteAction.SASRadialOut:
                     setAutopilotMode(VesselAutopilot.AutopilotMode.RadialOut, 6);
                     return;
                 case DiscreteAction.SASManeuver:
@@ -406,10 +445,10 @@ namespace KSPAdvancedFlyByWire
                     if (FlightInputHandler.fetch != null)
                     {
                         FlightInputHandler.fetch.precisionMode = !FlightInputHandler.fetch.precisionMode;
-						GameEvents.Input.OnPrecisionModeToggle.Fire(FlightInputHandler.fetch.precisionMode);
+                        GameEvents.Input.OnPrecisionModeToggle.Fire(FlightInputHandler.fetch.precisionMode);
                     }
                     return;
-                case DiscreteAction.ResetTrim:                    
+                case DiscreteAction.ResetTrim:
                     m_Yaw.SetTrim(0.0f);
                     m_Pitch.SetTrim(0.0f);
                     m_Roll.SetTrim(0.0f);
@@ -691,15 +730,18 @@ namespace KSPAdvancedFlyByWire
         private static bool setAutopilotMode(VesselAutopilot.AutopilotMode mode, int ui_button)
         {
             //Debug.Log("setAutopilotMode, mode: " + mode);
-                if (FlightGlobals.ActiveVessel.Autopilot.CanSetMode(mode)) {
-                        FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
-                        FlightGlobals.ActiveVessel.Autopilot.Update();
-                        FlightGlobals.ActiveVessel.Autopilot.SetMode(mode);
-                        setSASUI(ui_button);
-                        return true;
-                } else {
-                    return false;
-                }
+            if (FlightGlobals.ActiveVessel.Autopilot.CanSetMode(mode))
+            {
+                FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
+                FlightGlobals.ActiveVessel.Autopilot.Update();
+                FlightGlobals.ActiveVessel.Autopilot.SetMode(mode);
+                setSASUI(ui_button);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

@@ -277,7 +277,7 @@ namespace KSPAdvancedFlyByWire
 
         public static Configuration Deserialize(string filename)
         {
-           // Debug.Log("Deserialize, filename: " + filename);
+           //Debug.Log("Deserialize, filename: " + filename);
             var serializer = new XmlSerializer(typeof(Configuration));
 
             try
@@ -288,7 +288,10 @@ namespace KSPAdvancedFlyByWire
                     config.OnPostDeserialize();
                     return config;
                 }
-            } catch {}
+            } catch (Exception ex)
+            {
+                Debug.Log("Exception Deserializing: " + ex.Message);
+            }
 
             return null;
         }

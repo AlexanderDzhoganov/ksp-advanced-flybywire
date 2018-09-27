@@ -31,7 +31,9 @@ namespace KSPAdvancedFlyByWire
         public bool m_IgnoreFlightCtrlState = true;
         public bool m_UseOnPreInsteadOfOnFlyByWire = false;
 
-       
+        public bool m_ThrottleOverride = false;        
+
+        public bool m_MaxMoveSpeedAlways = false;
 
         public void Serialize(string filename, AFBW_Settings config)
         {
@@ -46,7 +48,7 @@ namespace KSPAdvancedFlyByWire
 
         public AFBW_Settings Deserialize(string filename)
         {
-            // Debug.Log("Deserialize, filename: " + filename);
+            //Debug.Log("Deserialize, filename: " + filename);
             var serializer = new XmlSerializer(typeof(AFBW_Settings));
 
             try
@@ -57,7 +59,10 @@ namespace KSPAdvancedFlyByWire
                     return config;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.Log("Exception deserializing " + filename + ", " + ex.Message);
+            }
 
             return null;
         }
@@ -81,9 +86,9 @@ namespace KSPAdvancedFlyByWire
 
         public AFBW_Settings settings = new AFBW_Settings();
 
-        public bool m_UseOnPreInsteadOfOnFlyByWire = false;
+        //public bool m_UseOnPreInsteadOfOnFlyByWire = false;
 
-        public bool m_MaxMoveSpeedAlways = false;
+        //public bool m_MaxMoveSpeedAlways = false;
 
         // Configuration
         private static readonly string addonFolder = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
@@ -161,7 +166,7 @@ namespace KSPAdvancedFlyByWire
 
         private void LoadState(ConfigNode configNode)
         {
-            var s = settings.Deserialize("");
+            var s = settings.Deserialize(GetAbsoluteSettingsPath());
             if (s != null)
                 settings = s;
             m_Configuration = Configuration.Deserialize(GetAbsoluteConfigurationPath());
@@ -232,7 +237,7 @@ namespace KSPAdvancedFlyByWire
 
         void AddFlyByWireCallbackToActiveVessel()
         {
-            if (m_UseOnPreInsteadOfOnFlyByWire)
+            if (settings.m_UseOnPreInsteadOfOnFlyByWire)
                 FlightGlobals.ActiveVessel.OnPreAutopilotUpdate += m_FlightManager.OnFlyByWire;
             else
                 FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
