@@ -1,3 +1,6 @@
+1.8.1.1
+	Version bump for 1.5 rebuild
+
 1.8.1
 	Added option to allow throttle to be overridden by joystick or not
 	Fixed loading of settings upon entering the flight scene
