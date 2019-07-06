@@ -202,6 +202,7 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGUIRecoveryDialogDespawn.Add(OnGUIRecoveryDialogDespawn);
 
             GameEvents.onVesselChange.Add(OnVesselChange);
+            GameEvents.onVesselSwitching.Add(OnVesselSwitching);
         }
 
         private void UnregisterCallbacks()
@@ -219,7 +220,7 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogDespawn);
            
             GameEvents.onVesselChange.Remove(OnVesselChange);
-
+            GameEvents.onVesselSwitching.Remove(OnVesselSwitching);
             if (FlightGlobals.ActiveVessel != null)
             {
                 try
@@ -251,18 +252,58 @@ namespace KSPAdvancedFlyByWire
             }
 */
         }
-
+        void RemoveFlyByWireCallbackFromInActiveVessel()
+        {
+            if (settings.m_UseOnPreInsteadOfOnFlyByWire)
+                FlightGlobals.ActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;
+            else
+                FlightGlobals.ActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
+            //m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
+            /*
+                        if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null
+                            && FlightGlobals.ActiveVessel.Autopilot.SAS.CanEngageSAS() && FlightGlobals.ActiveVessel.CurrentControlLevel == Vessel.ControlLevel.FULL
+                            && !FlightGlobals.ActiveVessel.isEVA)
+                        {
+                            FlightGlobals.ActiveVessel.Autopilot.SAS.ConnectFlyByWire(true);
+                        }
+            */
+        }
         private Vessel m_LastChangedActiveVessel = null;
 
-		IEnumerator<YieldInstruction> WaitAndAddFlyByWireCallbackToActiveVessel ()
-		{
-			yield return null;
-			AddFlyByWireCallbackToActiveVessel ();
-		}
+        IEnumerator<YieldInstruction> WaitAndAddFlyByWireCallbackToActiveVessel()
+        {
+            yield return null;
+            AddFlyByWireCallbackToActiveVessel();
+        }
+        IEnumerator<YieldInstruction> WaitAndRemoveFlyByWireCallbackFromInactiveVessel()
+        {
+            yield return null;
+            RemoveFlyByWireCallbackFromInActiveVessel();
+        }
+
 
         private void OnVesselChange(Vessel vessel)
         {
             if (vessel == null)
+            {
+                return;
+            }
+            if (m_LastChangedActiveVessel == null)
+            {
+                m_FlightManager.m_Throttle.SetZero();
+                m_FlightManager.m_WheelThrottle.SetZero();
+                m_FlightManager.m_Yaw.SetZero();
+                m_FlightManager.m_Pitch.SetZero();
+                m_FlightManager.m_Roll.SetZero();
+
+                StartCoroutine(WaitAndAddFlyByWireCallbackToActiveVessel());
+            }
+        }
+
+        private void OnVesselSwitching(Vessel from, Vessel to)
+        {
+            if (from == null || to == null)
+
             {
                 return;
             }
@@ -293,11 +334,14 @@ namespace KSPAdvancedFlyByWire
             m_FlightManager.m_Pitch.SetZero();
             m_FlightManager.m_Roll.SetZero();
 
+            StartCoroutine(WaitAndRemoveFlyByWireCallbackFromInactiveVessel());
             StartCoroutine (WaitAndAddFlyByWireCallbackToActiveVessel());
         }
+
+
         //ApplicationLauncherButton ABFWButton = null;
-        const string TOOLBAR_BTN_38 = "ksp-advanced-flybywire/PluginData/Textures/toolbar_btn_38";
-        const string TOOLBAR_BTN_24 = "ksp-advanced-flybywire/PluginData/Textures/toolbar_btn";
+        const string TOOLBAR_BTN_38 = "ksp-advanced-flybywire/Textures/toolbar_btn_38";
+        const string TOOLBAR_BTN_24 = "ksp-advanced-flybywire/Textures/toolbar_btn";
                                        
         internal const string MODID = "ABFW_NS";
         internal const string MODNAME = "Advanced Fly-By-Wire";
