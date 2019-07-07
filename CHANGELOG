@@ -1,5 +1,7 @@
 1.8.2
 	Fixed controller affecting multiple vessels at a time
+	Fixed AFBW input overrides SAS
+	Fixed AFBW input overrides throttle
 	Moved textures out of PluginData directory
 	Updated AssemblyVersion.tt
 
