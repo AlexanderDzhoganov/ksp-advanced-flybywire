@@ -91,7 +91,8 @@ namespace KSPAdvancedFlyByWire
         //public bool m_MaxMoveSpeedAlways = false;
 
         // Configuration
-        private static readonly string addonFolder = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
+        private static readonly string ADDON_FOLDER = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ksp-advanced-flybywire");
+        private static readonly string DATAFOLDER = ADDON_FOLDER + "/PluginData";
         private Configuration m_Configuration = null;
 
         private ModSettingsWindow m_ModSettings = null;
@@ -119,17 +120,20 @@ namespace KSPAdvancedFlyByWire
 
         public string GetAbsoluteConfigurationPath()
         {
+            System.IO.Directory.CreateDirectory(DATAFOLDER);
             return Path.Combine
             (
-                addonFolder + "/PluginData",
+
+                DATAFOLDER,
                 "advanced_flybywire_config_v" + versionMajor + versionMinor + ".xml"
             );
         }
         public string GetAbsoluteSettingsPath()
         {
+            System.IO.Directory.CreateDirectory(DATAFOLDER);
             return Path.Combine
             (
-                addonFolder + "/PluginData",
+                DATAFOLDER,
                 "settings" + ".xml"
             );
         }

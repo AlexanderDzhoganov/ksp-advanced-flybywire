@@ -1,3 +1,6 @@
+1.8.2.1
+	Added code to create data folder (PluginData) if it doesn't exist
+
 1.8.2
 	Fixed controller affecting multiple vessels at a time
 	Fixed AFBW input overrides SAS
