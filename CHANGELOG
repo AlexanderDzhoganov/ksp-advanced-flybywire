@@ -1,3 +1,9 @@
+ChangeLog
+
+1.8.3
+	Added InstallChecker
+	Updated for KSP 1.8
+
 1.8.2.1
 	Added code to create data folder (PluginData) if it doesn't exist
 
