@@ -314,10 +314,9 @@ namespace KSPAdvancedFlyByWire
         public List<ContinuousAction> GetContinuousBinding(int axis, Bitset state)
         {
             List<KeyValuePair<Bitset, ContinuousAction>> matches = new List<KeyValuePair<Bitset, ContinuousAction>>();
-
             foreach (var continuousActionPair in continuousActionsMap)
             {
-                if(continuousActionPair.Value.Value != axis)
+                if (continuousActionPair.Value.Key == null || continuousActionPair.Value.Value != axis)
                 {
                     continue;
                 }
