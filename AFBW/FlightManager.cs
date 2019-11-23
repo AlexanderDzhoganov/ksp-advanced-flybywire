@@ -382,10 +382,7 @@ namespace KSPAdvancedFlyByWire
                     WarpController.StopWarp();
                     return;
                 case DiscreteAction.NavballToggle:
-                    if (MapView.MapIsEnabled && MapView.fetch != null)
-                    {
-                        //  MapView.fetch.maneuverModeToggle.OnPress.Invoke();
-                    }
+                    FlightGlobals.CycleSpeedModes();
                     return;
                 case DiscreteAction.IVAViewToggle:
                     if (CameraManager.Instance != null)
