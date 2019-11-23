@@ -237,12 +237,12 @@ namespace KSPAdvancedFlyByWire
 
                 foreach (var pair in preset.continuousActionsMap)
                 {
-                    newPreset.continuousActionsMap.Add(pair.Key, new KeyValuePair<Bitset, int>(pair.Value.Key.Copy(), pair.Value.Value));
+                    newPreset.continuousActionsMap.Add(pair.Key, new ContinuousActionEntry(pair.Key, pair.Value.Bitset.Copy(), pair.Value.Axis, pair.Value.Inverted));
                 }
 
                 foreach (var pair in preset.discreteActionsMap)
                 {
-                    newPreset.discreteActionsMap.Add(pair.Key, pair.Value.Copy());
+                    newPreset.discreteActionsMap.Add(pair.Key, new DiscreteActionEntry(pair.Key, pair.Value.Bitset.Copy()));
                 }
 
                 m_Controller.presets.Add(newPreset);
