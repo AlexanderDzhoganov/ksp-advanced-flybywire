@@ -46,6 +46,7 @@ namespace KSPAdvancedFlyByWire
         RCS,
         SAS,
         SASHold,
+        SASInvert,
         SASStabilityAssist,
         SASPrograde,
         SASRetrograde,

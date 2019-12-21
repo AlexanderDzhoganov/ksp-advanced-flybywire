@@ -130,6 +130,8 @@
                     return "Camera View [Toggle]";
                 case DiscreteAction.SASHold:
                     return "SAS (Hold)";
+                case DiscreteAction.SASInvert:
+                    return "SAS (Invert)";
                 case DiscreteAction.SASStabilityAssist:
                     return "SAS (Stability assist)";
                 case DiscreteAction.SASPrograde:

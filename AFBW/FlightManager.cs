@@ -399,43 +399,46 @@ namespace KSPAdvancedFlyByWire
                 case DiscreteAction.SASHold:
                     FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
                     return;
+                case DiscreteAction.SASInvert:
+                    invertAutopilotMode();
+                    return;
                 case DiscreteAction.SASStabilityAssist:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.StabilityAssist, 0);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.StabilityAssist);
                     return;
                 case DiscreteAction.SASPrograde:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.Prograde, 1);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Prograde);
                     return;
                 case DiscreteAction.SASRetrograde:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.Retrograde, 2);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Retrograde);
                     return;
                 case DiscreteAction.SASNormal:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.Normal, 3);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Normal);
                     return;
                 case DiscreteAction.SASAntinormal:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.Antinormal, 4);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Antinormal);
                     return;
                 // The radial controls are reversed
                 case DiscreteAction.SASRadialOut:
                     //case DiscreteAction.SASRadialIn:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.RadialIn, 5);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.RadialIn);
                     return;
                 case DiscreteAction.SASRadialIn:
                     //case DiscreteAction.SASRadialOut:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.RadialOut, 6);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.RadialOut);
                     return;
                 case DiscreteAction.SASManeuver:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.Maneuver, 7);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Maneuver);
                     return;
                 case DiscreteAction.SASTarget:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.Target, 8);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.Target);
                     return;
                 case DiscreteAction.SASAntiTarget:
-                    setAutopilotMode(VesselAutopilot.AutopilotMode.AntiTarget, 9);
+                    setAutopilotMode(VesselAutopilot.AutopilotMode.AntiTarget);
                     return;
                 case DiscreteAction.SASManeuverOrTarget:
-                    if (!setAutopilotMode(VesselAutopilot.AutopilotMode.Maneuver, 7))
+                    if (!setAutopilotMode(VesselAutopilot.AutopilotMode.Maneuver))
                     {
-                        setAutopilotMode(VesselAutopilot.AutopilotMode.Target, 8);
+                        setAutopilotMode(VesselAutopilot.AutopilotMode.Target);
                     };
                     return;
                 case DiscreteAction.TogglePrecisionControls:
@@ -718,13 +721,7 @@ namespace KSPAdvancedFlyByWire
             }
         }
 
-        private static void setSASUI(int mode)
-        {
-            KSP.UI.UIStateToggleButton[] SASbtns = UnityEngine.Object.FindObjectOfType<VesselAutopilotUI>().modeButtons;
-            SASbtns[mode].SetState(true);
-        }
-
-        private static bool setAutopilotMode(VesselAutopilot.AutopilotMode mode, int ui_button)
+        private static bool setAutopilotMode(VesselAutopilot.AutopilotMode mode)
         {
             //Debug.Log("setAutopilotMode, mode: " + mode);
             if (FlightGlobals.ActiveVessel.Autopilot.CanSetMode(mode))
@@ -732,12 +729,40 @@ namespace KSPAdvancedFlyByWire
                 FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
                 FlightGlobals.ActiveVessel.Autopilot.Update();
                 FlightGlobals.ActiveVessel.Autopilot.SetMode(mode);
-                setSASUI(ui_button);
                 return true;
             }
-            else
-            {
+            return false;
+        }
+
+        private static bool invertAutopilotMode()
+        {
+            if (!FlightGlobals.ActiveVessel.Autopilot.Enabled)
                 return false;
+
+            switch (FlightGlobals.ActiveVessel.Autopilot.Mode)
+            {
+                case VesselAutopilot.AutopilotMode.StabilityAssist:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.Maneuver);
+                case VesselAutopilot.AutopilotMode.Maneuver:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.StabilityAssist);
+                case VesselAutopilot.AutopilotMode.Prograde:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.Retrograde);
+                case VesselAutopilot.AutopilotMode.Retrograde:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.Prograde);
+                case VesselAutopilot.AutopilotMode.Normal:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.Antinormal);
+                case VesselAutopilot.AutopilotMode.Antinormal:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.Normal);
+                case VesselAutopilot.AutopilotMode.RadialIn:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.RadialOut);
+                case VesselAutopilot.AutopilotMode.RadialOut:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.RadialIn);
+                case VesselAutopilot.AutopilotMode.Target:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.AntiTarget);
+                case VesselAutopilot.AutopilotMode.AntiTarget:
+                    return setAutopilotMode(VesselAutopilot.AutopilotMode.Target);
+                default:
+                    return false;
             }
         }
     }
