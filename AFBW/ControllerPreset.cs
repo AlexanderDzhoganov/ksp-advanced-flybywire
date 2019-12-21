@@ -7,13 +7,11 @@ using UnityEngine;
 namespace KSPAdvancedFlyByWire
 {
 
-    using DiscreteActionsMap = Dictionary<DiscreteAction, Bitset>;
-    using ContinuousActionsMap = Dictionary<ContinuousAction, KeyValuePair<Bitset, int>>;
-    using ContinuousActionsInversionMap = Dictionary<ContinuousAction, bool>;
+    using DiscreteActionsMap = Dictionary<DiscreteAction, DiscreteActionEntry>;
+    using ContinuousActionsMap = Dictionary<ContinuousAction, ContinuousActionEntry>;
 
-    using SerializableDiscreteActionsMap = List<KeyValuePair<DiscreteAction, Bitset>>;
-    using SerializableContinuousActionsMap = List<KeyValuePair<ContinuousAction, KeyValuePair<Bitset, int>>>;
-    using SerializableContinuousActionsInvMap = List<KeyValuePair<ContinuousAction, bool>>;
+    using SerializableDiscreteActionsList = List<DiscreteActionEntry>;
+    using SerializableContinuousActionsList = List<ContinuousActionEntry>;
 
     public enum DiscreteAction
     {
@@ -140,6 +138,34 @@ namespace KSPAdvancedFlyByWire
         CameraZoom
     }
 
+    public class DiscreteActionEntry
+    {
+        public DiscreteAction Action = DiscreteAction.None;
+        public Bitset Bitset = null;
+        public DiscreteActionEntry() { } // Required for XML serialization
+        public DiscreteActionEntry(DiscreteAction action, Bitset bitset)
+        {
+            this.Action = action;
+            this.Bitset = bitset;
+        }
+    }
+
+    public class ContinuousActionEntry
+    {
+        public ContinuousAction Action = ContinuousAction.None;
+        public Bitset Bitset = null;
+        public int Axis = 0;
+        public bool Inverted = false;
+        public ContinuousActionEntry() { } // Required for XML serialization
+        public ContinuousActionEntry(ContinuousAction action, Bitset bitset, int axis, bool inverted)
+        {
+            this.Action = action;
+            this.Bitset = bitset;
+            this.Axis = axis;
+            this.Inverted = inverted;
+        }
+    }
+
     public class ControllerPreset
     {
 
@@ -151,52 +177,37 @@ namespace KSPAdvancedFlyByWire
         public DiscreteActionsMap discreteActionsMap = new DiscreteActionsMap();
         [XmlIgnore()]
         public ContinuousActionsMap continuousActionsMap = new ContinuousActionsMap();
-        [XmlIgnore()]
-        public ContinuousActionsInversionMap continuousActionsInvMap = new ContinuousActionsInversionMap();
 
-        public SerializableDiscreteActionsMap serializableDiscreteActionMap = new SerializableDiscreteActionsMap();
-        public SerializableContinuousActionsMap serialiazableContinuousActionMap = new SerializableContinuousActionsMap();
-        public SerializableContinuousActionsInvMap serializableContinuousActionInvMap = new SerializableContinuousActionsInvMap();
+        public SerializableDiscreteActionsList serializableDiscreteActionList = new SerializableDiscreteActionsList();
+        public SerializableContinuousActionsList serialiazableContinuousActionList = new SerializableContinuousActionsList();
 
         public void OnPreSerialize()
         {
-            serialiazableContinuousActionMap.Clear();
+            serialiazableContinuousActionList.Clear();
             foreach(var keyValue in continuousActionsMap)
             {
-                serialiazableContinuousActionMap.Add(keyValue);
+                serialiazableContinuousActionList.Add(keyValue.Value);
             }
 
-            serializableContinuousActionInvMap.Clear();
-            foreach (var keyValue in continuousActionsInvMap)
-            {
-                serializableContinuousActionInvMap.Add(keyValue);
-            }
-
-            serializableDiscreteActionMap.Clear();
+            serializableDiscreteActionList.Clear();
             foreach(var keyValue in discreteActionsMap)
             {
-                serializableDiscreteActionMap.Add(keyValue);
+                serializableDiscreteActionList.Add(keyValue.Value);
             }
         }
 
         public void OnPostDeserialize()
         {
             continuousActionsMap.Clear();
-            foreach(var keyValue in serialiazableContinuousActionMap)
+            foreach(var entry in serialiazableContinuousActionList)
             {
-                continuousActionsMap.Add(keyValue.Key, keyValue.Value);
-            }
-
-            continuousActionsInvMap.Clear();
-            foreach (var keyValue in serializableContinuousActionInvMap)
-            {
-                continuousActionsInvMap.Add(keyValue.Key, keyValue.Value);
+                continuousActionsMap.Add(entry.Action, entry);
             }
 
             discreteActionsMap.Clear();
-            foreach(var keyValue in serializableDiscreteActionMap)
+            foreach(var entry in serializableDiscreteActionList)
             {
-                discreteActionsMap.Add(keyValue.Key, keyValue.Value);
+                discreteActionsMap.Add(entry.Action, entry);
             }
         }
 
@@ -211,7 +222,7 @@ namespace KSPAdvancedFlyByWire
                 }
             }
 
-            discreteActionsMap[action] = state;
+            discreteActionsMap[action] = new DiscreteActionEntry(action, state);
         }
 
         public void UnsetDiscreteBinding(DiscreteAction action)
@@ -228,14 +239,12 @@ namespace KSPAdvancedFlyByWire
         {
             List<KeyValuePair<Bitset, DiscreteAction>> matches = new List<KeyValuePair<Bitset, DiscreteAction>>();
 
-            foreach (var maskActionPair in discreteActionsMap)
+            foreach (var discreteActionEntry in discreteActionsMap.Values)
             {
-                Bitset expectedState = maskActionPair.Value;
                 bool match = true;
-
                 for (int i = 0; i < state.m_NumBits; i++)
                 {
-                    if (expectedState.Get(i))
+                    if (discreteActionEntry.Bitset.Get(i))
                     {
                         if (!state.Get(i))
                         {
@@ -247,7 +256,7 @@ namespace KSPAdvancedFlyByWire
 
                 if(match)
                 {
-                    matches.Add(new KeyValuePair<Bitset, DiscreteAction>(maskActionPair.Value, maskActionPair.Key));
+                    matches.Add(new KeyValuePair<Bitset, DiscreteAction>(discreteActionEntry.Bitset, discreteActionEntry.Action));
                 }
             }
 
@@ -291,43 +300,33 @@ namespace KSPAdvancedFlyByWire
         public Bitset GetBitsetForDiscreteBinding(DiscreteAction action)
         {
             if (!discreteActionsMap.ContainsKey(action)) return null;
-            return discreteActionsMap[action];
+            return discreteActionsMap[action].Bitset;
         }
 
         public void SetContinuousBinding(int axis, Bitset state, ContinuousAction action, bool isInverted)
         {
-            //Debug.Log("SetContBind: " + action.ToString() + " to axis " + axis + " and bitset " + state.ToString());
-            continuousActionsMap[action] = new KeyValuePair<Bitset, int>(state, axis);
-            if (isInverted)
-            {
-                continuousActionsInvMap[action] = true;
-            }
-            //TODO: Remove from map if false and containsKey? Saves a little space when serializing.
+            continuousActionsMap[action] = new ContinuousActionEntry(action, state, axis, isInverted);
         }
 
         public void UnsetContinuousBinding(ContinuousAction action)
         {
             continuousActionsMap.Remove(action);
-            continuousActionsInvMap.Remove(action);
         }
 
         public List<ContinuousAction> GetContinuousBinding(int axis, Bitset state)
         {
             List<KeyValuePair<Bitset, ContinuousAction>> matches = new List<KeyValuePair<Bitset, ContinuousAction>>();
-
-            foreach (var continuousActionPair in continuousActionsMap)
+            foreach (var continuousActionEntry in continuousActionsMap.Values)
             {
-                if(continuousActionPair.Value.Value != axis)
+                if (continuousActionEntry.Bitset == null || continuousActionEntry.Axis != axis)
                 {
                     continue;
                 }
 
-                Bitset expectedState = continuousActionPair.Value.Key;
                 bool match = true;
-
                 for (int i = 0; i < state.m_NumBits; i++)
                 {
-                    if (expectedState.Get(i))
+                    if (continuousActionEntry.Bitset.Get(i))
                     {
                         if (!state.Get(i))
                         {
@@ -339,7 +338,7 @@ namespace KSPAdvancedFlyByWire
 
                 if (match)
                 {
-                    matches.Add(new KeyValuePair<Bitset, ContinuousAction>(expectedState, continuousActionPair.Key));
+                    matches.Add(new KeyValuePair<Bitset, ContinuousAction>(continuousActionEntry.Bitset, continuousActionEntry.Action));
                 }
             }
 
@@ -387,17 +386,21 @@ namespace KSPAdvancedFlyByWire
                 return new KeyValuePair<int, Bitset>(0, null);
             }
 
-            return new KeyValuePair<int,Bitset>(continuousActionsMap[action].Value, continuousActionsMap[action].Key);
+            var entry = continuousActionsMap[action];
+            return new KeyValuePair<int,Bitset>(entry.Axis, entry.Bitset);
         }
 
         public bool IsContinuousBindingInverted(ContinuousAction action)
         {
-            return continuousActionsInvMap.ContainsKey(action) ? continuousActionsInvMap[action] : false;
+            return continuousActionsMap.ContainsKey(action) && continuousActionsMap[action].Inverted;
         }
 
         public void SetContinuousBindingInverted(ContinuousAction action, bool isInverted)
         {
-            continuousActionsInvMap[action] = isInverted;
+            if (continuousActionsMap.ContainsKey(action))
+            {
+                continuousActionsMap[action].Inverted = isInverted;
+            }
         }
 
         private static int CompareKeys(KeyValuePair<int, ContinuousAction> a, KeyValuePair<int, ContinuousAction> b)
