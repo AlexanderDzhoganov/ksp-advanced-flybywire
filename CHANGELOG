@@ -1,5 +1,13 @@
 ChangeLog
 
+1.8.3.1
+	Fixed initialization of variable outside of MonoBehaviour loop
+	Thanks to github user @bhaan for the following:
+		 New Feature: SAS Invert
+		 re-enable nav-ball toggle (speed mode)
+		 Fix Xml Serialization for KSPv1.8
+			Note: This change is not backwards compatible with previous controller presets. Users will have to reconfigure their controllers if these changes are merged. I've tested that an old configuration file will not cause failures for the mod during deserialization, but all the button and axis bindings will be removed.
+
 1.8.3
 	Added InstallChecker
 	Updated for KSP 1.8
