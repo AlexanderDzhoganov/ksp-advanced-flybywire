@@ -1,5 +1,8 @@
 ChangeLog
 
+1.8.3.2
+	Updated README with correct URL for download, and short OSX install section
+
 1.8.3.1
 	Fixed initialization of variable outside of MonoBehaviour loop
 	Thanks to github user @bhaan for the following:
