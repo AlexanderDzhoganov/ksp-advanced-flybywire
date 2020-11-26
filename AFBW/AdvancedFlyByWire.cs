@@ -31,7 +31,7 @@ namespace KSPAdvancedFlyByWire
         public bool m_IgnoreFlightCtrlState = true;
         public bool m_UseOnPreInsteadOfOnFlyByWire = false;
 
-        public bool m_ThrottleOverride = false;        
+        public bool m_ThrottleOverride = false;
 
         public bool m_MaxMoveSpeedAlways = false;
 
@@ -81,7 +81,7 @@ namespace KSPAdvancedFlyByWire
 
         private bool m_UIActive = true;
         private bool m_UIHidden = false;
-        private Rect m_WindowRect = new Rect(0, 64, 432, 576);
+        private Rect m_WindowRect = new Rect(0, 64, 432, 200);
         private Vector2 m_ScrollPosition = new Vector2(0, 0);
 
         public AFBW_Settings settings = new AFBW_Settings();
@@ -142,13 +142,13 @@ namespace KSPAdvancedFlyByWire
         {
             m_Instance = this;
 
-            RegisterCallbacks(); 
+            RegisterCallbacks();
             LoadState(null);
             InitializeToolbarButton();
 
             m_UIHidden = false;
             m_UIActive = false;
-            
+
             print("Advanced Fly-By-Wire: Initialized");
         }
 
@@ -182,9 +182,9 @@ namespace KSPAdvancedFlyByWire
 
             m_FlightManager.m_Configuration = m_Configuration;
         }
-        
+
         public void SaveState(ConfigNode configNode)
-        { 
+        {
             settings.Serialize(GetAbsoluteSettingsPath(), settings);
 
             Configuration.Serialize(GetAbsoluteConfigurationPath(), m_Configuration);
@@ -222,7 +222,7 @@ namespace KSPAdvancedFlyByWire
             GameEvents.onGameStateLoad.Remove(LoadState);
             GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogSpawn);
             GameEvents.onGUIRecoveryDialogSpawn.Remove(OnGUIRecoveryDialogDespawn);
-           
+
             GameEvents.onVesselChange.Remove(OnVesselChange);
             GameEvents.onVesselSwitching.Remove(OnVesselSwitching);
             if (FlightGlobals.ActiveVessel != null)
@@ -247,14 +247,14 @@ namespace KSPAdvancedFlyByWire
             else
                 FlightGlobals.ActiveVessel.OnFlyByWire += m_FlightManager.OnFlyByWire;
             m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
-/*
-            if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null
-                && FlightGlobals.ActiveVessel.Autopilot.SAS.CanEngageSAS() && FlightGlobals.ActiveVessel.CurrentControlLevel == Vessel.ControlLevel.FULL
-                && !FlightGlobals.ActiveVessel.isEVA)
-            {
-                FlightGlobals.ActiveVessel.Autopilot.SAS.ConnectFlyByWire(true);
-            }
-*/
+            /*
+                        if (FlightGlobals.ActiveVessel.Autopilot != null && FlightGlobals.ActiveVessel.Autopilot.SAS != null
+                            && FlightGlobals.ActiveVessel.Autopilot.SAS.CanEngageSAS() && FlightGlobals.ActiveVessel.CurrentControlLevel == Vessel.ControlLevel.FULL
+                            && !FlightGlobals.ActiveVessel.isEVA)
+                        {
+                            FlightGlobals.ActiveVessel.Autopilot.SAS.ConnectFlyByWire(true);
+                        }
+            */
         }
         void RemoveFlyByWireCallbackFromInActiveVessel()
         {
@@ -321,14 +321,14 @@ namespace KSPAdvancedFlyByWire
 
                 try
                 {
-                    FlightGlobals.ActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;                    
+                    FlightGlobals.ActiveVessel.OnPreAutopilotUpdate -= m_FlightManager.OnFlyByWire;
                 }
                 catch (NullReferenceException) { }
                 try
                 {
                     FlightGlobals.ActiveVessel.OnFlyByWire -= m_FlightManager.OnFlyByWire;
                 }
-                catch (NullReferenceException) { }                
+                catch (NullReferenceException) { }
                 m_LastChangedActiveVessel = FlightGlobals.ActiveVessel;
             }
 
@@ -339,21 +339,25 @@ namespace KSPAdvancedFlyByWire
             m_FlightManager.m_Roll.SetZero();
 
             StartCoroutine(WaitAndRemoveFlyByWireCallbackFromInactiveVessel());
-            StartCoroutine (WaitAndAddFlyByWireCallbackToActiveVessel());
+            StartCoroutine(WaitAndAddFlyByWireCallbackToActiveVessel());
         }
 
 
         //ApplicationLauncherButton ABFWButton = null;
         const string TOOLBAR_BTN_38 = "ksp-advanced-flybywire/Textures/toolbar_btn_38";
-        const string TOOLBAR_BTN_24 = "ksp-advanced-flybywire/Textures/toolbar_btn";
-                                       
+        const string TOOLBAR_BTN_24 = "ksp-advanced-flybywire/Textures/toolbar_btn"; 
+        const string TOOLBAR_BTN_disabled_38 = "ksp-advanced-flybywire/Textures/toolbar_btn_disabled_38";
+        const string TOOLBAR_BTN_disabled_24 = "ksp-advanced-flybywire/Textures/toolbar_btn_disabled";
+
+
         internal const string MODID = "ABFW_NS";
         internal const string MODNAME = "Advanced Fly-By-Wire";
 
         private void InitializeToolbarButton()
         {
             toolbarControl = gameObject.AddComponent<ToolbarControl>();
-            toolbarControl.AddToAllToolbars(StockToolbarButtonClick, StockToolbarButtonClick,
+            toolbarControl.AddToAllToolbars
+            (null, null,
                 ApplicationLauncher.AppScenes.FLIGHT,
                 MODID,
                 "abfwButton",
@@ -361,12 +365,24 @@ namespace KSPAdvancedFlyByWire
                 TOOLBAR_BTN_24,
                 MODNAME
             );
+            toolbarControl.AddLeftRightClickCallbacks(StockToolbarButtonClick, RightClick);
 
         }
 
+#if false
         void OnToolbarButtonClick(ClickEvent ev)
         {
             StockToolbarButtonClick();
+        }
+#endif
+        static internal  bool rightClickDisabled = false;
+        void RightClick()
+        {
+            rightClickDisabled = !rightClickDisabled;
+            if (rightClickDisabled)
+                toolbarControl.SetTexture(TOOLBAR_BTN_disabled_38, TOOLBAR_BTN_disabled_24);
+            else
+                toolbarControl.SetTexture(TOOLBAR_BTN_38, TOOLBAR_BTN_24);
         }
 
         void StockToolbarButtonClick()
@@ -396,7 +412,7 @@ namespace KSPAdvancedFlyByWire
 
         public void ButtonPressedCallback(IController controller, int button, FlightCtrlState state)
         {
-            if(!HighLogic.LoadedSceneIsFlight)
+            if (!HighLogic.LoadedSceneIsFlight)
             {
                 return;
             }
@@ -412,7 +428,7 @@ namespace KSPAdvancedFlyByWire
 
             List<DiscreteAction> actions = config.GetCurrentPreset().GetDiscreteBinding(mask);
 
-            if(actions != null)
+            if (actions != null)
             {
                 foreach (DiscreteAction action in actions)
                 {
@@ -438,10 +454,10 @@ namespace KSPAdvancedFlyByWire
                 for (int i = 0; i < controller.GetButtonsCount(); i++)
                 {
                     if (!controller.GetButtonState(i) && evaluatedMask.Get(i))
-                   {
-                       masksToRemove.Add(evaluatedMask);
-                       break;
-                   }
+                    {
+                        masksToRemove.Add(evaluatedMask);
+                        break;
+                    }
                 }
             }
 
@@ -450,7 +466,7 @@ namespace KSPAdvancedFlyByWire
                 config.evaluatedDiscreteActionMasks.Remove(maskRemove);
             }
 
-            if(controller.lastUpdateMask != null)
+            if (controller.lastUpdateMask != null)
             {
                 foreach (var presetEditor in m_PresetEditors)
                 {
@@ -464,12 +480,12 @@ namespace KSPAdvancedFlyByWire
             mask.Set(button);
             var actions = config.GetCurrentPreset().GetDiscreteBinding(mask);
 
-            if(actions != null)
+            if (actions != null)
             {
                 foreach (DiscreteAction action in actions)
                 {
                     m_FlightManager.EvaluateDiscreteActionRelease(config, action, state);
-                }   
+                }
             }
         }
 
@@ -477,14 +493,14 @@ namespace KSPAdvancedFlyByWire
         {
             SDLController.SDLUpdateState();
 
-            if(HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
+            if (HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel != null)
             {
                 if (TimeWarp.fetch != null && TimeWarp.fetch.Mode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRateIndex != 0)
                 {
                     m_FlightManager.OnFlyByWire(new FlightCtrlState());
                 }
             }
-            if(Input.GetKey("left shift") && Input.GetKey("l"))
+            if (Input.GetKey("left shift") && Input.GetKey("l"))
             {
                 m_UIActive = true;
             }
@@ -495,7 +511,7 @@ namespace KSPAdvancedFlyByWire
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUI.Button(new Rect(m_WindowRect.width - 24, 4, 20, 20), "X"))
-              //  if (GUILayout.Button("X", GUILayout.Height(16)))
+            //  if (GUILayout.Button("X", GUILayout.Height(16)))
             {
                 m_UIActive = false;
                 InputLockManager.RemoveControlLock("AdvancedFlyByWireMainWindow");
@@ -598,14 +614,14 @@ namespace KSPAdvancedFlyByWire
 
                     GUILayout.BeginHorizontal();
                     GUILayout.FlexibleSpace();
-                    
+
                     GUILayout.Label("Preset: " + config.GetCurrentPreset().name);
 
                     if (config.currentPreset <= 0)
                     {
                         GUI.enabled = false;
                     }
-                  
+
                     if (GUILayout.Button("<", GUILayout.Width(32)))
                     {
                         config.currentPreset--;
@@ -629,7 +645,7 @@ namespace KSPAdvancedFlyByWire
                 }
 
                 GUILayout.Space(24);
-                
+
                 GUI.enabled = true;
             }
 
@@ -665,7 +681,7 @@ namespace KSPAdvancedFlyByWire
 
             for (int i = 0; i < m_PresetEditors.Count; i++)
             {
-                if(m_PresetEditors[i].shouldBeDestroyed)
+                if (m_PresetEditors[i].shouldBeDestroyed)
                 {
                     InputLockManager.RemoveControlLock(m_PresetEditors[i].inputLockHash);
                     m_PresetEditors.RemoveAt(i);

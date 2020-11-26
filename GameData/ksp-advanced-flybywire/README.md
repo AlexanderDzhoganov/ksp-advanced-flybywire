@@ -3,9 +3,7 @@
 
 Latest version - 1.7-beta for KSP 1.1 and later
 
-[Download v1.7-beta (Windows, KSP x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.7_x64.zip)
-
-[Download v1.7-beta (Linux, KSP x86/x64)](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/raw/master/builds/ksp-advanced-flybywire_v1.7-linux.zip) (Requires libsdl2)
+[Download latest version](https://github.com/linuxgurugamer/ksp-advanced-flybywire/releases)
 
 [Licensed under the MIT License](https://github.com/AlexanderDzhoganov/ksp-advanced-flybywire/blob/master/LICENSE)
 
@@ -41,6 +39,10 @@ It dramatically enhances the stock input system with a bunch of fixes and many n
 
 The mod adds a new button to the mod toolbar.
 
+Dependencies
+	ClickThroughBlocker
+	ToolbarController
+
 Click the game controller icon or press Shift + L during flight to bring up Fly-By-Wire's main configuration screen.
 
 From there you will see a list of detected controllers. You can click on "Enable" to enable a controller from the list - two new buttons will appear - "Presets" and "Configure".
@@ -65,4 +67,9 @@ Please report any bugs using [GitHub's issue tracker](https://github.com/Alexand
 ### Changelog
 
 [Click here for changelog](https://raw.githubusercontent.com/AlexanderDzhoganov/ksp-advanced-flybywire/master/CHANGELOG)
+
+
+OSX Instructions
+
+Use brew install sdl2 and restart the game.
 

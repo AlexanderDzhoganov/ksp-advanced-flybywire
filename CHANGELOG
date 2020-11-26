@@ -1,5 +1,10 @@
 ChangeLog
 
+1.8.3.3
+	Add right-click to disable/enable any active controllers
+	Inverted the button colors when disabled
+	Reduced size of main window
+
 1.8.3.2
 	Updated README with correct URL for download, and short OSX install section
 

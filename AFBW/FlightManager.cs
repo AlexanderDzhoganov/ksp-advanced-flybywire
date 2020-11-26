@@ -50,7 +50,7 @@ namespace KSPAdvancedFlyByWire
 
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
-                if (config.isEnabled)
+                if (config.isEnabled && !AdvancedFlyByWire.rightClickDisabled)
                 {
                     config.iface.Update(state);
                     UpdateAxes(config, state);
