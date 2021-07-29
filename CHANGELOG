@@ -1,7 +1,8 @@
 ChangeLog
 
 1.8.3.5
-	Restored missing DLLs
+	Updated SDL2 for KSP 1.12
+	For now, no support for Linux or Mac
 
 1.8.3.4
 	Renamed DLL for CKAN compatibility
