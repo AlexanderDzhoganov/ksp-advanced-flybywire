@@ -1,5 +1,10 @@
 ChangeLog
 
+1.8.3.4
+	Renamed DLL for CKAN compatibility
+	Added AssemblyFileVersion
+	Updated version file for 1.12
+
 1.8.3.3
 	Add right-click to disable/enable any active controllers
 	Inverted the button colors when disabled
