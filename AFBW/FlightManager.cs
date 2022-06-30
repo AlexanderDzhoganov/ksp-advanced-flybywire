@@ -27,6 +27,13 @@ namespace KSPAdvancedFlyByWire
         public FlightProperty m_CameraPitch = new FlightProperty(-1.0f, 1.0f);
         public FlightProperty m_CameraHeading = new FlightProperty(-1.0f, 1.0f);
         public FlightProperty m_CameraZoom = new FlightProperty(-1.0f, 1.0f);
+        public FlightProperty[] m_CustomAxes = new[] {
+            new FlightProperty(-1.0f, 1.0f),
+            new FlightProperty(-1.0f, 1.0f),
+            new FlightProperty(-1.0f, 1.0f),
+            new FlightProperty(-1.0f, 1.0f),
+        };
+
 
         // VesselAutopilot.VesselSAS
         public static float controlDetectionThreshold = 0.05f;
@@ -91,6 +98,8 @@ namespace KSPAdvancedFlyByWire
                     state.roll = Utility.Clamp(state.roll + state.rollTrim, -1.0f, 1.0f);
                 }
             }
+
+            UpdateAxisGroups(FlightGlobals.ActiveVessel, state);
         }
 
         private void UpdateAxes(ControllerConfiguration config, FlightCtrlState state)
@@ -184,6 +193,11 @@ namespace KSPAdvancedFlyByWire
             }
 
             state.wheelSteer = Utility.Clamp(state.wheelSteer + m_WheelSteer.Update(), -1.0f, 1.0f);
+
+            for (int i = 0; i < Math.Min(m_CustomAxes.Length, state.custom_axes.Length); ++i)
+            {
+                state.custom_axes[i] = Utility.Clamp(state.custom_axes[i] + m_CustomAxes[i].Update(), -1.0f, 1.0f);
+            }
         }
 
         private void ZeroOutFlightProperties()
@@ -248,6 +262,44 @@ namespace KSPAdvancedFlyByWire
             if (!m_CameraZoom.HasIncrement())
             {
                 m_CameraZoom.SetValue(0.0f);
+            }
+
+            for (int i = 0; i < m_CustomAxes.Length; ++i)
+            {
+                if (!m_CustomAxes[i].HasIncrement())
+                {
+                    m_CustomAxes[i].SetValue(0.0f);
+                }
+            }
+        }
+
+        // Mirror the flight state into the vessel's axis group modules
+        //
+        // Without this, the axes will be updated for physics processing but not axis control bindings.
+        // Lack of this used to result in the main throttle updating but not affecting axis control groups.
+        //
+        // Optimization may be possible by caching the module fetch step for each vessel.
+        private void UpdateAxisGroups(Vessel vessel, FlightCtrlState state)
+        {
+            for (int m = 0; m < vessel.vesselModules.Count; ++m)
+            {
+                if (vessel.vesselModules[m] is AxisGroupsModule)
+                {
+                    var agModule = vessel.vesselModules[m] as AxisGroupsModule;
+                    agModule.UpdateAxisGroup(KSPAxisGroup.Pitch, state.pitch);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.Yaw, state.yaw);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.Roll, state.roll);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.TranslateX, state.X);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.TranslateY, state.Y);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.TranslateZ, state.Z);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.MainThrottle, state.mainThrottle);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.WheelSteer, state.wheelSteer);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.WheelThrottle, state.wheelThrottle);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.Custom01, state.custom_axes[0]);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.Custom02, state.custom_axes[1]);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.Custom03, state.custom_axes[2]);
+                    agModule.UpdateAxisGroup(KSPAxisGroup.Custom04, state.custom_axes[3]);
+                }
             }
         }
 
@@ -717,6 +769,18 @@ namespace KSPAdvancedFlyByWire
                     return;
                 case ContinuousAction.CameraZoom:
                     m_CameraZoom.Increment(value);
+                    return;
+                case ContinuousAction.Custom1:
+                    m_CustomAxes[0].SetValue(value);
+                    return;
+                case ContinuousAction.Custom2:
+                    m_CustomAxes[1].SetValue(value);
+                    return;
+                case ContinuousAction.Custom3:
+                    m_CustomAxes[2].SetValue(value);
+                    return;
+                case ContinuousAction.Custom4:
+                    m_CustomAxes[3].SetValue(value);
                     return;
             }
         }
