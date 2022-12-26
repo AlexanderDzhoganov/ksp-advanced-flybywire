@@ -1,5 +1,9 @@
 ChangeLog
 
+1.8.4
+	Thanks to github user @AlexanderDzhoganov for this:
+		Add support for Custom Axis Groups
+
 1.8.3.7
 	Fixed small memory leak
 
