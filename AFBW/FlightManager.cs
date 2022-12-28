@@ -55,12 +55,14 @@ namespace KSPAdvancedFlyByWire
             m_Throttle.SetMinMaxValues(-state.mainThrottle, 1.0f - state.mainThrottle);
             m_WheelThrottle.SetMinMaxValues(-1.0f, 1.0f);
 
+
             foreach (ControllerConfiguration config in m_Configuration.controllers)
             {
                 if (config.isEnabled && !AdvancedFlyByWire.rightClickDisabled)
                 {
-                    config.iface.Update(state);
+                    throttleActive = true;
                     UpdateAxes(config, state);
+                    config.iface.Update(state);
 
                     if (FlightGlobals.ActiveVessel.isEVA)
                     {
@@ -116,7 +118,7 @@ namespace KSPAdvancedFlyByWire
 
                 float axisState = config.iface.GetAxisState(i);
 
-                foreach (var action in actions)
+                foreach (ContinuousAction action in actions)
                 {
                     var axisValue = axisState;
                     if (config.GetCurrentPreset().IsContinuousBindingInverted(action))
@@ -124,13 +126,12 @@ namespace KSPAdvancedFlyByWire
                         axisValue *= -1.0f;
                     }
 
-
                     throttleActive = true;
                     if (!AdvancedFlyByWire.Instance.settings.m_ThrottleOverride && action == ContinuousAction.Throttle)
                     {
                         if (axisValue == last_m_throttle)
                         {
-                            throttleActive = false;
+                            //throttleActive = false;
                         }
                         else
                         {

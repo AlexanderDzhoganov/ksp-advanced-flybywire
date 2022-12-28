@@ -204,7 +204,7 @@ namespace KSPAdvancedFlyByWire
         public void OnPostDeserialize()
         {
             continuousActionsMap.Clear();
-            foreach(var entry in serialiazableContinuousActionList)
+            foreach(ContinuousActionEntry entry in serialiazableContinuousActionList)
             {
                 continuousActionsMap.Add(entry.Action, entry);
             }

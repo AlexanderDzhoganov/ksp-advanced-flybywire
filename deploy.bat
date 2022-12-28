@@ -8,6 +8,7 @@ rem VERSIONFILE is the name of the version file, usually the same as GAMEDATA,
 rem    but not always
 
 set H=%KSPDIR%
+
 set GAMEDIR=ksp-advanced-flybywire
 set GAMEDATA="GameData"
 set SUPPORTFILES=SUPPORTFILES
@@ -23,4 +24,4 @@ copy /Y %VERSIONFILE% %GAMEDATA%\%GAMEDIR%
 xcopy /y /s /I %GAMEDATA%\%GAMEDIR% "%H%\GameData\%GAMEDIR%"
 xcopy /y /s /I %GAMEDATA%\%GAMEDIR% "%DP0%\GameData\%GAMEDIR%"
 
-pause
+rem pause
