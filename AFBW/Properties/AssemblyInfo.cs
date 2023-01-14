@@ -1,16 +1,17 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Resources;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ControllerTestTool")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("KSPAdvancedFlyByWire")]
+[assembly: AssemblyDescription("Input mod for Kerbal Space Program")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ControllerTestTool")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCompany("Alexander \"nlight\" Dzhoganov (alexander.dzhoganov@gmail.com)")]
+[assembly: AssemblyProduct("KSPAdvancedFlyByWire")]
+[assembly: AssemblyCopyright("Copyright © Alexander Dzhoganov 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("42537f21-0ab0-4cc8-a50a-86e85f0f5883")]
+[assembly: Guid("c749b9c9-cbf8-4782-a73c-bd17e631c366")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +33,9 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.2")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+//[assembly: AssemblyVersion("1.1.0.28")]
+//[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: NeutralResourcesLanguageAttribute("")]
+
+[assembly: KSPAssemblyDependency("ClickThroughBlocker", 1, 0)]
+[assembly: KSPAssemblyDependency("ToolbarController", 1, 0)]

@@ -1,3 +1,112 @@
+ChangeLog
+
+1.8.4.1
+	Fixed issue where buttons to change throttle weren't working unless there was at least one axis defined
+
+1.8.4
+	Thanks to github user @AlexanderDzhoganov for this:
+		Add support for Custom Axis Groups
+
+1.8.3.7
+	Fixed small memory leak
+
+1.8.3.6
+	removed bad DLLs
+
+1.8.3.5
+	Updated SDL2 for KSP 1.12
+
+1.8.3.4
+	Renamed DLL for CKAN compatibility
+	Added AssemblyFileVersion
+	Updated version file for 1.12
+
+1.8.3.3
+	Add right-click to disable/enable any active controllers
+	Inverted the button colors when disabled
+	Reduced size of main window
+
+1.8.3.2
+	Updated README with correct URL for download, and short OSX install section
+
+1.8.3.1
+	Fixed initialization of variable outside of MonoBehaviour loop
+	Thanks to github user @bhaan for the following:
+		 New Feature: SAS Invert
+		 re-enable nav-ball toggle (speed mode)
+		 Fix Xml Serialization for KSPv1.8
+			Note: This change is not backwards compatible with previous controller presets. Users will have to reconfigure their controllers if these changes are merged. I've tested that an old configuration file will not cause failures for the mod during deserialization, but all the button and axis bindings will be removed.
+
+1.8.3
+	Added InstallChecker
+	Updated for KSP 1.8
+
+1.8.2.1
+	Added code to create data folder (PluginData) if it doesn't exist
+
+1.8.2
+	Fixed controller affecting multiple vessels at a time
+	Fixed AFBW input overrides SAS
+	Fixed AFBW input overrides throttle
+	Moved textures out of PluginData directory
+	Updated AssemblyVersion.tt
+
+1.8.1.1
+	Version bump for 1.5 rebuild
+
+1.8.1
+	Added option to allow throttle to be overridden by joystick or not
+	Fixed loading of settings upon entering the flight scene
+	Fixed saving of:
+		m_MaxMoveSpeedAlways
+		m_UseOnPreInsteadOfOnFlyByWire
+
+1.8.0.5
+	Centered Mod Settings button
+	Fixed RadialIn/RadialOut buttons (are reversed)
+	Fixed Pitch Trim +/- to adjust trim by .1 per click
+
+1.8.0.4
+	Fixed builds
+	Added option to run at max speed always when autorun is enabled
+	Now closes the config window after saving
+	Tweaked size of some buttons
+	Some minor optimizations
+	Now allows deleting 1st preset in list, if more than one exists
+
+1.8.0.3
+	Updated the SDLs library
+	Updated the SDL2 file
+
+		Note:  The SDL update should fix the issues with the non-us keyboards
+
+	Added code to dynamically get the vectorField and floatField offsets
+	Rewrote all event code for EVA events to use new methods of calling
+	Repositioned the GUI.DragWindow() calls to allow full windows to be draggable
+	Added a DragWindow to the Choose Action windows, and fixed the call to properly save the location
+	Added OSX build
+
+
+1.8.0.2
+	Updated name in .version file
+	Updated Jenkins file for Linux build
+	Added missing file for Linux
+
+1.8.0.1
+	Rebuild for bad dll
+	Moved XInputDotNetPure dll into Plugins folder
+
+1.8.0
+	Adopted by LGG
+	Updated for 1.4
+	Added support for the ToolbarController
+	Added support for the ClickthroughBlocker
+	Removed option for Bizzy toobar, now handled by the Toolbarcontroller
+	Added transparancy to large button 
+
+	Changed method of serializing settings
+	Reorganized release directory
+
 v1.7
 - Updated for KSP 1.1
 

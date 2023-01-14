@@ -1,0 +1,25 @@
+{
+  "NAME": "AdvancedFlyByWire",
+  "URL": "http://ksp.spacetux.net/avc/ksp-advanced-flybywire",
+  "DOWNLOAD": "https://github.com/linuxgurugamer/ksp-advanced-flybywire/releases",
+  "GITHUB": {
+    "USERNAME": "linuxgurugamer",
+    "REPOSITORY": "flybywire"
+  },
+  "VERSION": {
+    "MAJOR": 1,
+    "MINOR": 8,
+    "PATCH": 4,
+    "BUILD": 1
+  },
+  "KSP_VERSION": {
+    "MAJOR": 1,
+    "MINOR": 12,
+    "PATCH": 4
+  },
+  "KSP_VERSION_MIN": {
+    "MAJOR": 1,
+    "MINOR": 12,
+    "PATCH": 0
+  }
+}
